@@ -54,6 +54,7 @@ function Dashboard() {
           alignment: "left",
           columns: ["description", "quantity", "unitPrice", "total"],
         },
+        { section: "break" },
         {
           section: "totals",
           position: "bottom",
@@ -298,11 +299,11 @@ function Dashboard() {
             </div>
           )}
           {step == 3 && (
-            <div className="flex flex-col gap-4">
+            <div className="mt-24 flex flex-col gap-4">
               <h1 className="text-center font-bold text-4xl space-x-10">
                 Your generated invoice
               </h1>
-              <div className="h-72 p-4 flex flex-col border border-gray-100 shadow-base shadow-2xl rounded-2xl">
+              <div className="h-fit p-4 flex flex-col ">
                 <InvoicePreview
                   template={template}
                   templatesData={templatesData}
