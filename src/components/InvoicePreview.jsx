@@ -1,94 +1,98 @@
 import { DownloadButton } from "./DownloadButton";
 
-const getAlignmentClass = (alignment) => {
-  switch (alignment) {
-    case "left":
-      return "text-left";
-    case "right":
-      return "text-right";
-    case "center":
-      return "text-center";
-    default:
-      return "";
-  }
+const getTextStyle = (section) => {
+  let style = "";
+  if (section.bold) style += " font-bold";
+  if (section.italic) style += " italic";
+  if (section.alignment === "right") style += " text-right";
+  if (section.alignment === "center") style += " text-center";
+  if (section.uppercase) style += " uppercase";
+  if (section.fontSize) style += ` text-[${section.fontSize}px]`;
+  return style;
 };
 
 export function InvoicePreview({ template, invoice }) {
   return (
-    <div className="relative flex justify-center items-center">
-      <div className="w-[210px] sm:w-[420px] aspect-[210/297] border border-gray-300 p-4 shadow-md text-[min(1vw,12px)]">
+    <div className="relative flex flex-col items-center">
+      <div className="w-[210px] sm:w-[420px] aspect-[210/297] border border-gray-300 bg-white p-4 shadow-md text-[min(1vw,12px)]">
         {template.structure.map((section) => (
           <div
             key={section.section}
-            className={`flex flex-col ${getAlignmentClass(section.alignment)}`}
+            className={`flex flex-col text-black ${getTextStyle(section)}`}
           >
-            {/* Render Text Fields */}
-            {section.fields?.map(
-              (field) =>
-                invoice[field] && (
-                  <div key={field} className="font-semibold">
-                    {invoice[field]}
-                  </div>
-                )
-            )}
+            {section.section === "horizontal-line" && <hr className="my-2" />}
+            {section.fields?.map((field) => {
+              // if (section.section === "totals") return null; // Prevents duplicate rendering
+              const value = invoice[field];
 
-            {/* Render Horizontal Line */}
-            {section.section === "horizontal-line" && (
-              <hr className="my-2 border-t border-gray-300" />
-            )}
+              if (!value) return null;
 
-            {/* Render Space */}
-            {section.section === "space" && <br />}
-
-            {/* Render Items Table */}
-            {section.section === "items" && (
-              <div className="mt-2">
-                <table className="w-full border-collapse border border-gray-300 text-[min(1vw,12px)]">
-                  <thead>
-                    <tr className="border-b ">
-                      {[...new Set(invoice.items.flatMap(Object.keys))].map(
-                        (key) => (
-                          <th
-                            className="text-center p-1 border border-gray-300"
-                            key={key}
-                          >
-                            {key.charAt(0).toUpperCase() + key.slice(1)}
-                          </th>
-                        )
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {invoice.items.map((item, index) => (
-                      <tr key={index} className="border-b">
-                        {[...new Set(invoice.items.flatMap(Object.keys))].map(
-                          (key) => (
-                            <td
-                              className="text-center p-1 border border-gray-300"
-                              key={key}
-                            >
-                              {item[key] ?? "-"}
-                            </td>
-                          )
-                        )}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              return (
+                <div key={field}>
+                  <strong>{template.labels?.[field] || field}</strong>
+                  {value}
+                </div>
+              );
+            })}
+            {section.section === "title" && (
+              <div className={`my-2 underline ${getTextStyle(section)}`}>
+                <strong>{template.labels?.title.toUpperCase()}</strong>
               </div>
             )}
 
-            {/* Render Total Amount */}
+            {section.section === "items" && (
+              <table className="w-full border-collapse text-xs mt-2">
+                <thead>
+                  <tr className="border-b">
+                    {section.columns.map((col) => (
+                      <th key={col} className="text-center">
+                        {col.charAt(0).toUpperCase() + col.slice(1)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoice.items.map((item, index) => (
+                    <tr key={index}>
+                      {section.columns.map((col) => (
+                        <td key={col} className="text-center">
+                          {item[col] ?? "-"}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+
             {section.section === "totals" && (
-              <div className="font-semibold mt-2 text-right">
-                Total: ${invoice.totalAmount}
+              <div className="mt-2 text-right">
+                <div>
+                  {template.labels?.subtotal || "Subtotal"}: {invoice.subtotal}
+                </div>
+
+                {invoice.deductions?.map((deduct, index) => (
+                  <div key={index}>
+                    {deduct.description} -{deduct.amount}
+                  </div>
+                ))}
+
+                {invoice.additions?.map((add, index) => (
+                  <div key={index}>
+                    {add.description} +{add.amount}
+                  </div>
+                ))}
+
+                <div className="font-bold">
+                  {template.labels?.totalAmount || "Total"}:{" "}
+                  {invoice.totalAmount}
+                </div>
               </div>
             )}
           </div>
         ))}
       </div>
-      {/* Download Button Below Preview */}
-      <DownloadButton invoice={invoice} />
+      <DownloadButton invoice={invoice} template={template} />
     </div>
   );
 }

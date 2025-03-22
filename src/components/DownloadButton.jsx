@@ -1,14 +1,14 @@
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import InvoicePDF from "./InvoicePDF";
 
-export function DownloadButton({ invoice }) {
+export function DownloadButton({ invoice, template }) {
   return (
     <PDFDownloadLink
-      document={<InvoicePDF invoice={invoice} />}
+      document={<InvoicePDF invoice={invoice} template={template} />}
       fileName="invoice.pdf"
     >
       {({ loading }) => (
-        <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded shadow">
+        <button className="btn btn-accent">
           {loading ? "Generating PDF..." : "Download PDF"}
         </button>
       )}

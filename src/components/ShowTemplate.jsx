@@ -35,6 +35,23 @@ function ShowTemplate({
         total: 150,
       },
     ],
+    deductions: [
+      {
+        description: "Discounts:",
+        amount: 100,
+      },
+    ],
+    additions: [
+      {
+        description: "CGST @ 9%:",
+        amount: 100,
+      },
+      {
+        description: "SGST @ 9%:",
+        amount: 100,
+      },
+    ],
+    subTotal: null,
     totalAmount: 2150,
   };
 
@@ -47,10 +64,10 @@ function ShowTemplate({
         }`}
       >
         {/* Mini Invoice Preview */}
-        <MiniInvoice
+        {/* <MiniInvoice
           currentTemplate={currentTemplate}
           sampleInvoice={sampleInvoice}
-        />
+        /> */}
       </div>
       <h2
         className={`text-xs font-bold text-center ${

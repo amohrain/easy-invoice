@@ -6,224 +6,23 @@ import TypingPlaceholder from "../../components/TypingPlaceholder";
 import { handleInvoiceGenerate } from "@/lib/openai";
 import { Loading } from "@/components/Loading";
 import { InvoicePreview } from "@/components/InvoicePreview";
+import { templates } from "@/lib/templatesData";
+import InvoicePDF from "@/components/InvoicePDF";
+
+// For showing ReactPDF Viewer
+import dynamic from "next/dynamic";
+import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
+
+const PDFViewer = dynamic(
+  () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
+  { ssr: false }
+);
 
 function Dashboard() {
   const [step, setStep] = useState(1);
   const [text, setText] = useState("");
-  const [templatesData, setTemplatesData] = useState([
-    {
-      id: "1",
-      name: "Standard Business Invoice",
-      structure: [
-        {
-          section: "header",
-          position: "top",
-          alignment: "right",
-          bold: true, // there can be text decorations
-          fields: [
-            "businessName",
-            "businessAddress",
-            "businessEmail",
-            "businessPhone",
-            "businessLogo",
-          ],
-        },
-        { section: "horizontal-line" },
-        {
-          section: "clientDetails",
-          position: "left",
-          alignment: "left",
-          fields: [
-            "clientName",
-            "clientEmail",
-            "clientPhone",
-            "clientAddress",
-            "clientTaxId",
-          ],
-        },
-        {
-          section: "invoiceDetails",
-          position: "right",
-          alignment: "left",
-          fields: ["invoiceNumber", "issuedAt", "dueDate", "paymentTerms"],
-        },
-        { section: "space" },
-        {
-          section: "items",
-          position: "center",
-          alignment: "left",
-          columns: ["description", "quantity", "unitPrice", "total"],
-        },
-        { section: "break" },
-        {
-          section: "totals",
-          position: "bottom",
-          alignment: "right",
-          fields: ["subtotal", "tax", "discount", "totalAmount"],
-        },
-        {
-          section: "footer",
-          position: "bottom",
-          alignment: "center",
-          fields: ["notes", "paymentInstructions"],
-        },
-      ],
-    },
-    {
-      id: "2",
-      name: "Another Business Invoice",
-      structure: [
-        {
-          section: "header",
-          position: "top",
-          alignment: "center",
-          fields: [
-            "businessName",
-            "businessAddress",
-            "businessEmail",
-            "businessPhone",
-            "businessLogo",
-          ],
-        },
-        {
-          section: "clientDetails",
-          position: "left",
-          alignment: "left",
-          fields: ["name", "email", "phone", "address", "taxId"],
-        },
-        {
-          section: "invoiceDetails",
-          position: "right",
-          alignment: "left",
-          fields: ["invoiceNumber", "issuedAt", "dueDate", "paymentTerms"],
-        },
-        {
-          section: "items",
-          position: "center",
-          alignment: "left",
-          columns: ["description", "quantity", "unitPrice", "total"],
-        },
-        {
-          section: "totals",
-          position: "bottom",
-          alignment: "right",
-          fields: ["subtotal", "tax", "discount", "totalAmount"],
-        },
-        {
-          section: "footer",
-          position: "bottom",
-          alignment: "center",
-          fields: ["notes", "paymentInstructions"],
-        },
-      ],
-    },
-    {
-      id: "3",
-      name: "Standard Business Invoice",
-      structure: [
-        {
-          section: "header",
-          position: "top",
-          alignment: "right",
-          bold: true, // there can be text decorations
-          fields: [
-            "businessName",
-            "businessAddress",
-            "businessEmail",
-            "businessPhone",
-            "businessLogo",
-          ],
-        },
-        { section: "horizontal-line" },
-        {
-          section: "clientDetails",
-          position: "left",
-          alignment: "left",
-          fields: [
-            "clientName",
-            "clientEmail",
-            "clientPhone",
-            "clientAddress",
-            "clientTaxId",
-          ],
-        },
-        {
-          section: "invoiceDetails",
-          position: "right",
-          alignment: "left",
-          fields: ["invoiceNumber", "issuedAt", "dueDate", "paymentTerms"],
-        },
-        { section: "space" },
-        {
-          section: "items",
-          position: "center",
-          alignment: "left",
-          columns: ["description", "quantity", "unitPrice", "total"],
-        },
-        {
-          section: "totals",
-          position: "bottom",
-          alignment: "right",
-          fields: ["subtotal", "tax", "discount", "totalAmount"],
-        },
-        {
-          section: "footer",
-          position: "bottom",
-          alignment: "center",
-          fields: ["notes", "paymentInstructions"],
-        },
-      ],
-    },
-    {
-      id: "4",
-      name: "Another Business Invoice",
-      structure: [
-        {
-          section: "header",
-          position: "top",
-          alignment: "center",
-          fields: [
-            "businessName",
-            "businessAddress",
-            "businessEmail",
-            "businessPhone",
-            "businessLogo",
-          ],
-        },
-        {
-          section: "clientDetails",
-          position: "left",
-          alignment: "left",
-          fields: ["name", "email", "phone", "address", "taxId"],
-        },
-        {
-          section: "invoiceDetails",
-          position: "right",
-          alignment: "left",
-          fields: ["invoiceNumber", "issuedAt", "dueDate", "paymentTerms"],
-        },
-        {
-          section: "items",
-          position: "center",
-          alignment: "left",
-          columns: ["description", "quantity", "unitPrice", "total"],
-        },
-        {
-          section: "totals",
-          position: "bottom",
-          alignment: "right",
-          fields: ["subtotal", "tax", "discount", "totalAmount"],
-        },
-        {
-          section: "footer",
-          position: "bottom",
-          alignment: "center",
-          fields: ["notes", "paymentInstructions"],
-        },
-      ],
-    },
-  ]);
-  const [template, setTemplate] = useState({});
+  const [templatesData, setTemplatesData] = useState(templates);
+  const [template, setTemplate] = useState(templatesData[0]);
   const [invoice, setInvoice] = useState({});
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -235,10 +34,25 @@ function Dashboard() {
     const invoice = await handleInvoiceGenerate(text);
     setInvoice(invoice);
     setLoading(false);
-    setStep(3);
+    setStep(2);
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    console.log("step: ", step);
+  }, [step]);
+
+  const TestPDF = () => (
+    <Document>
+      <Page size="A4">
+        <View>
+          <Text>Section #1</Text>
+        </View>
+        <View>
+          <Text>Section #2</Text>
+        </View>
+      </Page>
+    </Document>
+  );
 
   return (
     <>
@@ -247,25 +61,6 @@ function Dashboard() {
         <div className="w-full px-4 max-w-3xl self-center flex flex-col gap-7">
           {loading && <Loading />}
           {step == 1 && (
-            <div className="flex w-full flex-col gap-4 justify-center">
-              <h1 className="text-center font-bold text-4xl space-x-10">
-                Choose your template
-              </h1>
-              <Templates
-                className="self-center flex flex-row gap-4 w-full"
-                templatesData={templatesData}
-                template={template.id}
-                setTemplate={setTemplate}
-              />
-              <button
-                onClick={() => setStep(2)}
-                className="btn btn-primary self-center"
-              >
-                Next
-              </button>
-            </div>
-          )}
-          {step == 2 && (
             <div className="flex flex-col gap-4">
               <h1 className="text-center font-bold text-4xl space-x-10">
                 Enter your prompt
@@ -298,18 +93,66 @@ function Dashboard() {
               </div>
             </div>
           )}
-          {step == 3 && (
+          {step == 2 && (
             <div className="mt-24 flex flex-col gap-4">
               <h1 className="text-center font-bold text-4xl space-x-10">
                 Your generated invoice
               </h1>
-              <div className="h-fit p-4 flex flex-col ">
+              <div className="h-fit p-4 flex flex-row justify-center items-center gap-4">
+                <button
+                  disabled={
+                    templatesData.findIndex((t) => t.id === template.id) === 0
+                  }
+                  onClick={() => {
+                    setTemplate((prev) => {
+                      const index = templatesData.findIndex(
+                        (t) => t.id === prev.id
+                      );
+                      if (index === 0) return prev; // Prevents going before first template
+                      return templatesData[index - 1]; // Moves to previous template
+                    });
+                  }}
+                  className="btn btn-circle btn-primary"
+                >
+                  ≤
+                </button>
                 <InvoicePreview
                   template={template}
                   templatesData={templatesData}
                   invoice={invoice}
                   setInvoice={setInvoice}
                 />
+                <PDFViewer
+                  style={{
+                    width: "210px",
+                    maxWidth: "420px",
+                    aspectRatio: "210 / 297",
+                    border: "1px solid #D1D5DB",
+                    padding: "1rem",
+                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                    fontSize: "min(1vw, 12px)",
+                  }}
+                >
+                  <InvoicePDF template={template} invoice={invoice} />
+                </PDFViewer>
+                <button
+                  disabled={
+                    templatesData.findIndex((t) => t.id === template.id) ===
+                    templatesData.length - 1
+                  }
+                  onClick={() => {
+                    setTemplate((prev) => {
+                      const index = templatesData.findIndex(
+                        (t) => t.id === prev.id
+                      );
+                      if (index === templatesData.length - 1) return prev; // Prevents going before first template
+                      return templatesData[index + 1]; // Moves to previous template
+                    });
+                  }}
+                  className="btn btn-circle btn-primary"
+                >
+                  ≥
+                </button>
               </div>
               <button
                 onClick={() => setStep(2)}

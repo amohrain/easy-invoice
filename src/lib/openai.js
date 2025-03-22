@@ -68,7 +68,7 @@ export const handleInvoiceGenerate = async (prompt) => {
     "clientAddress": "",
     "clientTaxId": "",
     "invoiceNumber": "",
-    "issuedAt": "2025-03-20",
+    "issuedAt": "",
     "dueDate": "2025-04-19",
     "paymentTerms": "Due in 30 days",
     "subtotal": 2150,
@@ -92,7 +92,23 @@ export const handleInvoiceGenerate = async (prompt) => {
         "discount": 0,
         "total": 150
       }
-    ]
+    ],
+    "deductions": [
+      {
+        "description": "Discounts:",
+        "amount": 100,
+      },
+    ],
+    "additions": [
+      {
+        "description": "CGST @ 9%:",
+        "amount": 100,
+      },
+      {
+        "description": "SGST @ 9%:",
+        "amount": 100,
+      },
+    ],
 }`;
 
   const userPrompt = `Convert this into the JSON structure: ${prompt}`;
