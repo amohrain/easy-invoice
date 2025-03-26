@@ -4,6 +4,10 @@ export const templates = [
     name: "Standard Business Invoice",
     structure: [
       {
+        section: "logo",
+        alignment: "right",
+      },
+      {
         section: "header",
         alignment: "right",
         bold: true,
@@ -15,13 +19,11 @@ export const templates = [
           "businessAddress",
           "businessEmail",
           "businessPhone",
-          "businessLogo",
         ],
       },
-      { section: "horizontal-line" },
       {
         section: "clientDetails",
-        position: "left",
+
         alignment: "left",
         fields: [
           "clientName",
@@ -33,33 +35,30 @@ export const templates = [
       },
       {
         section: "invoiceDetails",
-        position: "right",
+
         alignment: "left",
         fields: ["invoiceNumber", "issuedAt", "dueDate", "paymentTerms"],
       },
-      { section: "space" },
       {
         section: "items",
-        position: "center",
+
         alignment: "left",
         columns: ["description", "quantity", "unitPrice", "total"],
       },
-      { section: "break" },
       {
         section: "totals",
-        position: "bottom",
+
         alignment: "right",
-        // fields: ["subtotal", "deductions", "additions", "totalAmount"], // removed to prevent duplications
       },
       {
         section: "footer",
-        position: "bottom",
+
         alignment: "center",
         fields: ["notes", "paymentInstructions"],
       },
     ],
     labels: {
-      businessName: "",
+      businessName: "BIZ: ",
       businessAddress: "Address: ",
       businessEmail: "Email: ",
       businessPhone: "Phone: ",
@@ -86,6 +85,10 @@ export const templates = [
     name: "Standard Business Invoice",
     structure: [
       {
+        section: "logo",
+        alignment: "center",
+      },
+      {
         section: "header",
         alignment: "right",
         bold: true,
@@ -97,13 +100,12 @@ export const templates = [
           "businessAddress",
           "businessEmail",
           "businessPhone",
-          "businessLogo",
         ],
       },
       { section: "horizontal-line" },
       {
         section: "clientDetails",
-        position: "left",
+
         alignment: "left",
         fields: [
           "clientName",
@@ -115,27 +117,26 @@ export const templates = [
       },
       {
         section: "invoiceDetails",
-        position: "right",
+
         alignment: "left",
         fields: ["invoiceNumber", "issuedAt", "dueDate", "paymentTerms"],
       },
       { section: "space" },
       {
         section: "items",
-        position: "center",
+
         alignment: "left",
         columns: ["description", "quantity", "unitPrice", "total"],
       },
       { section: "break" },
       {
         section: "totals",
-        position: "bottom",
+
         alignment: "right",
-        // fields: ["subtotal", "deductions", "additions", "totalAmount"], // removed to prevent duplications
       },
       {
         section: "footer",
-        position: "bottom",
+
         alignment: "center",
         fields: ["notes", "paymentInstructions"],
       },
@@ -185,7 +186,7 @@ export const templates = [
   //     { section: "horizontal-line" },
   //     {
   //       section: "clientDetails",
-  //       position: "left",
+
   //       alignment: "left",
   //       fields: [
   //         "clientName",
@@ -197,28 +198,28 @@ export const templates = [
   //     },
   //     {
   //       section: "invoiceDetails",
-  //       position: "right",
+
   //       alignment: "left",
   //       fields: ["invoiceNumber", "issuedAt", "dueDate", "paymentTerms"],
   //     },
   //     { section: "space" },
-  //     { section: "title", position: "center", alignment: "center" },
+  //     { section: "title",  alignment: "center" },
   //     {
   //       section: "items",
-  //       position: "center",
+
   //       alignment: "left",
   //       columns: ["description", "quantity", "unitPrice", "total"],
   //     },
   //     { section: "break" },
   //     {
   //       section: "totals",
-  //       position: "bottom",
+
   //       alignment: "right",
   //       // fields: ["subtotal", "deductions", "additions", "totalAmount"], // removed to prevent duplications
   //     },
   //     {
   //       section: "footer",
-  //       position: "bottom",
+
   //       alignment: "center",
   //       fields: ["notes", "paymentInstructions"],
   //     },
@@ -263,13 +264,16 @@ export const templates = [
           "businessAddress",
           "businessEmail",
           "businessPhone",
-          "businessLogo",
         ],
+      },
+      {
+        section: "logo",
+        alignment: "right",
       },
       { section: "horizontal-line" },
       {
         section: "clientDetails",
-        position: "left",
+
         alignment: "left",
         fields: [
           "clientName",
@@ -281,27 +285,27 @@ export const templates = [
       },
       {
         section: "invoiceDetails",
-        position: "right",
+
         alignment: "left",
         fields: ["invoiceNumber", "issuedAt", "dueDate", "paymentTerms"],
       },
       { section: "space" },
       {
         section: "items",
-        position: "center",
+
         alignment: "left",
         columns: ["description", "quantity", "unitPrice", "total"],
       },
       { section: "break" },
       {
         section: "totals",
-        position: "bottom",
+
         alignment: "right",
         // fields: ["subtotal", "deductions", "additions", "totalAmount"], // removed to prevent duplications
       },
       {
         section: "footer",
-        position: "bottom",
+
         alignment: "center",
         fields: ["notes", "paymentInstructions"],
       },

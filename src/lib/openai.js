@@ -97,16 +97,19 @@ export const handleInvoiceGenerate = async (prompt) => {
       {
         "description": "Discounts:",
         "amount": 100,
+        "percent": 10
       },
     ],
     "additions": [
       {
         "description": "CGST @ 9%:",
         "amount": 100,
-      },
-      {
+        "percent": 10
+        },
+        {
         "description": "SGST @ 9%:",
         "amount": 100,
+        "percent": 10
       },
     ],
 }`;

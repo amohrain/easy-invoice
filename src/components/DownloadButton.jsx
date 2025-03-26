@@ -8,7 +8,7 @@ export function DownloadButton({ invoice, template }) {
       fileName="invoice.pdf"
     >
       {({ loading }) => (
-        <button className="btn btn-accent">
+        <button className="btn btn-accent w-full">
           {loading ? "Generating PDF..." : "Download PDF"}
         </button>
       )}
