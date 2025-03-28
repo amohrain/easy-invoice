@@ -1,3 +1,5 @@
+// Each section can have styles propety
+
 export const templates = [
   {
     id: "1",
@@ -41,7 +43,6 @@ export const templates = [
       },
       {
         section: "items",
-
         alignment: "left",
         columns: ["description", "quantity", "unitPrice", "total"],
       },
@@ -136,9 +137,11 @@ export const templates = [
       },
       {
         section: "footer",
-
         alignment: "center",
         fields: ["notes", "paymentInstructions"],
+        styles: {
+          marginBottom: 10,
+        },
       },
     ],
     labels: {
@@ -259,16 +262,21 @@ export const templates = [
         fontSize: 16,
         uppercase: true,
         backgroundColor: "#f8f8f8",
-        fields: [
-          "businessName",
-          "businessAddress",
-          "businessEmail",
-          "businessPhone",
+        columns: [
+          {
+            alignment: "left",
+            fields: ["businessLogo"],
+          },
+          {
+            alignment: "right",
+            fields: [
+              "businessName",
+              "businessAddress",
+              "businessEmail",
+              "businessPhone",
+            ],
+          },
         ],
-      },
-      {
-        section: "logo",
-        alignment: "right",
       },
       { section: "horizontal-line" },
       {
@@ -287,7 +295,16 @@ export const templates = [
         section: "invoiceDetails",
 
         alignment: "left",
-        fields: ["invoiceNumber", "issuedAt", "dueDate", "paymentTerms"],
+        columns: [
+          {
+            alignment: "left",
+            fields: ["invoiceNumber", "issuedAt"],
+          },
+          {
+            alignment: "right",
+            fields: ["dueDate", "paymentTerms"],
+          },
+        ],
       },
       { section: "space" },
       {
@@ -305,7 +322,6 @@ export const templates = [
       },
       {
         section: "footer",
-
         alignment: "center",
         fields: ["notes", "paymentInstructions"],
       },

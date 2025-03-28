@@ -65,7 +65,6 @@ const invoiceSchema = new mongoose.Schema(
         description: { type: String, required: true },
         amount: { type: Number, required: false },
         percent: { type: Number, required: false },
-        type: { type: String, enum: ["fixed", "percentage"], required: true },
       },
     ],
 
@@ -74,7 +73,6 @@ const invoiceSchema = new mongoose.Schema(
         description: { type: String, required: true },
         amount: { type: Number, required: false },
         percent: { type: Number, required: false },
-        type: { type: String, enum: ["fixed", "percentage"], required: true }, // New field
       },
     ],
 

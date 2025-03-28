@@ -9,11 +9,7 @@ const templateSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  structure: {
-    type: String,
-    required: true,
-  },
-  isPublilc: {
+  isPublic: {
     type: Boolean,
     default: false,
   },

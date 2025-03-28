@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Nav from "../../components/Nav";
-import Templates from "../../components/Templates";
+// import Templates from "../../components/Templates";
 import TypingPlaceholder from "../../components/TypingPlaceholder";
 import { handleInvoiceGenerate } from "@/lib/openai";
 import { Loading } from "@/components/Loading";
@@ -14,6 +14,7 @@ import dynamic from "next/dynamic";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 import { DownloadButton } from "@/components/DownloadButton";
 import LeftBar from "@/components/LeftBar";
+import Template from "@/models/template.model";
 
 const PDFViewer = dynamic(
   () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
@@ -24,38 +25,47 @@ function Dashboard() {
   const [step, setStep] = useState(1);
   const [text, setText] = useState("");
   const [templatesData, setTemplatesData] = useState(templates);
-  const [template, setTemplate] = useState(templatesData[0]);
+  const [template, setTemplate] = useState(templates[2]);
   const [invoice, setInvoice] = useState({});
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [showControlsPopup, setShowControlsPopup] = useState(false);
+
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const response = await fetch("/api/get-template");
+  //     const templates = await response.json();
+  //     console.log(templates);
+  //     setTemplatesData(templates);
+  //     setTemplate(templates[0]);
+  //   }
+  //   fetchData();
+  // }, []);
 
   const handleGenerate = async () => {
     setLoading(true);
     console.log("Generating invoice...");
     // const invoice = await handleInvoiceGenerate(text);
     const invoice = {
-      businessName: "",
-      businessAddress: "",
-      businessEmail: "",
-      businessPhone: "",
-      businessLogo:
-        "https://img.freepik.com/premium-vector/organic-natural-product-labels-vector-labels-are-suitable-web-print-use_968697-1452.jpg",
+      businessName: "My Business",
+      businessAddress: "dg",
+      businessEmail: "sdg",
+      businessPhone: "g",
+      businessLogo: "./chanel-1.jpg",
       clientName: "XYZ ltd",
-      clientEmail: "",
-      clientPhone: "",
-      clientAddress: "",
-      clientTaxId: "",
-      invoiceNumber: "",
-      issuedAt: "",
-      dueDate: "",
-      paymentTerms: "",
-      subtotal: 225,
+      clientEmail: "safd",
+      clientPhone: "asdg",
+      clientAddress: "sdg",
+      clientTaxId: "sdg",
+      invoiceNumber: "sdg",
+      dueDate: "sdg",
+      paymentTerms: "sdg",
+      subtotal: 300,
       tax: 40.5,
       discount: 100,
-      totalAmount: 165.5,
-      notes: "",
-      paymentInstructions: "",
+      totalAmount: 318.6,
+      notes: "dg",
+      paymentInstructions: "dg",
       items: [
         {
           description: "Toothbrush",
@@ -86,6 +96,7 @@ function Dashboard() {
           percent: 18,
         },
       ],
+      issuedAt: "sdg",
     };
     setInvoice(invoice);
     console.log(invoice);
@@ -112,10 +123,8 @@ function Dashboard() {
 
   return (
     <>
-      <Nav />
-      <div className="flex flex-row">
-        <LeftBar className="w-1/5" />
-        <div className="flex flex-col w-4/5 h-[calc(100vh-60px)] bg-base-100 justify-center">
+      <div className="flex flex-row h-screen">
+        <div className="flex flex-col w-4/5 h-full bg-base-100 justify-center">
           <div className="w-full px-4 max-w-3xl self-center flex flex-col gap-7">
             {loading && <Loading />}
             {step == 1 && (
@@ -159,12 +168,12 @@ function Dashboard() {
                 <div className="h-fit p-4 flex flex-row justify-center items-center gap-4">
                   <button
                     disabled={
-                      templatesData.findIndex((t) => t.id === template.id) === 0
+                      templatesData.findIndex((t) => t == template) === 0
                     }
                     onClick={() => {
                       setTemplate((prev) => {
                         const index = templatesData.findIndex(
-                          (t) => t.id === prev.id
+                          (t) => t == template
                         );
                         if (index === 0) return prev; // Prevents going before first template
                         return templatesData[index - 1]; // Moves to previous template
@@ -196,13 +205,13 @@ function Dashboard() {
                 </PDFViewer> */}
                   <button
                     disabled={
-                      templatesData.findIndex((t) => t.id === template.id) ===
+                      templatesData.findIndex((t) => t == template) ===
                       templatesData.length - 1
                     }
                     onClick={() => {
                       setTemplate((prev) => {
                         const index = templatesData.findIndex(
-                          (t) => t.id === prev.id
+                          (t) => t == template
                         );
                         if (index === templatesData.length - 1) return prev; // Prevents going before first template
                         return templatesData[index + 1]; // Moves to previous template
@@ -249,6 +258,7 @@ function Dashboard() {
             )}
           </div>
         </div>
+        <LeftBar className="w-1/5" />
       </div>
     </>
   );

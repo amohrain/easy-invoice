@@ -6,9 +6,10 @@ const getTextStyle = (section) => {
   let style = "";
   if (section.bold) style += " font-bold";
   if (section.italic) style += " italic";
+  if (section.alignment === "left") style += " text-left self-start";
   if (section.alignment === "right") style += " text-right self-end";
   if (section.alignment === "center") style += " text-center self-center";
-  if (section.uppercase) style += " uppercase";
+  // if (section.uppercase) style += " uppercase";
   if (section.fontSize) style += ` text-[${section.fontSize}px]`;
   return style;
 };
@@ -55,18 +56,64 @@ export function InvoicePreview({ template, invoice, setInvoice, setStep }) {
 
   return (
     <div className="relative flex flex-col items-center">
-      <div className="w-[210px] sm:w-[420px] aspect-[210/297] border border-gray-300 bg-white p-4 shadow-md text-[min(1vw,12px)]">
+      <div className="w-[210px] sm:w-[420px] aspect-[210/297] border border-gray-300 bg-white p-4 shadow-md sm:text-md text-sm">
         {template.structure.map((section) => (
           <div
             key={section.section}
-            className={`flex flex-col text-black ${getTextStyle(section)}`}
+            className={`flex flex-col text-md text-black ${getTextStyle(
+              section
+            )}`}
           >
-            {section.section === "horizontal-line" && <hr className="my-2" />}
+            {section.section === "horizontal-line" && (
+              <hr className="my-2 text-primary" />
+            )}
             {section.section === "logo" && (
               <img
                 src={invoice.businessLogo}
                 className={`h-10 w-fit ${getTextStyle(section)}`}
               />
+            )}
+            {section.columns && (
+              <div className="flex w-full">
+                {section.columns.map((col, colIndex) => (
+                  <div key={colIndex} className={`flex-1 ${getTextStyle(col)}`}>
+                    {col.fields?.map((field) =>
+                      field === "businessLogo" ? (
+                        <img
+                          key={field}
+                          src={invoice.businessLogo}
+                          className="h-10 w-auto"
+                        />
+                      ) : (
+                        <div
+                          key={field}
+                          className={invoice[field] ? "" : "text-gray-400"}
+                        >
+                          <strong
+                            onClick={(e) => e.target.nextSibling?.focus()}
+                            className="cursor-pointer"
+                          >
+                            {!invoice[field]
+                              ? template.labels?.[field] || field
+                              : ""}
+                          </strong>
+                          <span
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) =>
+                              handleChange(field, e.target.innerText.trim())
+                            }
+                            className="whitespace-pre-wrap border-b border-dashed border-gray-200 cursor-text outline-none focus:text-black"
+                            onClick={(e) => e.target.focus()}
+                          >
+                            {invoice[field] ?? ""}
+                          </span>
+                        </div>
+                      )
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
             {section.fields?.map((field) => (
               <div
@@ -77,7 +124,7 @@ export function InvoicePreview({ template, invoice, setInvoice, setStep }) {
                   onClick={(e) => e.target.nextSibling?.focus()} // Shift focus to input when label is clicked
                   className="cursor-pointer"
                 >
-                  {template.labels?.[field] || field}
+                  {!invoice[field] ? template.labels?.[field] || field : ""}
                 </strong>
                 <span
                   contentEditable
@@ -132,7 +179,7 @@ export function InvoicePreview({ template, invoice, setInvoice, setStep }) {
             {section.section === "totals" && (
               <div className="mt-2 text-right">
                 <div>
-                  {template.labels?.subtotal || "Subtotal"}:
+                  {template.labels?.subtotal || "Sub total "}:
                   <span
                     contentEditable
                     suppressContentEditableWarning
@@ -222,7 +269,7 @@ export function InvoicePreview({ template, invoice, setInvoice, setStep }) {
                 ))}
 
                 <div className="font-bold">
-                  {template.labels?.totalAmount || "Total"}:
+                  {template.labels?.totalAmount || "Total"}
                   <span
                     contentEditable
                     suppressContentEditableWarning

@@ -3,6 +3,7 @@ import React from "react";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 
 import dynamic from "next/dynamic";
+import InvoiceDocument from "@/components/ReactPDF";
 
 const PDFViewer = dynamic(
   () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
@@ -10,23 +11,12 @@ const PDFViewer = dynamic(
 );
 
 function page() {
-  const TestPDF = () => (
-    <Document>
-      <Page size="A4">
-        <View>
-          <Text>Section #1</Text>
-        </View>
-        <View>
-          <Text>Section #2</Text>
-        </View>
-      </Page>
-    </Document>
-  );
-
   return (
-    <PDFViewer>
-      <TestPDF />
-    </PDFViewer>
+    <div className="flex flex-row h-screen w-screen justify-center">
+      <PDFViewer height={500} className="self-center">
+        <InvoiceDocument />
+      </PDFViewer>
+    </div>
   );
 }
 

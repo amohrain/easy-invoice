@@ -1,5 +1,12 @@
 "use client";
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+} from "@react-pdf/renderer";
 
 const createStyles = (template) =>
   StyleSheet.create({
@@ -43,38 +50,60 @@ const InvoicePDF = ({ template, invoice }) => {
         {template.structure.map((section) => (
           <View
             key={section.section}
-            style={[styles.section, getTextStyle(section, styles)]}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              // marginBottom: 10,
+            }}
           >
-            {section.fields?.map((field) => {
-              const value = invoice[field];
+            {section.columns &&
+              section.columns?.map((col, colIndex) => (
+                <View key={colIndex} style={{ marginBottom: 10 }}>
+                  {col.fields?.map((field) =>
+                    field === "businessLogo" ? (
+                      <Image
+                        key={field}
+                        src={invoice[field]}
+                        style={{
+                          height: 40,
+                          width: "auto",
+                          objectFit: "contain",
+                        }} // Adjust size as needed
+                      />
+                    ) : (
+                      <View key={field} style={{}}>
+                        <Text>{invoice[field]}</Text>
+                      </View>
+                    )
+                  )}
+                </View>
+              ))}
 
-              if (!value) return null;
+            {section.fields && (
+              <View style={{ marginBottom: 10 }}>
+                {section.fields?.map((field) => {
+                  const value = invoice[field];
 
-              return (
-                <Text key={field} style={styles.text}>
-                  <Text style={styles.bold}>
-                    {template.labels?.[field] || field}
-                  </Text>
-                  {value}
-                </Text>
-              );
-            })}
+                  if (!value) return null;
 
+                  return (
+                    <Text key={field} style={styles.text}>
+                      {value}
+                    </Text>
+                  );
+                })}
+              </View>
+            )}
+
+            {section.section === "logo" && null}
             {section.section === "horizontal-line" && (
               <View
-                style={{ borderBottom: "1px solid #000", marginVertical: 5 }}
+                style={{ borderBottom: "5px solid #000", marginVertical: 5 }}
               />
             )}
-            {/* {section.section === "title" && (
-              <View
-                style={{ borderBottom: "1px solid #000", marginVertical: 5 }}
-              >
-                {template.labels?.title}
-              </View>
-            )} */}
-
             {section.section === "items" && (
-              <View style={[styles.table, { marginTop: 10 }]}>
+              <View style={[styles.table, { marginTop: 10, marginBottom: 10 }]}>
                 <View style={styles.row}>
                   {section.columns.map((col) => (
                     <Text key={col} style={[styles.col, styles.bold]}>
@@ -97,7 +126,13 @@ const InvoicePDF = ({ template, invoice }) => {
             {/* Totals Section */}
             {section.section === "totals" && (
               <View>
-                <Text style={[styles.textRight, styles.bold]}>
+                <Text
+                  style={[
+                    styles.textRight,
+                    styles.bold,
+                    { marginVertical: 10 },
+                  ]}
+                >
                   {template.labels?.subtotal || "Subtotal"}: {invoice.subtotal}
                 </Text>
 
