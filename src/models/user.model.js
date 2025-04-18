@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     index: true,
   },
+
   name: {
     type: String,
     required: true,
@@ -20,14 +21,6 @@ const userSchema = new mongoose.Schema({
     required: false,
   },
   industry: {
-    type: String,
-    required: false,
-  },
-  address: {
-    type: String,
-    required: false,
-  },
-  phone: {
     type: String,
     required: false,
   },

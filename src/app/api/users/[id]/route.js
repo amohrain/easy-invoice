@@ -1,17 +1,57 @@
-import connectDB from "@/lib/mongodb";
-import User from "@/models/User";
+import { NextResponse } from "next/server";
+import connectDB from "../../../../lib/mongodb";
+import User from "../../../../models/user.model";
 
-export default async function handler(req, res) {
+export async function GET(request, { params }) {
+  const id = params.id;
   await connectDB(); // Connect to DB
-
-  const { id } = req.query; // Get user ID from URL
 
   try {
     const user = await User.findById(id);
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user)
+      return NextResponse.json({
+        error: "User not found",
+        status: 404,
+      });
 
-    res.status(200).json(user);
+    return NextResponse.json({
+      success: true,
+      data: user,
+    });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    return NextResponse.json({
+      error: "Internal Server Error",
+      status: 500,
+    });
+  }
+}
+
+export async function PUT(request, { params }) {
+  const id = await params.id;
+  await connectDB(); // Connect to DB
+
+  try {
+    const userData = await request.json();
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      userData,
+      { new: true } // Return the updated user
+    );
+    if (!user)
+      return NextResponse.json({
+        error: "User not found",
+        status: 404,
+      });
+
+    return NextResponse.json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    return NextResponse.json({
+      error: "Internal Server Error",
+      status: 500,
+    });
   }
 }

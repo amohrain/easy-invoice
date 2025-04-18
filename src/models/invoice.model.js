@@ -6,35 +6,55 @@ const invoiceSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    Template: {
+    company: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+    },
+    template: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Template",
     },
     invoiceNumber: {
       type: String,
-      required: true,
+      required: false,
     },
-    customerId: {
+    clientId: {
       type: String,
       required: false,
     },
-    customer: {
+    clientName: {
       type: String,
       required: true,
     },
-    customerAddress: {
+    clientAddress: {
       type: String,
       required: true,
     },
-    customerEmail: {
+    clientEmail: {
       type: String,
       required: false,
     },
-    customerPhone: {
+    clientPhone: {
       type: String,
       required: false,
     },
-    customerTaxId: {
+    clientTaxId: {
+      type: String,
+      required: false,
+    },
+    issuedAt: {
+      type: String,
+      required: false,
+    },
+    dueDate: {
+      type: String,
+      required: false,
+    },
+    paymentTerms: {
+      type: String,
+      required: false,
+    },
+    currencySymbol: {
       type: String,
       required: false,
     },
@@ -49,14 +69,22 @@ const invoiceSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
-        price: {
+        rate: {
+          type: Number,
+          required: true,
+        },
+        discount: {
+          type: Number,
+          required: false,
+        },
+        total: {
           type: Number,
           required: true,
         },
       },
     ],
 
-    subTotal: {
+    subtotal: {
       type: Number,
       required: true,
     },
@@ -80,11 +108,11 @@ const invoiceSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    dueDate: {
-      type: Date,
-      required: true,
-    },
     notes: {
+      type: String,
+      required: false,
+    },
+    paymentInstructions: {
       type: String,
       required: false,
     },
@@ -92,19 +120,11 @@ const invoiceSchema = new mongoose.Schema(
       type: String,
       default: "unpaid",
     },
-    paymentStatus: {
-      type: Object,
-      default: {
-        status: "unpaid",
-        date: null,
-        paymentMethod: null,
-        transactionId: null,
-      },
-    },
   },
   { timestamps: true } // Handles createdAt and updatedAt automatically
 );
 
-const Invoice = mongoose.model("Invoice", invoiceSchema);
+const Invoice =
+  mongoose.models?.Invoice || mongoose.model("Invoice", invoiceSchema);
 
 export default Invoice;

@@ -12,9 +12,9 @@ export const handleInvoiceGenerate = async (prompt) => {
 ### Instructions:
 1. Extract relevant information from the user's text prompt and map it to the provided JSON structure.
 2. Fill as many fields as possible based on the input.
-3. Use intelligent parsing to categorize **items**, identifying attributes like **description**, **quantity**, **unitPrice**, **discount**, and **total**.
+3. Use intelligent parsing to categorize **items**, identifying attributes like **description**, **quantity**, **rate**, **discount**, and **total**.
 4. If a value is missing or unclear, leave the field blank ("") instead of guessing.
-5. Ensure **totalAmount** is the sum of all **items** (unitPrice * quantity - discount).
+5. Ensure **totalAmount** is the sum of all **items** (rate * quantity - discount).
 6. Maintain proper formatting (dates in **YYYY-MM-DD** format, numbers without currency symbols).
 7. Return only valid JSON output without explanations or additional text.
 
@@ -39,12 +39,13 @@ export const handleInvoiceGenerate = async (prompt) => {
     "discount": "",
     "totalAmount": "",
     "notes": "",
+    "currencySymbol: "",
     "paymentInstructions": "",
     "items": [
       {
         "description": "",
         "quantity": "",
-        "unitPrice": "",
+        "rate": "",
         "discount": "",
         "total": ""
       }
@@ -76,19 +77,20 @@ export const handleInvoiceGenerate = async (prompt) => {
     "discount": "",
     "totalAmount": 2150,
     "notes": "",
+    "currencySymbol: "$",
     "paymentInstructions": "",
     "items": [
       {
         "description": "Web Development",
         "quantity": 1,
-        "unitPrice": 2000,
+        "rate": 2000,
         "discount": 0,
         "total": 2000
       },
       {
         "description": "Hosting",
         "quantity": 3,
-        "unitPrice": 50,
+        "rate": 50,
         "discount": 0,
         "total": 150
       }

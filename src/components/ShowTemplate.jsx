@@ -23,14 +23,14 @@ function ShowTemplate({
       {
         description: "Web Development",
         quantity: 1,
-        unitPrice: 2000,
+        rate: 2000,
         discount: 0,
         total: 2000,
       },
       {
         description: "Hosting",
         quantity: 3,
-        unitPrice: 50,
+        rate: 50,
         discount: 0,
         total: 150,
       },

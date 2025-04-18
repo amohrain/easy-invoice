@@ -1,9 +1,10 @@
-import { calculateInvoice } from "@/lib/calculate";
+import { calculateInvoice } from "../lib/calculate";
 import { DownloadButton } from "./DownloadButton";
 import { useEffect } from "react";
 
 const getTextStyle = (section) => {
   let style = "";
+  if (!section) return style;
   if (section.bold) style += " font-bold";
   if (section.italic) style += " italic";
   if (section.alignment === "left") style += " text-left self-start";
@@ -16,12 +17,21 @@ const getTextStyle = (section) => {
 
 export function InvoicePreview({ template, invoice, setInvoice, setStep }) {
   useEffect(() => {
-    if (!invoice.businessName) {
-      setInvoice((prev) => {
-        return { ...prev, businessName: "My Business" };
-      });
-    }
+    setInvoice((prev) => {
+      const updatedInvoice = calculateInvoice(prev);
+      return updatedInvoice.businessName
+        ? updatedInvoice
+        : {
+            ...updatedInvoice,
+            businessName: "Easy Invoice",
+            businessAddress: "Business Address",
+            businessEmail: "abhishek@easyinvoice.com",
+            businessPhone: "+91-9876543210",
+            businessLogo: "./chanel-1.jpg",
+          };
+    });
   }, []);
+
   const handleChange = (field, value) => {
     // if (Object.values(template.labels).includes(value)) return;
     setInvoice((prev) => {
@@ -61,27 +71,30 @@ export function InvoicePreview({ template, invoice, setInvoice, setStep }) {
           <div
             key={section.section}
             className={`flex flex-col text-md text-black ${getTextStyle(
-              section
+              section.style
             )}`}
           >
             {section.section === "horizontal-line" && (
               <hr className="my-2 text-primary" />
             )}
-            {section.section === "logo" && (
+            {section.section === "logo" && invoice.businessLogo && (
               <img
                 src={invoice.businessLogo}
-                className={`h-10 w-fit ${getTextStyle(section)}`}
+                className={`h-10 w-fit ${getTextStyle(section.style)}`}
               />
             )}
             {section.columns && (
               <div className="flex w-full">
                 {section.columns.map((col, colIndex) => (
-                  <div key={colIndex} className={`flex-1 ${getTextStyle(col)}`}>
+                  <div
+                    key={colIndex}
+                    className={`flex-1 ${getTextStyle(col.style)}`}
+                  >
                     {col.fields?.map((field) =>
                       field === "businessLogo" ? (
                         <img
                           key={field}
-                          src={invoice.businessLogo}
+                          src={invoice.businessLogo || null}
                           className="h-10 w-auto"
                         />
                       ) : (
@@ -142,7 +155,7 @@ export function InvoicePreview({ template, invoice, setInvoice, setStep }) {
               <table className="w-full border-collapse text-xs mt-2">
                 <thead>
                   <tr className="border-b">
-                    {section.columns.map((col) => (
+                    {section.items.map((col) => (
                       <th key={col} className="text-center">
                         {col.charAt(0).toUpperCase() + col.slice(1)}
                       </th>
@@ -152,7 +165,7 @@ export function InvoicePreview({ template, invoice, setInvoice, setStep }) {
                 <tbody>
                   {invoice.items?.map((item, index) => (
                     <tr key={index}>
-                      {section.columns.map((col) => (
+                      {section.items.map((col) => (
                         <td key={col} className="text-center">
                           <span
                             contentEditable

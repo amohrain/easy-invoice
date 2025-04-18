@@ -41,6 +41,28 @@ const getTextStyle = (section, styles) => [
   section.alignment === "center" && styles.alignCenter,
 ];
 
+const getPdfTextStyle = (section) => {
+  const style = {};
+  console.log("section: ", section);
+
+  if (!section) return style;
+  if (section.bold) style.fontWeight = "bold";
+  if (section.italic) style.fontStyle = "italic";
+
+  // Text alignment
+  if (section.alignment === "left") style.textAlign = "left";
+  if (section.alignment === "right") style.textAlign = "right";
+  if (section.alignment === "center") style.textAlign = "center";
+
+  // Uppercase, if needed
+  // if (section.uppercase) style.textTransform = 'uppercase';
+
+  // Font size
+  if (section.fontSize) style.fontSize = section.fontSize;
+
+  return style;
+};
+
 const InvoicePDF = ({ template, invoice }) => {
   const styles = createStyles(template);
 
@@ -50,33 +72,50 @@ const InvoicePDF = ({ template, invoice }) => {
         {template.structure.map((section) => (
           <View
             key={section.section}
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              // marginBottom: 10,
-            }}
+            style={
+              {
+                // display: "flex",
+                // flexDirection: "row",
+                // justifyContent: "space-between",
+              }
+            }
           >
             {section.columns &&
               section.columns?.map((col, colIndex) => (
                 <View key={colIndex} style={{ marginBottom: 10 }}>
-                  {col.fields?.map((field) =>
-                    field === "businessLogo" ? (
-                      <Image
-                        key={field}
-                        src={invoice[field]}
-                        style={{
-                          height: 40,
-                          width: "auto",
-                          objectFit: "contain",
-                        }} // Adjust size as needed
-                      />
-                    ) : (
-                      <View key={field} style={{}}>
-                        <Text>{invoice[field]}</Text>
-                      </View>
-                    )
-                  )}
+                  <View
+                    key={colIndex}
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginBottom: 10,
+                    }}
+                  >
+                    {col.fields?.map((field) =>
+                      field === "businessLogo" ? (
+                        <Image
+                          key={field}
+                          src={invoice[field]}
+                          style={{
+                            height: 40,
+                            width: "auto",
+                            objectFit: "contain",
+                            ...getPdfTextStyle(section.style),
+                          }} // Adjust size as needed
+                        />
+                      ) : (
+                        <View
+                          key={field}
+                          style={{
+                            ...getPdfTextStyle(section.style),
+                          }}
+                        >
+                          <Text>{invoice[field]}</Text>
+                        </View>
+                      )
+                    )}
+                  </View>
                 </View>
               ))}
 
@@ -88,7 +127,7 @@ const InvoicePDF = ({ template, invoice }) => {
                   if (!value) return null;
 
                   return (
-                    <Text key={field} style={styles.text}>
+                    <Text key={field} style={getPdfTextStyle(section.style)}>
                       {value}
                     </Text>
                   );
@@ -124,15 +163,9 @@ const InvoicePDF = ({ template, invoice }) => {
             )}
 
             {/* Totals Section */}
-            {section.section === "totals" && (
-              <View>
-                <Text
-                  style={[
-                    styles.textRight,
-                    styles.bold,
-                    { marginVertical: 10 },
-                  ]}
-                >
+            {/* {section.section === "totals" && (
+              <View >
+                <Text>
                   {template.labels?.subtotal || "Subtotal"}: {invoice.subtotal}
                 </Text>
 
@@ -152,6 +185,48 @@ const InvoicePDF = ({ template, invoice }) => {
                 ))}
 
                 <Text style={[styles.textRight, styles.bold]}>
+                  {template.labels?.totalAmount || "Total"}:{" "}
+                  {invoice.totalAmount}
+                </Text>
+              </View>
+            )} */}
+
+            {section.section === "totals" && (
+              <View style={{ marginTop: 10, gap: 10 }}>
+                <Text style={getPdfTextStyle(section.style)}>
+                  {template.labels?.subtotal || "Subtotal"}: {invoice.subtotal}
+                </Text>
+
+                {invoice.deductions?.map((deduct, index) => (
+                  <Text
+                    key={index}
+                    style={{
+                      ...getPdfTextStyle(section.style),
+                      color: "red",
+                    }}
+                  >
+                    {deduct.description} -{deduct.amount}
+                  </Text>
+                ))}
+
+                {invoice.additions?.map((add, index) => (
+                  <Text
+                    key={index}
+                    style={{
+                      ...getPdfTextStyle(section.style),
+                      color: "green",
+                    }}
+                  >
+                    {add.description} +{add.amount}
+                  </Text>
+                ))}
+
+                <Text
+                  style={{
+                    ...getPdfTextStyle(section.style),
+                    fontWeight: "bold",
+                  }}
+                >
                   {template.labels?.totalAmount || "Total"}:{" "}
                   {invoice.totalAmount}
                 </Text>

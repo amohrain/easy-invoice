@@ -1,28 +1,55 @@
 import React from "react";
 import Link from "next/link";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
+import NavButton from "./NavButton";
+import { BiHome } from "react-icons/bi";
+import { PiInvoice } from "react-icons/pi";
+import { MdOutlineRoomPreferences } from "react-icons/md";
+import { BsBuilding } from "react-icons/bs";
 
 function LeftBar() {
   const { user } = useUser();
   const fullName = user?.fullName;
+
   return (
-    <div className="flex flex-col py-4 m-4 items-center justify-between rounded-xl bg-base-300">
-      <div className="flex flex-col px-10 py-2 gap-2">
-        <div className="flex-1">
-          <a href="/dashboard" className="text-2xl font-bold">
-            <div className="flex gap-2 text-center">EasyVoice</div>
+    <div className="flex flex-col h-full w-xs py-6 justify-between bg-base-300 min-h-screen shadow-lg">
+      {/* Logo and Navigation Section */}
+      <div className="flex flex-col px-4">
+        {/* Logo/Brand */}
+        <div className="px-2 mb-4">
+          <a
+            href="/dashboard"
+            className="text-2xl font-bold hover:opacity-80 transition-opacity"
+          >
+            <div className="flex items-center gap-2">
+              {/* <div className="mask mask-squircle bg-primary w-10 h-10 flex items-center justify-center text-white font-bold">
+                EV
+              </div> */}
+              <span>Easy Invoice</span>
+            </div>
           </a>
         </div>
-        <Link href="/" className="">
-          <button className="btn btn-primary w-full">Create new</button>
-        </Link>
-        <Link href="/" className="">
-          <button className="btn btn-primary w-full">Invoice Database</button>
-        </Link>
-        <button className="btn btn-primary">Your Company</button>
-        <button className="btn btn-primary">Manage Templates</button>
+        {/* Horizontal line */}
+        <div className="w-full h-[2px] bg-neutral-content mb-1.5" />
+
+        {/* Navigation Menu - with visual indicators */}
+        <div className="flex flex-col">
+          {/* <div className="text-xs font-semibold text-base-content/60 px-2 mb-1">
+            MAIN MENU
+          </div> */}
+          <NavButton link="/dashboard" name="Home" icon={<BiHome />} />
+          <NavButton link="/invoices" name="Invoices" icon={<PiInvoice />} />
+          <NavButton
+            link="/preferences"
+            name="Preferences"
+            icon={<MdOutlineRoomPreferences />}
+          />
+          <NavButton link="/company" name="Company" icon={<BsBuilding />} />
+        </div>
       </div>
-      <div className="flex flex-row dropdown dropdown-end gap-2.5">
+
+      {/* User Profile Section */}
+      <div className="flex px-4 mt-auto gap-3">
         <SignedIn>
           <p className="sm:block hidden text-lg">Hi, {fullName}</p>
           <UserButton />

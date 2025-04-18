@@ -1,30 +1,31 @@
 "use client";
 
-import { useState } from "react";
-import { useUser, useClerk } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 export default function Onboarding() {
   const router = useRouter();
   const { user } = useUser();
-  const { user: clerkUser } = useClerk();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: user?.firstName || "",
     position: "" || "",
     industry: "",
   });
+  const [companyData, setCompanyData] = useState({
+    businessName: "",
+    businessAddress: "",
+    businessLogo: "",
+    businessEmail: "",
+    businessPhone: "",
+  });
 
   const handleNext = async () => {
-    console.log("User:", user);
     if (step === 2) {
       try {
-        // await clerkUser.update({
-        //   firstName: formData.name,
-        // });
-
         // Call an API route to update publicMetadata
-        await fetch("/api/users/create", {
+        const response = await fetch("/api/users/create", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -34,16 +35,30 @@ export default function Onboarding() {
             industry: formData.industry,
           }),
         });
-
-        setStep(step + 1);
+        if (!response.ok) {
+          throw new Error("Failed to update user data");
+        }
+        setStep((prev) => prev + 1);
       } catch (error) {
-        console.error("Error updating user:", error);
+        console.error("Error creating user:", error);
       }
     } else if (step === 3) {
+      try {
+        const response = await fetch("/api/company", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(companyData),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to create company");
+        }
+        setStep((prev) => prev + 1);
+      } catch (error) {
+        console.error("Error creating company:", error);
+      }
+    } else if (step === 4) {
       router.push("/dashboard");
-    } else {
-      setStep(step + 1);
-    }
+    } else setStep((prev) => prev + 1);
   };
 
   return (
@@ -51,7 +66,7 @@ export default function Onboarding() {
       {step === 1 && (
         <div>
           <h2 className="text-2xl font-bold">Welcome, {user?.firstName}!</h2>
-          <p className="mt-2">Let's get you set up.</p>
+          <p className="mt-2">Let's get you set up with Easy Invoice.</p>
         </div>
       )}
       {step === 2 && (
@@ -78,6 +93,68 @@ export default function Onboarding() {
         </div>
       )}
       {step === 3 && (
+        <div>
+          <h2 className="text-2xl font-bold">Please describe your company!</h2>
+          <p className="mt-2">
+            This will help us tailor the experience to your needs.
+          </p>
+          <input
+            type="text"
+            placeholder="Your Company Name"
+            className="input input-bordered w-full mt-4"
+            value={companyData.name}
+            onChange={(e) =>
+              setCompanyData({ ...companyData, businessName: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            placeholder="Your Company Email"
+            className="input input-bordered w-full mt-2"
+            value={companyData.industry}
+            onChange={(e) =>
+              setCompanyData({ ...companyData, businessEmail: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            placeholder="Your Company Address"
+            className="input input-bordered w-full mt-2"
+            value={companyData.businessAddress}
+            onChange={(e) =>
+              setCompanyData({
+                ...companyData,
+                businessAddress: e.target.value,
+              })
+            }
+          />
+          <input
+            type="text"
+            placeholder="Your Company Phone"
+            className="input input-bordered w-full mt-2"
+            value={companyData.businessPhone}
+            onChange={(e) =>
+              setCompanyData({
+                ...companyData,
+                businessPhone: e.target.value,
+              })
+            }
+          />
+          <input
+            type="text"
+            placeholder="Your Company Logo URL. Leave empty if you don't have one"
+            className="input input-bordered w-full mt-2"
+            value={companyData.businessLogo}
+            onChange={(e) =>
+              setCompanyData({
+                ...companyData,
+                businessLogo: e.target.value,
+              })
+            }
+          />
+        </div>
+      )}
+      {step === 4 && (
         <div>
           <h2 className="text-2xl font-bold">You're all set!</h2>
           <p className="mt-2">

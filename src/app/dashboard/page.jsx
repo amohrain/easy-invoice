@@ -1,105 +1,117 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Nav from "../../components/Nav";
-// import Templates from "../../components/Templates";
 import TypingPlaceholder from "../../components/TypingPlaceholder";
-import { handleInvoiceGenerate } from "@/lib/openai";
-import { Loading } from "@/components/Loading";
-import { InvoicePreview } from "@/components/InvoicePreview";
-import { templates } from "@/lib/templatesData";
-import InvoicePDF from "@/components/InvoicePDF";
-
-// For showing ReactPDF Viewer
+import { handleInvoiceGenerate } from "../../lib/openai";
+import { Loading } from "../../components/Loading";
+import { InvoicePreview } from "../../components/InvoicePreview";
 import dynamic from "next/dynamic";
-import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
-import { DownloadButton } from "@/components/DownloadButton";
-import LeftBar from "@/components/LeftBar";
-import Template from "@/models/template.model";
-
-const PDFViewer = dynamic(
-  () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
-  { ssr: false }
-);
+import LeftBar from "../../components/LeftBar";
+import InvoiceViewer from "../../components/InvoiceViewer";
+import DownloadInvoiceButton from "../../components/DownloadInvoiceButton";
+import { useCompanyStore } from "../../store/useCompany";
 
 function Dashboard() {
   const [step, setStep] = useState(1);
   const [text, setText] = useState("");
-  const [templatesData, setTemplatesData] = useState(templates);
-  const [template, setTemplate] = useState(templates[2]);
+  const [templatesData, setTemplatesData] = useState(null);
+  const [template, setTemplate] = useState(null);
   const [invoice, setInvoice] = useState({});
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [showControlsPopup, setShowControlsPopup] = useState(false);
+  const { company, setCompany } = useCompanyStore();
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     const response = await fetch("/api/get-template");
-  //     const templates = await response.json();
-  //     console.log(templates);
-  //     setTemplatesData(templates);
-  //     setTemplate(templates[0]);
-  //   }
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch("/api/templates");
+      const data = await response.json();
+      const templates = data.data;
+      console.log("Templates data: ", templates);
+      setTemplatesData(templates);
+      setTemplate(templates[0]);
+    }
+    fetchData();
+  }, []);
+
+  const handleSaveInvoice = async () => {
+    try {
+      setLoading(true);
+      console.log("Saving invoice...");
+      const response = await fetch("/api/invoice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(invoice),
+      });
+      const data = await response.json();
+      const savedInvoice = data.data;
+    } catch (error) {
+      console.error("Error saving invoice:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGenerate = async () => {
     setLoading(true);
     console.log("Generating invoice...");
-    // const invoice = await handleInvoiceGenerate(text);
-    const invoice = {
-      businessName: "My Business",
-      businessAddress: "dg",
-      businessEmail: "sdg",
-      businessPhone: "g",
-      businessLogo: "./chanel-1.jpg",
-      clientName: "XYZ ltd",
-      clientEmail: "safd",
-      clientPhone: "asdg",
-      clientAddress: "sdg",
-      clientTaxId: "sdg",
-      invoiceNumber: "sdg",
-      dueDate: "sdg",
-      paymentTerms: "sdg",
-      subtotal: 300,
-      tax: 40.5,
-      discount: 100,
-      totalAmount: 318.6,
-      notes: "dg",
-      paymentInstructions: "dg",
-      items: [
-        {
-          description: "Toothbrush",
-          quantity: 15,
-          unitPrice: 10,
-          discount: 0,
-          total: 150,
-        },
-        {
-          description: "Toothpaste",
-          quantity: 10,
-          unitPrice: 15,
-          discount: 0,
-          total: 150,
-        },
-      ],
-      deductions: [
-        {
-          description: "Discounts:",
-          amount: 30,
-          percent: 10,
-        },
-      ],
-      additions: [
-        {
-          description: "IGST @ 18%:",
-          amount: 48.6,
-          percent: 18,
-        },
-      ],
-      issuedAt: "sdg",
-    };
+    const invoice = await handleInvoiceGenerate(text);
+    // const invoice = {
+    //   businessName: "My Business",
+    //   businessAddress: "dg",
+    //   businessEmail: "sdg",
+    //   businessPhone: "g",
+    //   businessLogo: "./chanel-1.jpg",
+    //   clientName: "XYZ ltd",
+    //   clientEmail: "info@xyz.com",
+    //   clientPhone: "+91-1234567890",
+    //   clientAddress: "New Delhi, India",
+    //   clientTaxId: "GSTIN-11223344",
+    //   invoiceNumber: "INV-123",
+    //   dueDate: "",
+    //   paymentTerms: "",
+    //   subtotal: 300,
+    //   tax: 40.5,
+    //   discount: 120,
+    //   totalAmount: 328.6,
+    //   currencySymbol: "$",
+    //   notes: "dg",
+    //   paymentInstructions: "dg",
+    //   items: [
+    //     {
+    //       description: "Toothbrush",
+    //       quantity: 15,
+    //       rate: 10,
+    //       discount: 0,
+    //       total: 1150,
+    //     },
+    //     {
+    //       description: "Toothpaste",
+    //       quantity: 10,
+    //       rate: 15,
+    //       discount: 0,
+    //       total: 130,
+    //     },
+    //   ],
+    //   deductions: [
+    //     {
+    //       description: "Discounts:",
+    //       amount: 30,
+    //       percent: 10,
+    //     },
+    //   ],
+    //   additions: [
+    //     {
+    //       description: "IGST @ 18%:",
+    //       amount: 4118.6,
+    //       percent: 9,
+    //     },
+    //   ],
+    //   issuedAt: "sdg",
+    // };
     setInvoice(invoice);
-    console.log(invoice);
     setLoading(false);
     setStep(2);
   };
@@ -108,22 +120,10 @@ function Dashboard() {
     console.log("step: ", step);
   }, [step]);
 
-  const TestPDF = () => (
-    <Document>
-      <Page size="A4">
-        <View>
-          <Text>Section #1</Text>
-        </View>
-        <View>
-          <Text>Section #2</Text>
-        </View>
-      </Page>
-    </Document>
-  );
-
   return (
     <>
       <div className="flex flex-row h-screen">
+        <LeftBar className="w-1/5" />
         <div className="flex flex-col w-4/5 h-full bg-base-100 justify-center">
           <div className="w-full px-4 max-w-3xl self-center flex flex-col gap-7">
             {loading && <Loading />}
@@ -190,19 +190,6 @@ function Dashboard() {
                     setInvoice={setInvoice}
                     setStep={setStep}
                   />
-                  {/* <PDFViewer
-                  style={{
-                    width: "210px",
-                    maxWidth: "420px",
-                    aspectRatio: "210 / 297",
-                    border: "1px solid #D1D5DB",
-                    padding: "1rem",
-                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                    fontSize: "min(1vw, 12px)",
-                  }}
-                >
-                  <InvoicePDF template={template} invoice={invoice} />
-                </PDFViewer> */}
                   <button
                     disabled={
                       templatesData.findIndex((t) => t == template) ===
@@ -230,20 +217,14 @@ function Dashboard() {
                   Your generated invoice. Click to download or save, whatever
                 </h1>
                 <div className="h-fit p-4 flex flex-col justify-center items-center gap-4">
-                  <PDFViewer
-                    showToolbar={false}
-                    style={{
-                      width: "50%",
-                      // maxWidth: "420px",
-                      aspectRatio: "210 / 297",
-                      border: "1px solid #D1D5DB",
-                      padding: "1rem",
-                      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                      fontSize: "min(1vw, 12px)",
-                    }}
-                  >
-                    <InvoicePDF template={template} invoice={invoice} />
-                  </PDFViewer>
+                  <InvoiceViewer
+                    invoice={invoice}
+                    template={template}
+                  ></InvoiceViewer>
+                  <DownloadInvoiceButton
+                    template={template}
+                    invoice={invoice}
+                  />
                   <div className="self-center flex">
                     <button
                       onClick={() => setStep((prev) => prev - 1)}
@@ -251,14 +232,18 @@ function Dashboard() {
                     >
                       Back
                     </button>
-                    <DownloadButton invoice={invoice} template={template} />
+                    <button
+                      onClick={handleSaveInvoice}
+                      className="btn btn-primary w-1/2"
+                    >
+                      Save
+                    </button>
                   </div>
                 </div>
               </div>
             )}
           </div>
         </div>
-        <LeftBar className="w-1/5" />
       </div>
     </>
   );

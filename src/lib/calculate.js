@@ -1,63 +1,71 @@
 function calculateAmounts(invoice) {
   // Calculate item totals
   invoice.items.forEach((item) => {
-    item.total = item.quantity * item.unitPrice - (item.discount || 0);
+    item.total = item.quantity * item.rate - (item.discount || 0);
   });
 
   // Calculate subtotal
   invoice.subtotal = invoice.items.reduce((sum, item) => sum + item.total, 0);
 
-  // Apply deductions first
+  // Safely handle deductions
   let deductedSubtotal = invoice.subtotal;
-  invoice.deductions.forEach((deduction) => {
-    if (deduction.percent) {
-      deduction.amount = (deductedSubtotal * deduction.percent) / 100;
-    }
-  });
+  if (Array.isArray(invoice.deductions)) {
+    invoice.deductions.forEach((deduction) => {
+      if (deduction.percent) {
+        deduction.amount = (deductedSubtotal * deduction.percent) / 100;
+      }
+    });
+  } else {
+    invoice.deductions = [];
+  }
 
-  // Subtract deductions from subtotal
   const totalDeductions = invoice.deductions.reduce(
     (sum, d) => sum + (d.amount || 0),
     0
   );
   deductedSubtotal -= totalDeductions;
 
-  // Apply additions on the reduced subtotal
-  invoice.additions.forEach((addition) => {
-    if (addition.percent) {
-      addition.amount = (deductedSubtotal * addition.percent) / 100;
-    }
-  });
+  // Safely handle additions
+  if (Array.isArray(invoice.additions)) {
+    invoice.additions.forEach((addition) => {
+      if (addition.percent) {
+        addition.amount = (deductedSubtotal * addition.percent) / 100;
+      }
+    });
+  } else {
+    invoice.additions = [];
+  }
 }
 
 export function calculateInvoice(invoice) {
+  // Ensure items array exists
+  invoice.items = Array.isArray(invoice.items) ? invoice.items : [];
+
   // Calculate subtotal
   let subtotal = invoice.items.reduce(
-    (sum, item) =>
-      sum + (item.quantity * item.unitPrice - (item.discount || 0)),
+    (sum, item) => sum + (item.quantity * item.rate - (item.discount || 0)),
     0
   );
   invoice.subtotal = subtotal;
 
-  // Calculate additions and deductions amounts
+  // Calculate amounts for deductions/additions
   calculateAmounts(invoice);
 
   // Calculate deductions
   let totalDeductions = invoice.deductions.reduce(
-    (sum, deduction) => sum + deduction.amount,
+    (sum, deduction) => sum + (deduction.amount || 0),
     0
   );
 
   // Calculate additions
   let totalAdditions = invoice.additions.reduce(
-    (sum, addition) => sum + addition.amount,
+    (sum, addition) => sum + (addition.amount || 0),
     0
   );
 
-  // Calculate total
+  // Final total
   let totalAmount = subtotal + totalAdditions - totalDeductions;
 
-  // Update the invoice object
   return {
     ...invoice,
     subtotal: subtotal,
