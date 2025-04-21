@@ -33,7 +33,7 @@ const getTextStyle = (section) => {
 };
 
 export function InvoicePreview({ setStep }) {
-  const { template, setTemplate, templatesData } = useTemplateStore();
+  const { template, setTemplate, userTemplates } = useTemplateStore();
   const { invoice, setInvoice, saveInvoice, postInvoice, invoiceId } =
     useInvoiceStore();
   const { loading, setLoading } = useLoadingStore();
@@ -141,10 +141,10 @@ export function InvoicePreview({ setStep }) {
   return (
     <div className="relative flex flex-row items-center gap-4">
       <button
-        disabled={templatesData.findIndex((t) => t == template) === 0}
+        disabled={userTemplates.findIndex((t) => t == template) === 0}
         onClick={() => {
-          const index = templatesData.findIndex((t) => t === template);
-          setTemplate(templatesData[index - 1]);
+          const index = userTemplates.findIndex((t) => t === template);
+          setTemplate(userTemplates[index - 1]);
         }}
         className="btn btn-circle btn-neutral"
       >
@@ -408,12 +408,12 @@ export function InvoicePreview({ setStep }) {
 
       <button
         disabled={
-          templatesData.findIndex((t) => t == template) ===
-          templatesData.length - 1
+          userTemplates.findIndex((t) => t == template) ===
+          userTemplates.length - 1
         }
         onClick={() => {
-          const index = templatesData.findIndex((t) => t === template);
-          setTemplate(templatesData[index + 1]);
+          const index = userTemplates.findIndex((t) => t === template);
+          setTemplate(userTemplates[index + 1]);
         }}
         className="btn btn-circle btn-neutral"
       >

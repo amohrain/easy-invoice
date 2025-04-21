@@ -22,7 +22,7 @@ function Dashboard() {
   const [text, setText] = useState("");
   const [showControlsPopup, setShowControlsPopup] = useState(false);
 
-  const { template, setTemplate, templatesData, getTemplatesData } =
+  const { template, setTemplate, userTemplates, getUsersTemplates } =
     useTemplateStore();
   const { loading, setLoading } = useLoadingStore();
 
@@ -31,14 +31,14 @@ function Dashboard() {
 
   useEffect(() => {
     async function fetchData() {
-      const templa = await getTemplatesData();
+      const templa = await getUsersTemplates();
       await getCompanies();
       await getInvoiceId();
     }
     fetchData();
   }, []);
 
-  console.log("Templates Data: ", template, templatesData);
+  console.log("Templates Data: ", template, userTemplates);
 
   const handleGenerate = async () => {
     try {

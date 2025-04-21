@@ -12,12 +12,12 @@ function InvoicePage() {
   const { id } = useParams();
   const { invoice, setInvoice, getInvoiceById, saveInvoice } =
     useInvoiceStore();
-  const { template, getTemplatesData } = useTemplateStore();
+  const { template, getUsersTemplates } = useTemplateStore();
 
   useEffect(() => {
     async function fetchData() {
       const inv = await getInvoiceById(id);
-      const templates = await getTemplatesData(inv.template);
+      const templates = await getUsersTemplates(inv.template);
     }
     fetchData();
   }, []);

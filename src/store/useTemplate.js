@@ -4,30 +4,10 @@ export const useTemplateStore = create((set, get) => ({
   loading: false,
   setLoading: (boolean) => set({ loading: boolean }),
   template: null,
-  userTemplates: null,
   setTemplate: (template) => set({ template }),
+
+  // Fetch all existing templates
   templatesData: null,
-  getAllTemplates: async () => {
-    try {
-      set({ loading: true });
-      const response = await fetch("/api/templates");
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const templates = data.data || [];
-
-      set({ templatesData: templates });
-
-      return templates;
-    } catch (error) {
-      console.error("Error fetching templates: ", error);
-    } finally {
-      set({ loading: false });
-    }
-  },
   getTemplatesData: async (templateId) => {
     try {
       set({ loading: true });
@@ -42,13 +22,6 @@ export const useTemplateStore = create((set, get) => ({
 
       set({ templatesData: templates });
 
-      if (templateId) {
-        const template = templates.find((temp) => temp._id === templateId);
-        set({ template: template || templates[0] });
-      } else {
-        set({ template: templates[0] });
-      }
-
       return templates;
     } catch (error) {
       console.error("Error fetching templates: ", error);
@@ -56,18 +29,21 @@ export const useTemplateStore = create((set, get) => ({
       set({ loading: false });
     }
   },
-  getTemplateById: async (templateId) => {
-    const template = await fetch(`/api/templates/${templateId}`);
-    const data = await template.json();
-    set({ template: data.data });
-    return data.data;
-  },
-  getUsersTemplates: async () => {
+
+  // Fetch user templates
+  userTemplates: null,
+  getUsersTemplates: async (templateId) => {
     try {
       const response = await fetch("/api/users/templates");
       const data = await response.json();
       const templates = data.data || [];
       set({ userTemplates: templates });
+      if (templateId) {
+        const template = templates.find((temp) => temp._id === templateId);
+        set({ template: template || templates[0] });
+      } else {
+        set({ template: templates[0] });
+      }
       return templates;
     } catch (error) {
       console.error("Error fetching user templates: ", error);
