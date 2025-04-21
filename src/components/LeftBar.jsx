@@ -6,6 +6,7 @@ import { BiHome } from "react-icons/bi";
 import { PiInvoice } from "react-icons/pi";
 import { MdOutlineRoomPreferences } from "react-icons/md";
 import { BsBuilding } from "react-icons/bs";
+import { FcTemplate } from "react-icons/fc";
 
 function LeftBar() {
   const { user } = useUser();
@@ -14,7 +15,7 @@ function LeftBar() {
   return (
     <div className="flex flex-col h-full w-xs py-6 justify-between bg-base-300 min-h-screen shadow-lg">
       {/* Logo and Navigation Section */}
-      <div className="flex flex-col px-4">
+      <div className="flex flex-col px-4 w-full">
         {/* Logo/Brand */}
         <div className="px-2 mb-4">
           <a
@@ -45,6 +46,7 @@ function LeftBar() {
             icon={<MdOutlineRoomPreferences />}
           />
           <NavButton link="/company" name="Company" icon={<BsBuilding />} />
+          <NavButton link="/templates" name="Templates" icon={<FcTemplate />} />
         </div>
       </div>
 

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import LeftBar from "../../components/LeftBar";
 import { useCompanyStore } from "../../store/useCompany";
+import InvoiceNumberFormat from "../../components/InvoiceNumberFormat";
 
 function Company() {
   const {
@@ -58,60 +59,59 @@ function Company() {
     fetchCompanies();
   }, [updateCompany]);
 
-  //   useEffect(() => {
-  //     console.log("Company data updated:", companyData);
-  //   }, [companyData]);
-
   return (
     <div className="flex h-screen">
       <LeftBar />
-      <div className="flex flex-col p-8 w-full gap-8">
+      <div className="flex flex-col p-4 gap-6">
         {/* Main content for the Company page */}
-        <div className="bg-base-300 p-4 w-full rounded-2xl">
+        <div className="">
           <h1 className="text-2xl font-bold">
             {companyData?.businessName || "My Company"}
           </h1>
-          <p className="mt-4">
+          <p className="mt-2">
             This is the company page. Here you can manage your company settings
             and information.
           </p>
+          {/* Add your invoice management components here */}
         </div>
-        {/* Add more content here as needed */}
-        <div>
+
+        <div className="px-4">
           <fieldset className="fieldset w-xl bg-base-200 border border-base-300 p-4 rounded-box">
-            <legend className="text-lg font-medium">Company Information</legend>
+            {/* <legend className="text-lg font-medium">Company Information</legend> */}
 
             {/* Logo upload stays at full width */}
-            <div className="mb-4">
-              <label className="fieldset-label block mb-2">Company Logo</label>
-              <div className="mb-2">
-                {preview && !logo && (
-                  <img
-                    src={preview}
-                    alt="Company Logo"
-                    className="h-10 w-auto object-contain rounded"
-                  />
-                )}
-                {logo && (
-                  <img
-                    src={URL.createObjectURL(logo)}
-                    alt="Company Logo"
-                    className="h-10 w-auto object-contain rounded"
-                  />
-                )}
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                className="file-input file-input-border w-full"
-                onChange={(e) => setLogo(e.target.files[0])}
-              />
-            </div>
 
             {/* Two-column layout for form fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Left Column */}
               <div>
+                <div className="mb-4">
+                  <label className="fieldset-label block mb-2">
+                    Company Logo
+                  </label>
+                  <div className="mb-2">
+                    {preview && !logo && (
+                      <img
+                        src={preview}
+                        alt="Company Logo"
+                        className="h-10 w-auto object-contain rounded"
+                      />
+                    )}
+                    {logo && (
+                      <img
+                        src={URL.createObjectURL(logo)}
+                        alt="Company Logo"
+                        className="h-10 w-auto object-contain rounded"
+                      />
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="file-input file-input-border w-full"
+                    onChange={(e) => setLogo(e.target.files[0])}
+                  />
+                </div>
                 <div className="mb-4">
                   <label className="fieldset-label block mb-2">
                     Company Name
@@ -182,7 +182,7 @@ function Company() {
                 <div className="mb-4">
                   <label className="fieldset-label block mb-2">Address</label>
                   <textarea
-                    className="textarea textarea-bordered w-full h-30.5 resize-none"
+                    className="textarea textarea-bordered w-full h-22 resize-none"
                     placeholder="123 Business St, Suite 101, City, State, 12345"
                     value={companyData?.businessAddress || ""}
                     onChange={(e) =>
@@ -193,6 +193,28 @@ function Company() {
                   />
                 </div>
 
+                <div className="mb-4">
+                  <label className="fieldset-label block mb-2">
+                    Tax ID / VAT Number
+                  </label>
+                  <input
+                    type="text"
+                    className="input input-bordered w-full"
+                    placeholder="123-45-6789"
+                    value={companyData?.businessTaxId || ""}
+                    onChange={(e) =>
+                      setCompanyData({
+                        businessTaxId: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="fieldset-label block mb-2">
+                    Invoice Number Format
+                  </label>
+                  <InvoiceNumberFormat />
+                </div>
                 <div className="mb-4">
                   <label className="fieldset-label block mb-2">
                     Tax ID / VAT Number

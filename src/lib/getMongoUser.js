@@ -1,5 +1,5 @@
 import User from "../models/user.model";
-import connectDB from "../lib/mongodb";
+import connectDB from "./mongodb.js";
 
 export const getMongoUser = async (clerkId) => {
   try {

@@ -37,11 +37,6 @@ const SectionSchema = new Schema({
 // Define the template schema
 const templateSchema = new Schema(
   {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     isPublic: {
       type: Boolean,
       default: false,

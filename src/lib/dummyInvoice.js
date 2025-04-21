@@ -1,0 +1,53 @@
+export const dummyInvoice = {
+  businessName: "",
+  businessAddress: "",
+  businessEmail: "",
+  businessPhone: "",
+  businessLogo: "./chanel-1.jpg",
+  clientName: "XYZ ltd",
+  clientEmail: "info@xyz.com",
+  clientPhone: "+91-1234567890",
+  clientAddress: "New Delhi, India",
+  clientTaxId: "GSTIN-11223344",
+  invoiceNumber: "INV-123",
+  dueDate: "",
+  paymentTerms: "",
+  subtotal: 300,
+  tax: 40.5,
+  discount: 120,
+  totalAmount: 328.6,
+  currencySymbol: "$",
+  notes: "dg",
+  paymentInstructions: "dg",
+  items: [
+    {
+      description: "Toothbrush",
+      quantity: 15,
+      rate: 10,
+      discount: 0,
+      total: 1150,
+    },
+    {
+      description: "Toothpaste",
+      quantity: 10,
+      rate: 15,
+      discount: 0,
+      total: 130,
+    },
+  ],
+  deductions: [
+    {
+      description: "Discounts:",
+      amount: 30,
+      percent: 10,
+    },
+  ],
+  additions: [
+    {
+      description: "IGST @ 18%:",
+      amount: 4118.6,
+      percent: 9,
+    },
+  ],
+  issuedAt: "sdg",
+};

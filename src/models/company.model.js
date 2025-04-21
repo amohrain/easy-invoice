@@ -42,6 +42,16 @@ const companySchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  invoicePrefix: {
+    type: String,
+    required: false,
+    default: "INV",
+  },
+  invoiceSuffix: {
+    type: String,
+    required: false,
+    default: new Date().getFullYear(),
+  },
   paymentInstructions: {
     type: String,
     required: false,

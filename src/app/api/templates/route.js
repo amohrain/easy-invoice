@@ -2,6 +2,8 @@
 import { NextResponse } from "next/server";
 import connectDB from "../../../lib/mongodb";
 import Template from "../../../models/template.model";
+import { auth } from "@clerk/nextjs/server";
+import { getMongoUser } from "../../../lib/getMongoUser";
 
 export async function POST(request) {
   try {
@@ -52,29 +54,42 @@ export async function GET(request) {
     // Connect to the database
     await connectDB();
 
-    // // Get URL parameters
-    // const { searchParams } = new URL(request.url);
-    // const id = searchParams.get("id");
+    // Get URL parameters
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("userId");
 
-    // // If ID is provided, get a specific template
-    // if (id) {
-    //   const template = await Template.findOne({ id });
+    // If userId is provided, get templates for that user
+    if (id) {
+      // authenticate the user
+      const { userId } = await auth();
 
-    //   if (!template) {
-    //     return NextResponse.json(
-    //       {
-    //         success: false,
-    //         error: "Template not found",
-    //       },
-    //       { status: 404 }
-    //     );
-    //   }
+      if (!userId) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Unauthorized",
+          },
+          { status: 401 }
+        );
+      }
 
-    //   return NextResponse.json({
-    //     success: true,
-    //     data: template,
-    //   });
-    // }
+      const user = await getMongoUser(userId);
+      if (!user) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "User not found",
+          },
+          { status: 404 }
+        );
+      }
+
+      const templates = user.templates;
+      return NextResponse.json({
+        success: true,
+        data: templates,
+      });
+    }
 
     // Otherwise, get all templates
     const templates = await Template.find({});

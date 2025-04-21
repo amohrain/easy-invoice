@@ -12,6 +12,7 @@
     "@clerk/nextjs": "^6.12.5",
     "@react-pdf/renderer": "^4.3.0",
     "cloudinary": "^2.6.0",
+    "lucide-react": "^0.501.0",
     "mongoose": "^8.12.1",
     "next": "15.2.3",
     "openai": "^4.89.0",

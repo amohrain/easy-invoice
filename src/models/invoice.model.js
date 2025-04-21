@@ -14,7 +14,35 @@ const invoiceSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Template",
     },
+    invoiceId: {
+      type: Number,
+      required: false,
+    },
     invoiceNumber: {
+      type: String,
+      required: false,
+    },
+    businessName: {
+      type: String,
+      required: true,
+    },
+    businessAddress: {
+      type: String,
+      required: false,
+    },
+    businessEmail: {
+      type: String,
+      required: false,
+    },
+    businessPhone: {
+      type: String,
+      required: false,
+    },
+    businessTaxId: {
+      type: String,
+      required: false,
+    },
+    businessLogo: {
       type: String,
       required: false,
     },
@@ -83,7 +111,6 @@ const invoiceSchema = new mongoose.Schema(
         },
       },
     ],
-
     subtotal: {
       type: Number,
       required: true,
@@ -118,7 +145,7 @@ const invoiceSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "unpaid",
+      default: "pending",
     },
   },
   { timestamps: true } // Handles createdAt and updatedAt automatically
