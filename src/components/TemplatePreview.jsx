@@ -1,22 +1,5 @@
-import { usePathname } from "next/navigation";
-import { calculateInvoice } from "../lib/calculate";
-import { useCompanyStore } from "../store/useCompany";
-import { useInvoiceStore } from "../store/useInvoice";
-import { useTemplateStore } from "../store/useTemplate";
-import { useLoadingStore } from "../store/useLoading";
 import { useEffect, useState } from "react";
-import {
-  ArrowLeftCircle,
-  ArrowRightCircle,
-  Copy,
-  CopyCheck,
-  Link2,
-  Save,
-  Undo2,
-} from "lucide-react";
 import DownloadIcon from "./DownloadIcon";
-import { useStepsStore } from "../store/useSteps";
-import { set } from "mongoose";
 import { useRouter } from "next/navigation";
 
 const getTextStyle = (section) => {
@@ -32,111 +15,12 @@ const getTextStyle = (section) => {
   return style;
 };
 
-export function InvoicePreview({ setStep }) {
+export function TemplatePreview({ setStep }) {
   const { template, setTemplate, userTemplates } = useTemplateStore();
   const { invoice, setInvoice, saveInvoice, postInvoice, invoiceId } =
     useInvoiceStore();
   const { loading, setLoading } = useLoadingStore();
-  const [showModal, setShowModal] = useState(false);
   const { company } = useCompanyStore();
-  const currentPath = usePathname();
-  const router = useRouter();
-
-  useEffect(() => {
-    // Return if not creating new invoice
-    if (currentPath !== "/invoices/create") {
-      console.log("Not creating new invoice");
-      return;
-    }
-
-    console.log("Creating new invoice", invoice);
-
-    let updatedInvoice = calculateInvoice(invoice);
-    if (!updatedInvoice.businessName) {
-      const {
-        businessName,
-        businessAddress,
-        businessEmail,
-        businessPhone,
-        businessLogo,
-        invoicePrefix,
-        invoiceSuffix,
-      } = company;
-
-      // Logic to get invoice number
-
-      updatedInvoice = {
-        ...updatedInvoice,
-        businessName,
-        businessAddress,
-        businessEmail,
-        businessPhone,
-        businessLogo,
-        invoiceId,
-        invoiceNumber: `${invoicePrefix}/${invoiceId}/${invoiceSuffix}`,
-      };
-
-      setInvoice(updatedInvoice);
-    }
-  }, [invoice]);
-
-  const handleChange = (field, value) => {
-    // if (Object.values(template.labels).includes(value)) return;
-    const updatedInvoice = { ...invoice };
-
-    if (value.trim() === "") {
-      delete updatedInvoice[field];
-    } else {
-      updatedInvoice[field] = value;
-    }
-    // Calculate new values
-    setInvoice(calculateInvoice(updatedInvoice));
-  };
-
-  const handleItemChange = (index, field, value) => {
-    const items = [...invoice.items];
-
-    // Convert value to float if it's a number field, otherwise keep it as is
-    items[index] = {
-      ...items[index],
-      [field]: field === "description" ? value : parseFloat(value) || 0,
-    };
-
-    const updatedInvoice = { ...invoice, items: items };
-    setInvoice(calculateInvoice(updatedInvoice));
-  };
-
-  const handleSave = async () => {
-    try {
-      setLoading(true);
-      if (currentPath === "/invoices/create") {
-        const newInvoice = await postInvoice({
-          ...invoice,
-          template: template._id,
-        });
-        router.push("/invoices/" + newInvoice._id);
-      } else {
-        await saveInvoice(template._id);
-      }
-    } catch (error) {
-      console.error("Error saving invoice:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentPath === "/invoices/create") {
-      setStep((prev) => prev - 1);
-    } else {
-      window.history.back();
-    }
-  };
-
-  // todo - implement share link
-  const handleLinkShare = () => {
-    setShowModal(true);
-  };
 
   return (
     <div className="relative flex flex-row items-center gap-4">
@@ -402,9 +286,7 @@ export function InvoicePreview({ setStep }) {
           />
 
           <DownloadIcon className="cursor-pointer" />
-          {currentPath !== "/invoices/create" && (
-            <Link2 className="cursor-pointer" onClick={handleLinkShare} />
-          )}
+          <Link2 className="cursor-pointer" onClick={handleLinkShare} />
         </div>
       </div>
 

@@ -7,6 +7,7 @@ import { PiInvoice } from "react-icons/pi";
 import { MdOutlineRoomPreferences } from "react-icons/md";
 import { BsBuilding } from "react-icons/bs";
 import { FcTemplate } from "react-icons/fc";
+import { Plus } from "lucide-react";
 
 function LeftBar() {
   const { user } = useUser();
@@ -26,7 +27,7 @@ function LeftBar() {
               {/* <div className="mask mask-squircle bg-primary w-10 h-10 flex items-center justify-center text-white font-bold">
                 EV
               </div> */}
-              <span>Easy Invoice</span>
+              <span>VibeInv</span>
             </div>
           </a>
         </div>
@@ -38,7 +39,7 @@ function LeftBar() {
           {/* <div className="text-xs font-semibold text-base-content/60 px-2 mb-1">
             MAIN MENU
           </div> */}
-          <NavButton link="/dashboard" name="Home" icon={<BiHome />} />
+          <NavButton link="/dashboard" name="Dashboard" icon={<BiHome />} />
           <NavButton link="/invoices" name="Invoices" icon={<PiInvoice />} />
           <NavButton
             link="/preferences"

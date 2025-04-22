@@ -41,7 +41,7 @@ export async function GET(request) {
     }).sort({ invoiceId: -1 });
 
     // Generate the next invoice number
-    const nextInvoiceId = lastInvoice ? lastInvoice.invoiceId + 1 : 1000;
+    const nextInvoiceId = lastInvoice ? lastInvoice.invoiceId + 1 : 1001;
 
     // Return the next invoice number
     return NextResponse.json({

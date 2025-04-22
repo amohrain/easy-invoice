@@ -57,7 +57,7 @@ export default function Onboarding() {
         console.error("Error creating company:", error);
       }
     } else if (step === 4) {
-      router.push("/dashboard");
+      router.push("/invoices/create");
     } else setStep((prev) => prev + 1);
   };
 

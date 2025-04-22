@@ -1,3 +1,5 @@
+import { dummyInvoice } from "../lib/dummyInvoice";
+
 // Function to get Tailwind alignment classes
 const getAlignmentClass = (alignment) => {
   switch (alignment) {
@@ -12,9 +14,10 @@ const getAlignmentClass = (alignment) => {
   }
 };
 
-export function MiniInvoice({ currentTemplate, sampleInvoice }) {
+export function MiniInvoice({ currentTemplate }) {
+  dummyInvoice.businessName = "Abhishek";
   return (
-    <div className="flex flex-col h-60 border-gray-300 pt-2 text-xs text-gray-600 space-y-1">
+    <div className="flex flex-col p-4 text-[6px] space-y-1 bg-white text-black rounded">
       {currentTemplate.structure.map((section) => (
         <div
           key={section.section}
@@ -22,9 +25,9 @@ export function MiniInvoice({ currentTemplate, sampleInvoice }) {
         >
           {section.fields?.map(
             (field) =>
-              sampleInvoice[field] && (
+              dummyInvoice[field] && (
                 <div key={field} className="font-semibold">
-                  {sampleInvoice[field]}
+                  {dummyInvoice[field]}
                 </div>
               )
           )}
@@ -34,7 +37,7 @@ export function MiniInvoice({ currentTemplate, sampleInvoice }) {
           {section.section === "space" && <br />}
           {/* {section.section === "items" && (
                 <div>
-                  {sampleInvoice.items.map((item, index) => (
+                  {dummyInvoice.items.map((item, index) => (
                     <div key={index} className="flex justify-between">
                       <span>{item.description}</span>
                       <span>${item.total}</span>
@@ -45,10 +48,10 @@ export function MiniInvoice({ currentTemplate, sampleInvoice }) {
           {/* Render Items Table */}
           {section.section === "items" && (
             <div className="mt-2">
-              <table className="w-full border-collapse text-xs">
+              <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-b">
-                    {[...new Set(sampleInvoice.items.flatMap(Object.keys))].map(
+                    {[...new Set(dummyInvoice.items.flatMap(Object.keys))].map(
                       (key) => (
                         <th className="text-center" key={key}>
                           {key.charAt(0).toUpperCase() + key.slice(1)}
@@ -58,10 +61,10 @@ export function MiniInvoice({ currentTemplate, sampleInvoice }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {sampleInvoice.items.map((item, index) => (
+                  {dummyInvoice.items.map((item, index) => (
                     <tr key={index}>
                       {[
-                        ...new Set(sampleInvoice.items.flatMap(Object.keys)),
+                        ...new Set(dummyInvoice.items.flatMap(Object.keys)),
                       ].map((key) => (
                         <td className="text-center" key={key}>
                           {item[key] ?? "-"}
@@ -75,7 +78,7 @@ export function MiniInvoice({ currentTemplate, sampleInvoice }) {
           )}
           {section.section === "totals" && (
             <div className="font-semibold">
-              Total: ${sampleInvoice.totalAmount}
+              Total: ${dummyInvoice.totalAmount}
             </div>
           )}
         </div>

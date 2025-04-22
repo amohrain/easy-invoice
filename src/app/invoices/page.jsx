@@ -7,12 +7,12 @@ function Invoices() {
   return (
     <div className="flex w-full h-screen">
       <LeftBar />
-      <div className="flex flex-col w-full p-4 gap-4">
+      <div className="flex flex-col w-full p-4 gap-4 bg-base-200">
         <div className="">
           <h1 className="text-2xl font-bold">Invoices</h1>
           <p className="mt-2">Manage your invoices here.</p>
         </div>
-        <div className="flex w-full h-full rounded-xl bg-base-300 p-4 gap-4">
+        <div className="flex w-full rounded-xl bg-base-100 shadow p-4 gap-4">
           {/* Tabs here */}
           <InvoiceTable />
 

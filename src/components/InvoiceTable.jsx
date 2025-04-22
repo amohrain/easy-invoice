@@ -34,7 +34,7 @@ function InvoiceTable() {
     setCurrentPage(1);
   }, [invoiceData]);
 
-  if (!invoiceData || invoiceData.length === 0) {
+  if (!invoiceData) {
     return <div className="p-4 text-center">Loading invoices...</div>;
   }
 
@@ -114,18 +114,18 @@ function InvoiceTable() {
   );
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-x-auto">
       {/* Toolbar */}
       <div className="flex justify-between items-center mb-2">
         <div className="flex gap-2">
           <InvoiceFilter filters={filters} setFilters={setFilters} />
           <div className="dropdown">
-            <label tabIndex={0} className="btn btn-sm">
+            <label tabIndex={0} className="btn btn-ghost btn-sm">
               Sort By
             </label>
             <ul
               tabIndex={0}
-              className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-48"
+              className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-48"
             >
               <li>
                 <a onClick={() => handleSort("date_asc")}>Date ↑</a>
@@ -147,11 +147,11 @@ function InvoiceTable() {
               </li>
             </ul>
           </div>
-          <button className="btn btn-sm" onClick={handleDelete}>
+          <button className="btn btn-ghost btn-sm" onClick={handleDelete}>
             Delete
           </button>
           <div className="dropdown dropdown-start">
-            <label tabIndex={0} className="btn btn-sm">
+            <label tabIndex={0} className="btn btn-ghost btn-sm">
               Mark as
             </label>
             <ul
@@ -167,7 +167,7 @@ function InvoiceTable() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Link href="/dashboard">
+          <Link href="/invoices/create">
             <button className="btn btn-sm btn-primary">
               <Plus /> Add
             </button>
@@ -176,7 +176,7 @@ function InvoiceTable() {
       </div>
 
       {/* Table */}
-      <table className="table table-sm">
+      <table className="table w-full">
         <thead className="italic uppercase">
           <tr>
             <th
@@ -198,7 +198,7 @@ function InvoiceTable() {
             <th>Inv. No.</th>
             <th>Date</th>
             <th>Client Name</th>
-            <th>ClientAddress</th>
+            <th>Client Address</th>
             <th>Amount</th>
             <th>Status</th>
           </tr>
@@ -246,8 +246,10 @@ function InvoiceTable() {
           <tr>
             <td colSpan="7">
               <div className="flex justify-between items-center p-2">
-                <span>
-                  Page {currentPage} of {totalPages}
+                <span className="text-center w-full">
+                  {invoiceData.length == 0
+                    ? "No invoices found. Click add to create one"
+                    : `Page ${currentPage} of ${totalPages}`}
                 </span>
                 <div className="flex gap-2">
                   <button

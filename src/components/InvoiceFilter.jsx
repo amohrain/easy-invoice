@@ -26,12 +26,12 @@ function InvoiceFilter({ filters, setFilters }) {
   };
   return (
     <div className="dropdown dropdown-start">
-      <label tabIndex={0} className="btn btn-sm">
+      <label tabIndex={0} className="btn btn-ghost btn-sm">
         Filter
       </label>
       <div
         tabIndex={0}
-        className="dropdown-content text-sm z-[1] card card-compact w-72 p-4 shadow bg-base-100 rounded-box space-y-3"
+        className="dropdown-content text-sm z-[1] card card-compact w-72 p-4 shadow bg-base-200 rounded-box space-y-3"
       >
         <div>
           <h3 className="font-bold mb-2">Status</h3>

@@ -4,6 +4,7 @@ import { useTemplateStore } from "../../store/useTemplate";
 import LeftBar from "../../components/LeftBar";
 import { useCompanyStore } from "../../store/useCompany";
 import { useUser } from "@clerk/nextjs";
+import { MiniInvoice } from "../../components/MiniInvoice";
 
 function Templates() {
   const {
@@ -37,13 +38,7 @@ function Templates() {
         <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
           {templatesData.map((template) => (
             <div key={template._id} className="card bg-base-200 shadow-sm">
-              <figure>
-                <img
-                  src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-                  className="rounded-lg"
-                  alt="Shoes"
-                />
-              </figure>
+              <MiniInvoice currentTemplate={template} />
               <div className="card-body flex flex-row justify-between">
                 <h2 className="card-title">{template.name}</h2>
                 {userTemplates?.find((t) => t._id === template._id) ? (

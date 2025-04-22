@@ -62,7 +62,7 @@ function Company() {
   return (
     <div className="flex h-screen">
       <LeftBar />
-      <div className="flex flex-col p-4 gap-6">
+      <div className="flex w-full flex-col p-4 gap-6 bg-base-200">
         {/* Main content for the Company page */}
         <div className="">
           <h1 className="text-2xl font-bold">
@@ -76,10 +76,8 @@ function Company() {
         </div>
 
         <div className="px-4">
-          <fieldset className="fieldset w-xl bg-base-200 border border-base-300 p-4 rounded-box">
+          <fieldset className="fieldset w-xl bg-base-100 shadow p-4 rounded-lg">
             {/* <legend className="text-lg font-medium">Company Information</legend> */}
-
-            {/* Logo upload stays at full width */}
 
             {/* Two-column layout for form fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -89,12 +87,12 @@ function Company() {
                   <label className="fieldset-label block mb-2">
                     Company Logo
                   </label>
-                  <div className="mb-2">
+                  <div className="flex justify-center mb-2">
                     {preview && !logo && (
                       <img
                         src={preview}
                         alt="Company Logo"
-                        className="h-10 w-auto object-contain rounded"
+                        className="h-10 w-auto object-contain rounded self-center"
                       />
                     )}
                     {logo && (
