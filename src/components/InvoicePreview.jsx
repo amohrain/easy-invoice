@@ -34,8 +34,15 @@ const getTextStyle = (section) => {
 
 export function InvoicePreview({ setStep }) {
   const { template, setTemplate, userTemplates } = useTemplateStore();
-  const { invoice, setInvoice, saveInvoice, postInvoice, invoiceId } =
-    useInvoiceStore();
+  const {
+    invoice,
+    setInvoice,
+    saveInvoice,
+    postInvoice,
+    invoiceId,
+    fetchClientId,
+    createClient,
+  } = useInvoiceStore();
   const { loading, setLoading } = useLoadingStore();
   const [showModal, setShowModal] = useState(false);
   const { company } = useCompanyStore();
@@ -49,35 +56,47 @@ export function InvoicePreview({ setStep }) {
       return;
     }
 
-    console.log("Creating new invoice", invoice);
+    async function createInvoice() {
+      console.log("Creating new invoice", invoice);
 
-    let updatedInvoice = calculateInvoice(invoice);
-    if (!updatedInvoice.businessName) {
-      const {
-        businessName,
-        businessAddress,
-        businessEmail,
-        businessPhone,
-        businessLogo,
-        invoicePrefix,
-        invoiceSuffix,
-      } = company;
+      let updatedInvoice = calculateInvoice(invoice);
+      if (!updatedInvoice.businessName) {
+        const {
+          businessName,
+          businessAddress,
+          businessEmail,
+          businessPhone,
+          businessLogo,
+          invoicePrefix,
+          invoiceSuffix,
+        } = company;
 
-      // Logic to get invoice number
+        // Logic to get invoice number
 
-      updatedInvoice = {
-        ...updatedInvoice,
-        businessName,
-        businessAddress,
-        businessEmail,
-        businessPhone,
-        businessLogo,
-        invoiceId,
-        invoiceNumber: `${invoicePrefix}/${invoiceId}/${invoiceSuffix}`,
-      };
+        updatedInvoice = {
+          ...updatedInvoice,
+          businessName,
+          businessAddress,
+          businessEmail,
+          businessPhone,
+          businessLogo,
+          invoiceId,
+          company: company._id,
+          invoiceNumber: `${invoicePrefix}/${invoiceId}/${invoiceSuffix}`,
+        };
 
-      setInvoice(updatedInvoice);
+        // Fetch client details based on clientId provided
+        if (updatedInvoice.clientId) {
+          const clientInfo = await fetchClientId(updatedInvoice.clientId);
+          updatedInvoice = { ...updatedInvoice, ...clientInfo };
+
+          console.log("updatedInvoice: ", updatedInvoice);
+        }
+
+        setInvoice(updatedInvoice);
+      }
     }
+    createInvoice();
   }, [invoice]);
 
   const handleChange = (field, value) => {
@@ -109,11 +128,21 @@ export function InvoicePreview({ setStep }) {
   const handleSave = async () => {
     try {
       setLoading(true);
+
       if (currentPath === "/invoices/create") {
-        const newInvoice = await postInvoice({
+        console.log("saving invoice");
+        // if client Id in invoice is absent, create a client in DB
+
+        const baseInvoice = {
           ...invoice,
           template: template._id,
-        });
+        };
+
+        if (!invoice.clientId) {
+          baseInvoice.clientId = await createClient();
+        }
+        const newInvoice = await postInvoice(baseInvoice);
+
         router.push("/invoices/" + newInvoice._id);
       } else {
         await saveInvoice(template._id);

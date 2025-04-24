@@ -13,12 +13,7 @@ function Invoices() {
           <p className="mt-2">Manage your invoices here.</p>
         </div>
         <div className="flex w-full rounded-xl bg-base-100 shadow p-4 gap-4">
-          {/* Tabs here */}
           <InvoiceTable />
-
-          {/* The whole table here */}
-
-          {/* Pagination buttons */}
         </div>
       </div>
     </div>

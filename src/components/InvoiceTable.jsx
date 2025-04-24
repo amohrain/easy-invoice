@@ -5,9 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import InvoiceFilter from "./InvoiceFilter";
 import InvoiceSort from "./InvoiceSort";
+import { useCompanyStore } from "../store/useCompany";
 
 function InvoiceTable() {
   const { invoiceData, getInvoices } = useInvoiceStore();
+  const { company } = useCompanyStore();
   const [items, setItems] = useState([]);
   const [filters, setFilters] = useState({
     status: "",
@@ -28,7 +30,7 @@ function InvoiceTable() {
       await getInvoices();
     }
     fetchData();
-  }, []);
+  }, [company]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -120,7 +122,7 @@ function InvoiceTable() {
         <div className="flex gap-2">
           <InvoiceFilter filters={filters} setFilters={setFilters} />
           <div className="dropdown">
-            <label tabIndex={0} className="btn btn-ghost btn-sm">
+            <label tabIndex={0} className="btn btn-ghost">
               Sort By
             </label>
             <ul
@@ -147,16 +149,16 @@ function InvoiceTable() {
               </li>
             </ul>
           </div>
-          <button className="btn btn-ghost btn-sm" onClick={handleDelete}>
+          <button className="btn btn-ghost" onClick={handleDelete}>
             Delete
           </button>
           <div className="dropdown dropdown-start">
-            <label tabIndex={0} className="btn btn-ghost btn-sm">
+            <label tabIndex={0} className="btn btn-ghost">
               Mark as
             </label>
             <ul
               tabIndex={0}
-              className="dropdown-content menu p-2 mt-2 shadow bg-base-100 rounded-box w-52"
+              className="dropdown-content menu p-2 mt-2 shadow bg-base-200 rounded-box w-52"
             >
               {["Pending", "Paid", "Overdue", "Cancelled"].map((status) => (
                 <li key={status}>
@@ -168,7 +170,7 @@ function InvoiceTable() {
         </div>
         <div className="flex gap-2">
           <Link href="/invoices/create">
-            <button className="btn btn-sm btn-primary">
+            <button className="btn btn-primary">
               <Plus /> Add
             </button>
           </Link>

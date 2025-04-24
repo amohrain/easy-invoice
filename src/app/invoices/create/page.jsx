@@ -38,8 +38,6 @@ function Dashboard() {
     fetchData();
   }, []);
 
-  console.log("Templates Data: ", template, userTemplates);
-
   const handleGenerate = async () => {
     try {
       setLoading(true);

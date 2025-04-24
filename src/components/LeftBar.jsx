@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import NavButton from "./NavButton";
@@ -6,12 +6,28 @@ import { BiHome } from "react-icons/bi";
 import { PiInvoice } from "react-icons/pi";
 import { MdOutlineRoomPreferences } from "react-icons/md";
 import { BsBuilding } from "react-icons/bs";
-import { FcTemplate } from "react-icons/fc";
-import { Plus } from "lucide-react";
+import { PanelsTopLeftIcon, Plus } from "lucide-react";
+import { useCompanyStore } from "../store/useCompany";
+import { TbUserShield } from "react-icons/tb";
+import { FaPeopleGroup, FaWpforms } from "react-icons/fa6";
 
 function LeftBar() {
   const { user } = useUser();
   const fullName = user?.fullName;
+
+  const { company, companies, getCompanies, changeCompany } = useCompanyStore();
+
+  useEffect(() => {
+    async function fetchCompanies() {
+      await getCompanies();
+    }
+    fetchCompanies();
+    console.log("Company fetched: ", company);
+  }, [getCompanies]);
+
+  const handleCompanyChange = async (companyId) => {
+    await changeCompany(companyId);
+  };
 
   return (
     <div className="flex flex-col h-full w-xs py-6 justify-between bg-base-300 min-h-screen shadow-lg">
@@ -27,7 +43,7 @@ function LeftBar() {
               {/* <div className="mask mask-squircle bg-primary w-10 h-10 flex items-center justify-center text-white font-bold">
                 EV
               </div> */}
-              <span>VibeInv</span>
+              <span>Vibe Invoice</span>
             </div>
           </a>
         </div>
@@ -47,24 +63,38 @@ function LeftBar() {
             icon={<MdOutlineRoomPreferences />}
           />
           <NavButton link="/company" name="Company" icon={<BsBuilding />} />
-          <NavButton link="/templates" name="Templates" icon={<FcTemplate />} />
+          <NavButton link="/clients" name="Clients" icon={<FaPeopleGroup />} />
+          <NavButton link="/templates" name="Templates" icon={<FaWpforms />} />
         </div>
       </div>
 
       {/* User Profile Section */}
-      <div className="flex px-4 mt-auto gap-3">
-        <SignedIn>
-          <p className="sm:block hidden text-lg">Hi, {fullName}</p>
-          <UserButton />
-        </SignedIn>
-        <SignedOut>
-          <button className="btn btn-outline">
-            <Link href={"/sign-in"}>Sign in</Link>
-          </button>
-          <button className="sm:block hidden btn btn-primary">
-            <Link href={"/sign-up"}>Get started</Link>
-          </button>
-        </SignedOut>
+      <div className="flex flex-col items-center">
+        <select
+          onChange={(e) => handleCompanyChange(e.target.value)}
+          value={company._id}
+          className="select w-auto select-ghost mx-2"
+        >
+          {companies?.map((company) => (
+            <option key={company._id} value={company._id}>
+              {company.businessName}
+            </option>
+          ))}
+        </select>
+        <div className="flex px-4 mt-auto gap-3">
+          <SignedIn>
+            <p className="sm:block hidden text-lg">Hi, {fullName}</p>
+            <UserButton />
+          </SignedIn>
+          <SignedOut>
+            <button className="btn btn-outline">
+              <Link href={"/sign-in"}>Sign in</Link>
+            </button>
+            <button className="sm:block hidden btn btn-primary">
+              <Link href={"/sign-up"}>Get started</Link>
+            </button>
+          </SignedOut>
+        </div>
       </div>
     </div>
   );

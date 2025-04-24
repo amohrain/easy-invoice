@@ -3,39 +3,42 @@ import connectDB from "../../../lib/mongodb.js";
 import Invoice from "../../../models/invoice.model";
 import { auth } from "@clerk/nextjs/server";
 import { getMongoUser } from "../../../lib/getMongoUser";
+import Client from "../../../models/client.model.js";
 
 // function to create an invoice
 export async function POST(request) {
-  const { userId } = await auth();
-  console.log("Clerk ID:", userId);
-  if (!userId) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Unauthorized",
-      },
-      { status: 401 }
-    );
-  }
-  const user = await getMongoUser(userId);
-  console.log("Mongo user:", user);
-
-  if (!user) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: "User not found",
-      },
-      { status: 404 }
-    );
-  }
-
   try {
+    const { userId } = await auth();
+    console.log("Clerk ID:", userId);
+    if (!userId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+    const user = await getMongoUser(userId);
+    console.log("Mongo user:", user);
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "User not found",
+        },
+        { status: 404 }
+      );
+    }
+
     // Connect to the database
     await connectDB();
 
     // Parse the request body
     const invoiceData = await request.json();
+
+    console.log("Invoice data: ", invoiceData);
 
     // Create a new invoice
     const invoice = new Invoice({ ...invoiceData, user: user._id });
@@ -82,7 +85,7 @@ export async function GET(request) {
     await connectDB();
 
     // Get all invoices
-    const invoices = await Invoice.find({ user: user._id });
+    const invoices = await Invoice.find({ company: user.company });
 
     // Return the invoices
     return NextResponse.json({

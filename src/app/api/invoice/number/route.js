@@ -36,7 +36,7 @@ export async function GET(request) {
 
     // Get the last invoice number from the database
     const lastInvoice = await Invoice.findOne({
-      user: user._id,
+      company: user.company,
       invoiceId: { $exists: true },
     }).sort({ invoiceId: -1 });
 

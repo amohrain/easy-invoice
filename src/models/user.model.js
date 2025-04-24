@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
     unique: true,
     index: true,
   },
-
   name: {
     type: String,
     required: true,
@@ -41,6 +40,11 @@ const userSchema = new mongoose.Schema({
   taxId: {
     type: String,
     required: false,
+  },
+  company: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Company",
+    // required: true,
   },
 });
 

@@ -1,10 +1,11 @@
 import { create } from "zustand";
 
 export const useCompanyStore = create((set, get) => ({
-  company: null,
+  company: {},
+  companies: [],
   setCompany: (company) => set({ company }),
 
-  companyData: null,
+  companyData: {},
   setCompanyData: (data) =>
     set((state) => ({
       companyData: { ...state.companyData, ...data },
@@ -14,15 +15,18 @@ export const useCompanyStore = create((set, get) => ({
     try {
       const response = await fetch("/api/company/");
       const data = await response.json();
-      set({ company: data.data[0] });
-      set({ companyData: data.data[0] });
+      const companies = data.data;
+      set({
+        companies: companies,
+        company: data.company,
+        companyData: data.company,
+      });
       return data.data;
     } catch (error) {
       console.error("Error fetching companies:", error);
       return [];
     }
   },
-
   updateCompany: async (data) => {
     console.log("Updating company data:", data);
     const companyId = data._id;
@@ -37,5 +41,19 @@ export const useCompanyStore = create((set, get) => ({
     } catch (error) {
       console.error("Error updating company:", error);
     }
+  },
+  changeCompany: async (companyId) => {
+    await fetch("/api/users/company", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company: companyId }),
+    });
+    const companies = get().companies;
+    const selectedCompany = companies.find(
+      (company) => company._id === companyId
+    );
+    set({ company: selectedCompany, companyData: selectedCompany });
   },
 }));

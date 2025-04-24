@@ -26,7 +26,7 @@ function InvoiceFilter({ filters, setFilters }) {
   };
   return (
     <div className="dropdown dropdown-start">
-      <label tabIndex={0} className="btn btn-ghost btn-sm">
+      <label tabIndex={0} className="btn btn-ghost">
         Filter
       </label>
       <div

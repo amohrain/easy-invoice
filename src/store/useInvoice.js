@@ -62,4 +62,69 @@ export const useInvoiceStore = create((set, get) => ({
       console.error("Error fetching invoice number:", error);
     }
   },
+
+  // Function to fetch client ID for creating invocie
+  fetchClientId: async (clientId) => {
+    try {
+      const response = await fetch(`/api/client/${clientId}`);
+      const data = await response.json();
+
+      const {
+        clientName,
+        clientAddress,
+        clientEmail,
+        clientPhone,
+        clientTaxId,
+      } = data.data;
+
+      return {
+        clientName,
+        clientAddress,
+        clientEmail,
+        clientPhone,
+        clientTaxId,
+      };
+    } catch (error) {
+      console.log("Error fetching client");
+    }
+
+    return "ClientId";
+  },
+
+  // Function to create a new client
+  // Todo
+  createClient: async () => {
+    try {
+      const currentInvoice = get().invoice;
+
+      // Test if the client already exists
+
+      const existingRes = await fetch(
+        `/api/client/query?name=${currentInvoice.clientName}&email=${currentInvoice.clientEmail}`
+      );
+
+      const existingData = await existingRes.json();
+      const existingClientId = existingData.data;
+
+      if (existingClientId) return existingClientId;
+
+      const response = await fetch("/api/client", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clientName: currentInvoice.clientName,
+          clientAddress: currentInvoice.clientAddress,
+          clientEmail: currentInvoice.clientEmail,
+          clientPhone: currentInvoice.clientPhone,
+          clientTaxId: currentInvoice.clientTaxId,
+        }),
+      });
+
+      const data = await response.json();
+      const clientId = data.data;
+      return clientId;
+    } catch (error) {
+      console.log("Error creating client", error);
+    }
+  },
 }));

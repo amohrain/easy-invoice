@@ -101,10 +101,15 @@ export async function GET() {
     // Get all companies for the user
     const companies = await Company.find({ user });
 
+    // get user's company
+
+    const currentCompany = await Company.findById(user.company);
+
     // Return the companies
     return NextResponse.json({
       success: true,
       data: companies,
+      company: currentCompany,
     });
   } catch (error) {
     console.error("Error fetching companies:", error);

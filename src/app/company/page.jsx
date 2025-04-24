@@ -48,13 +48,7 @@ function Company() {
 
   useEffect(() => {
     const fetchCompanies = async () => {
-      const companies = await getCompanies();
-      if (companies.length > 0) {
-        setCompany(companies[0]);
-        setCompanyData(companies[0]);
-        setPreview(companies[0].businessLogo);
-      }
-      console.log("Fetched companies:", companies);
+      await getCompanies();
     };
     fetchCompanies();
   }, [updateCompany]);
