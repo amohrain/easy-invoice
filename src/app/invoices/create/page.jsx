@@ -41,8 +41,8 @@ function Dashboard() {
   const handleGenerate = async () => {
     try {
       setLoading(true);
-      // const invoice = await handleInvoiceGenerate(text);
-      const invoice = dummyInvoice;
+      const invoice = await handleInvoiceGenerate(text);
+      // const invoice = dummyInvoice;
       setInvoice(invoice);
       setLoading(false);
       setStep(2);
@@ -78,18 +78,13 @@ function Dashboard() {
               <TypingPlaceholder text={text} setText={setText} />
               <div className="flex flex-row">
                 <div className="flex flex-row w-full gap-2">
-                  <button
-                    className={`btn rounded-3xl btn-soft btn-primary`}
-                    onClick={() => setShowControlsPopup(true)}
-                  >
-                    Options
-                  </button>
+                  <button></button>
                 </div>
                 <button
                   onClick={() => {
                     handleGenerate();
                   }}
-                  className="btn btn-secondary rounded-3xl"
+                  className="btn btn-accent rounded-3xl"
                 >
                   Generate
                 </button>

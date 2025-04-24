@@ -6,6 +6,8 @@ import { useInvoiceStore } from "../../store/useInvoice";
 import { getInvoiceStats } from "../../lib/getInvoiceStats";
 import Link from "next/link";
 import DailyRevenueChart from "../../components/DailyRevenueChart";
+import { Loading } from "../../components/Loading";
+import { useCompanyStore } from "../../store/useCompany";
 
 // This is a simple invoicing dashboard page using React and Tailwind CSS.
 
@@ -15,17 +17,18 @@ export default function InvoicingDashboard() {
 
   const [stats, setStats] = useState([]);
   const { invoiceData } = useInvoiceStore();
+  const { company } = useCompanyStore();
+  const currency = company.currency;
 
   useEffect(() => {
     if (!invoiceData) return;
-    setStats(getInvoiceStats(invoiceData));
+    setStats(getInvoiceStats(invoiceData, currency));
   }, [invoiceData]);
 
   useEffect(() => {
     const fetchTopClients = async () => {
       try {
         setIsLoading(true);
-
         const response = await fetch(`/api/client/top`);
 
         if (!response.ok) {
@@ -128,7 +131,8 @@ export default function InvoicingDashboard() {
                         <span>{client.clientName}</span>
                       </div>
                       <span className="font-semibold">
-                        ${client.totalBilled.toFixed(2)}
+                        {currency}
+                        {client.totalBilled.toFixed(2)}
                       </span>
                     </li>
                   ))}

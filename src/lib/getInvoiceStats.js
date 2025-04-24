@@ -1,6 +1,6 @@
 import { TrendingUp, CreditCard, Calendar, Users } from "lucide-react";
 
-export const getInvoiceStats = (invoiceData) => {
+export const getInvoiceStats = (invoiceData, currency = "$") => {
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
@@ -52,7 +52,8 @@ export const getInvoiceStats = (invoiceData) => {
     const changeType = change >= 0 ? "positive" : "negative";
     return {
       title,
-      value: title === "Clients" ? `${current}` : `$${current.toFixed(2)}`,
+      value:
+        title === "Clients" ? `${current}` : `${currency}${current.toFixed(2)}`,
       icon: icon,
       change: `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`,
       changeType,

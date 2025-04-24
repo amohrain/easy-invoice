@@ -57,11 +57,6 @@ function LeftBar() {
           </div> */}
           <NavButton link="/dashboard" name="Dashboard" icon={<BiHome />} />
           <NavButton link="/invoices" name="Invoices" icon={<PiInvoice />} />
-          <NavButton
-            link="/preferences"
-            name="Preferences"
-            icon={<MdOutlineRoomPreferences />}
-          />
           <NavButton link="/company" name="Company" icon={<BsBuilding />} />
           <NavButton link="/clients" name="Clients" icon={<FaPeopleGroup />} />
           <NavButton link="/templates" name="Templates" icon={<FaWpforms />} />

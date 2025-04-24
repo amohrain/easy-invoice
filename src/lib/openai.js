@@ -7,122 +7,70 @@ const openai = new OpenAI({
 
 export const handleInvoiceGenerate = async (prompt) => {
   const systemPrompt = `
-  You are an intelligent assistant that generates structured invoice data in JSON format based on user input. The invoice follows a predefined structure, including business details, client details, invoice metadata, and itemized services.
+  You are an intelligent assistant that generates structured invoice data in JSON format based on user input. The invoice follows a predefined structure, including business details, client details, invoice metadata, itemized services, and optional additions and deductions.
 
 ### Instructions:
-1. Extract relevant information from the user's text prompt and map it to the provided JSON structure.
+1. Extract relevant information from the user's text prompt and map it to the JSON structure.
 2. Fill as many fields as possible based on the input.
 3. Use intelligent parsing to categorize **items**, identifying attributes like **description**, **quantity**, **rate**, **discount**, and **total**.
-4. If a value is missing or unclear, leave the field blank ("") instead of guessing.
-5. Ensure **totalAmount** is the sum of all **items** (rate * quantity - discount).
-6. Maintain proper formatting (dates in **YYYY-MM-DD** format, numbers without currency symbols).
-7. Return only valid JSON output without explanations or additional text.
+4. Always include the **additions** and **deductions** arrays in your output, even if empty.
+5. If a value is missing or unclear, leave the field blank ("") or use empty arrays where appropriate.
+6. Ensure **totalAmount** is calculated correctly: sum of all **items** (rate * quantity) minus total deductions, plus total additions.
+7. Maintain proper formatting (dates in **YYYY-MM-DD** format, numbers without currency symbols).
+8. Return only valid JSON output without explanations or additional text.
+9. Enter fields businessName, businessAddress, businessEmail and businessPhone if and only if there appear to be more than two parties.
 
-### **Invoice Fields**
+### Output Structure:
 {
-    "businessName": "",
-    "businessAddress": "",
-    "businessEmail": "",
-    "businessPhone": "",
-    "businessLogo": "",
-    "clientId": "",
-    "clientName": "",
-    "clientEmail": "",
-    "clientPhone": "",
-    "clientAddress": "",
-    "clientTaxId": "",
-    "invoiceNumber": "",
-    "issuedAt": "",
-    "dueDate": "",
-    "paymentTerms": "",
-    "subtotal": "",
-    "tax": "",
-    "discount": "",
-    "totalAmount": "",
-    "notes": "",
-    "currencySymbol: "",
-    "paymentInstructions": "",
-    "items": [
-      {
-        "description": "",
-        "quantity": "",
-        "rate": "",
-        "discount": "",
-        "total": ""
-      }
-    ]
-}
-
-### **Examples**
-#### **User Input:**  
-"Generate an invoice for ABC Solutions billing John Doe for Web Development ($2000) and Hosting (3 months at $50). Issue date is March 20, 2025, due in 30 days."
-
-#### **AI Output in JSON:**  
-{
-    "businessName": "ABC Solutions",
-    "businessAddress": "",
-    "businessEmail": "",
-    "businessPhone": "",
-    "businessLogo": "",
-    "clientId": "",
-    "clientName": "John Doe",
-    "clientEmail": "",
-    "clientPhone": "",
-    "clientAddress": "",
-    "clientTaxId": "",
-    "invoiceNumber": "",
-    "issuedAt": "",
-    "dueDate": "2025-04-19",
-    "paymentTerms": "Due in 30 days",
-    "subtotal": 2150,
-    "tax": "",
-    "discount": "",
-    "totalAmount": 2150,
-    "notes": "",
-    "currencySymbol: "$",
-    "paymentInstructions": "",
-    "items": [
-      {
-        "description": "Web Development",
-        "quantity": 1,
-        "rate": 2000,
-        "discount": 0,
-        "total": 2000
-      },
-      {
-        "description": "Hosting",
-        "quantity": 3,
-        "rate": 50,
-        "discount": 0,
-        "total": 150
-      }
-    ],
-    "deductions": [
-      {
-        "description": "Discounts:",
-        "amount": 100,
-        "percent": 10
-      },
-    ],
-    "additions": [
-      {
-        "description": "CGST @ 9%:",
-        "amount": 100,
-        "percent": 10
-        },
-        {
-        "description": "SGST @ 9%:",
-        "amount": 100,
-        "percent": 10
-      },
-    ],
+  "businessName": "",
+  "businessAddress": "",
+  "businessEmail": "",
+  "businessPhone": "",
+  "clientName": "",
+  "clientEmail": "",
+  "clientPhone": "",
+  "clientAddress": "",
+  "clientTaxId": "",
+  "invoiceNumber": "",
+  "issuedAt": "",
+  "dueDate": "",
+  "paymentTerms": "",
+  "subtotal": "",
+  "tax": "",
+  "discount": "",
+  "totalAmount": "",
+  "notes": "",
+  "currencySymbol": "",
+  "paymentInstructions": "",
+  "items": [
+    {
+      "description": "",
+      "quantity": "",
+      "rate": "",
+      "total": ""
+    }
+  ],
+  "deductions": [
+    {
+      "description": "",
+      "amount": "",
+      "percent": ""
+    }
+  ],
+  "additions": [
+    {
+      "description": "",
+      "amount": "",
+      "percent": ""
+    }
+  ]
 }`;
 
   const userPrompt = `Convert this into the JSON structure: ${prompt}`;
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },

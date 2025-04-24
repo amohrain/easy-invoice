@@ -1,4 +1,4 @@
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { calculateInvoice } from "../lib/calculate";
 import { useCompanyStore } from "../store/useCompany";
 import { useInvoiceStore } from "../store/useInvoice";
@@ -18,6 +18,7 @@ import DownloadIcon from "./DownloadIcon";
 import { useStepsStore } from "../store/useSteps";
 import { set } from "mongoose";
 import { useRouter } from "next/navigation";
+import { useClientStore } from "../store/useClient";
 
 const getTextStyle = (section) => {
   let style = "";
@@ -46,13 +47,21 @@ export function InvoicePreview({ setStep }) {
   const { loading, setLoading } = useLoadingStore();
   const [showModal, setShowModal] = useState(false);
   const { company } = useCompanyStore();
+  const { clientId } = useClientStore();
   const currentPath = usePathname();
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const share = searchParams.get("share");
+
+  console.log("Client Id: ", clientId);
 
   useEffect(() => {
     // Return if not creating new invoice
     if (currentPath !== "/invoices/create") {
-      console.log("Not creating new invoice");
+      console.log(currentPath);
+      if (share) setShowModal(true);
+      console.log(typeof share);
       return;
     }
 
@@ -86,8 +95,8 @@ export function InvoicePreview({ setStep }) {
         };
 
         // Fetch client details based on clientId provided
-        if (updatedInvoice.clientId) {
-          const clientInfo = await fetchClientId(updatedInvoice.clientId);
+        if (clientId) {
+          const clientInfo = await fetchClientId(clientId);
           updatedInvoice = { ...updatedInvoice, ...clientInfo };
 
           console.log("updatedInvoice: ", updatedInvoice);
@@ -143,7 +152,7 @@ export function InvoicePreview({ setStep }) {
         }
         const newInvoice = await postInvoice(baseInvoice);
 
-        router.push("/invoices/" + newInvoice._id);
+        router.push("/invoices/" + newInvoice._id + "?share=true");
       } else {
         await saveInvoice(template._id);
       }
