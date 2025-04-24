@@ -1,8 +1,8 @@
-import User from "../../../../models/user.model";
+import User from "@/models/user.model";
 import { auth } from "@clerk/nextjs/server";
-import connectDB from "../../../../lib/mongodb";
+import connectDB from "@/lib/mongodb";
 import { NextResponse } from "next/server";
-import Template from "../../../../models/template.model";
+import Template from "@/models/template.model";
 
 export async function POST(req) {
   try {

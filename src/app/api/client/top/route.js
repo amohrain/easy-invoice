@@ -1,11 +1,11 @@
 // pages/api/clients/top-five.js
 import { auth } from "@clerk/nextjs/server";
-import connectDB from "../../../../lib/mongodb";
+import connectDB from "@/lib/mongodb";
 import mongoose from "mongoose";
 import { ObjectId } from "mongoose";
-import Invoice from "../../../../models/invoice.model";
+import Invoice from "@/models/invoice.model";
 import { NextResponse } from "next/server";
-import { getMongoUser } from "../../../../lib/getMongoUser";
+import { getMongoUser } from "@/lib/getMongoUser";
 
 export async function GET(req) {
   try {

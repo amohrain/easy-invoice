@@ -11,9 +11,9 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { Loading } from "../../components/Loading";
-import LeftBar from "../../components/LeftBar";
-import { useInvoiceStore } from "../../store/useInvoice";
+import { Loading } from "@/components/Loading";
+import LeftBar from "@/components/LeftBar";
+import { useInvoiceStore } from "@/store/useInvoice";
 
 export default function ClientsPage() {
   const [clients, setClients] = useState([]);

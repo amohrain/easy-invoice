@@ -1,8 +1,8 @@
 // components/InvoiceViewer.js
 
 import { useEffect, useState } from "react";
-import { getPdfMake } from "../lib/pdfmake";
-import { generatePdfDocDefinition } from "../lib/generatePdfDocDefinition";
+import { getPdfMake } from "@/lib/pdfmake";
+import { generatePdfDocDefinition } from "@/lib/generatePdfDocDefinition";
 
 async function prepareInvoice(invoice) {
   // Convert the logo to base64 if needed

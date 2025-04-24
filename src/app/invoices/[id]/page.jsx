@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect } from "react";
-import { InvoicePreview } from "../../../components/InvoicePreview";
-import { useInvoiceStore } from "../../../store/useInvoice";
+import { InvoicePreview } from "@/components/InvoicePreview";
+import { useInvoiceStore } from "@/store/useInvoice";
 import { useParams } from "next/navigation";
-import LeftBar from "../../../components/LeftBar";
-import { useTemplateStore } from "../../../store/useTemplate";
+import LeftBar from "@/components/LeftBar";
+import { useTemplateStore } from "@/store/useTemplate";
 import { Link, Link2, Printer, Save } from "lucide-react";
-import DownloadIcon from "../../../components/DownloadIcon";
+import DownloadIcon from "@/components/DownloadIcon";
 
 function InvoicePage() {
   const { id } = useParams();

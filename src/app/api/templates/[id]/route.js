@@ -1,5 +1,5 @@
-import Template from "../../../../models/template.model";
-import connectDB from "../../../../lib/mongodb";
+import Template from "@/models/template.model";
+import connectDB from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 
 export async function GET(request, { params }) {

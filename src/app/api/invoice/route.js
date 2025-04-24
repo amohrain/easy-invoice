@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import connectDB from "../../../lib/mongodb.js";
-import Invoice from "../../../models/invoice.model";
+import connectDB from "@/lib/mongodb.js";
+import Invoice from "@/models/invoice.model";
 import { auth } from "@clerk/nextjs/server";
-import { getMongoUser } from "../../../lib/getMongoUser";
-import Client from "../../../models/client.model.js";
+import { getMongoUser } from "@/lib/getMongoUser";
+import Client from "@/models/client.model.js";
 
 // function to create an invoice
 export async function POST(request) {

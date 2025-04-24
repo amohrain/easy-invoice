@@ -1,13 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
-import LeftBar from "../../components/LeftBar";
-import InvoiceTable from "../../components/InvoiceTable";
-import { useInvoiceStore } from "../../store/useInvoice";
-import { getInvoiceStats } from "../../lib/getInvoiceStats";
+import LeftBar from "@/components/LeftBar";
+import InvoiceTable from "@/components/InvoiceTable";
+import { useInvoiceStore } from "@/store/useInvoice";
+import { getInvoiceStats } from "@/lib/getInvoiceStats";
 import Link from "next/link";
-import DailyRevenueChart from "../../components/DailyRevenueChart";
-import { Loading } from "../../components/Loading";
-import { useCompanyStore } from "../../store/useCompany";
+import DailyRevenueChart from "@/components/DailyRevenueChart";
+import { Loading } from "@/components/Loading";
+import { useCompanyStore } from "@/store/useCompany";
 
 // This is a simple invoicing dashboard page using React and Tailwind CSS.
 

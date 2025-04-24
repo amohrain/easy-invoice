@@ -1,4 +1,4 @@
-import { dummyInvoice } from "../lib/dummyInvoice";
+import { dummyInvoice } from "@/lib/dummyInvoice";
 
 // Function to get Tailwind alignment classes
 const getAlignmentClass = (alignment) => {

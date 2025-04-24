@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import connectDB from "../../../../lib/mongodb";
-import User from "../../../../models/user.model";
+import connectDB from "@/lib/mongodb";
+import User from "@/models/user.model";
 
 export async function GET(request, { params }) {
   const id = params.id;

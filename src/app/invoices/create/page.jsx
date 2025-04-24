@@ -1,20 +1,20 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import TypingPlaceholder from "../../../components/TypingPlaceholder";
-import { handleInvoiceGenerate } from "../../../lib/openai";
-import { Loading } from "../../../components/Loading";
-import { InvoicePreview } from "../../../components/InvoicePreview";
-import LeftBar from "../../../components/LeftBar";
-import InvoiceViewer from "../../../components/InvoiceViewer";
-import DownloadInvoiceButton from "../../../components/DownloadInvoiceButton";
-import { useCompanyStore } from "../../../store/useCompany";
-import { useTemplateStore } from "../../../store/useTemplate";
-import { dummyInvoice } from "../../../lib/dummyInvoice";
-import { useInvoiceStore } from "../../../store/useInvoice";
+import TypingPlaceholder from "@/components/TypingPlaceholder";
+import { handleInvoiceGenerate } from "@/lib/openai";
+import { Loading } from "@/components/Loading";
+import { InvoicePreview } from "@/components/InvoicePreview";
+import LeftBar from "@/components/LeftBar";
+import InvoiceViewer from "@/components/InvoiceViewer";
+import DownloadInvoiceButton from "@/components/DownloadInvoiceButton";
+import { useCompanyStore } from "@/store/useCompany";
+import { useTemplateStore } from "@/store/useTemplate";
+import { dummyInvoice } from "@/lib/dummyInvoice";
+import { useInvoiceStore } from "@/store/useInvoice";
 import { Link2, Printer, Save } from "lucide-react";
-import DownloadIcon from "../../../components/DownloadIcon";
-import { useStepsStore } from "../../../store/useSteps";
-import { useLoadingStore } from "../../../store/useLoading";
+import DownloadIcon from "@/components/DownloadIcon";
+import { useStepsStore } from "@/store/useSteps";
+import { useLoadingStore } from "@/store/useLoading";
 
 function Dashboard() {
   const [step, setStep] = useState(1);

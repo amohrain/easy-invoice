@@ -1,9 +1,9 @@
 import { usePathname, useSearchParams } from "next/navigation";
-import { calculateInvoice } from "../lib/calculate";
-import { useCompanyStore } from "../store/useCompany";
-import { useInvoiceStore } from "../store/useInvoice";
-import { useTemplateStore } from "../store/useTemplate";
-import { useLoadingStore } from "../store/useLoading";
+import { calculateInvoice } from "@/lib/calculate";
+import { useCompanyStore } from "@/store/useCompany";
+import { useInvoiceStore } from "@/store/useInvoice";
+import { useTemplateStore } from "@/store/useTemplate";
+import { useLoadingStore } from "@/store/useLoading";
 import { useEffect, useState } from "react";
 import {
   ArrowLeftCircle,
@@ -15,10 +15,10 @@ import {
   Undo2,
 } from "lucide-react";
 import DownloadIcon from "./DownloadIcon";
-import { useStepsStore } from "../store/useSteps";
+import { useStepsStore } from "@/store/useSteps";
 import { set } from "mongoose";
 import { useRouter } from "next/navigation";
-import { useClientStore } from "../store/useClient";
+import { useClientStore } from "@/store/useClient";
 
 const getTextStyle = (section) => {
   let style = "";

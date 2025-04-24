@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
-import connectDB from "../../../../lib/mongodb";
+import connectDB from "@/lib/mongodb";
 import { NextResponse } from "next/server";
-import Client from "../../../../models/client.model";
-import { getMongoUser } from "../../../../lib/getMongoUser";
+import Client from "@/models/client.model";
+import { getMongoUser } from "@/lib/getMongoUser";
 
 export async function GET(request, { params }) {
   try {

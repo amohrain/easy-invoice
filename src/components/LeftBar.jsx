@@ -7,7 +7,7 @@ import { PiInvoice } from "react-icons/pi";
 import { MdOutlineRoomPreferences } from "react-icons/md";
 import { BsBuilding } from "react-icons/bs";
 import { PanelsTopLeftIcon, Plus } from "lucide-react";
-import { useCompanyStore } from "../store/useCompany";
+import { useCompanyStore } from "@/store/useCompany";
 import { TbUserShield } from "react-icons/tb";
 import { FaPeopleGroup, FaWpforms } from "react-icons/fa6";
 

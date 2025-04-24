@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
-import connectDB from "../../../../lib/mongodb";
-import User from "../../../../models/user.model";
-import { getMongoUser } from "../../../../lib/getMongoUser";
+import connectDB from "@/lib/mongodb";
+import User from "@/models/user.model";
+import { getMongoUser } from "@/lib/getMongoUser";
 import { NextResponse } from "next/server";
 
 export async function PUT(request) {

@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import connectDB from "../../../../lib/mongodb.js";
-import { getMongoUser } from "../../../../lib/getMongoUser";
-import Invoice from "../../../../models/invoice.model";
+import connectDB from "@/lib/mongodb.js";
+import { getMongoUser } from "@/lib/getMongoUser";
+import Invoice from "@/models/invoice.model";
 
 // Function to generate a serial invoice number
 export async function GET(request) {

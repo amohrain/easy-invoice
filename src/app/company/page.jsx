@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import LeftBar from "../../components/LeftBar";
-import { useCompanyStore } from "../../store/useCompany";
-import InvoiceNumberFormat from "../../components/InvoiceNumberFormat";
+import LeftBar from "@/components/LeftBar";
+import { useCompanyStore } from "@/store/useCompany";
+import InvoiceNumberFormat from "@/components/InvoiceNumberFormat";
 
 function Company() {
   const {

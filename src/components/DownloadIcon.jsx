@@ -1,8 +1,8 @@
 "use client";
 import { Download } from "lucide-react";
-import { generatePdfDocDefinition } from "../lib/generatePdfDocDefinition";
-import { useInvoiceStore } from "../store/useInvoice";
-import { useTemplateStore } from "../store/useTemplate";
+import { generatePdfDocDefinition } from "@/lib/generatePdfDocDefinition";
+import { useInvoiceStore } from "@/store/useInvoice";
+import { useTemplateStore } from "@/store/useTemplate";
 
 export default function DownloadIcon() {
   const { template } = useTemplateStore();

@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import LeftBar from "../../components/LeftBar";
-import InvoiceTable from "../../components/InvoiceTable";
+import LeftBar from "@/components/LeftBar";
+import InvoiceTable from "@/components/InvoiceTable";
 
 function Invoices() {
   return (

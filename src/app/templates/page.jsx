@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useTemplateStore } from "../../store/useTemplate";
-import LeftBar from "../../components/LeftBar";
-import { useCompanyStore } from "../../store/useCompany";
+import { useTemplateStore } from "@/store/useTemplate";
+import LeftBar from "@/components/LeftBar";
+import { useCompanyStore } from "@/store/useCompany";
 import { useUser } from "@clerk/nextjs";
-import { MiniInvoice } from "../../components/MiniInvoice";
+import { MiniInvoice } from "@/components/MiniInvoice";
 
 function Templates() {
   const {

@@ -1,4 +1,4 @@
-import User from "../models/user.model";
+import User from "@/models/user.model";
 import connectDB from "./mongodb.js";
 
 export const getMongoUser = async (clerkId) => {

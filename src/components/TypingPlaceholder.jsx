@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useClientStore } from "../store/useClient";
+import { useClientStore } from "@/store/useClient";
 
 const TypingPlaceholder = ({ text, setText }) => {
   const aiText = [
@@ -46,6 +46,7 @@ const TypingPlaceholder = ({ text, setText }) => {
   }, []);
 
   const startTyping = () => {
+    setClientId("");
     let i = 0;
     const textToType = aiText[Math.floor(Math.random() * aiText.length)];
     setPlaceholder("");

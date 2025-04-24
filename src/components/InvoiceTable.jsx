@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useInvoiceStore } from "../store/useInvoice";
+import { useInvoiceStore } from "@/store/useInvoice";
 import { Check, CheckSquare, Plus, Square, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import InvoiceFilter from "./InvoiceFilter";
 import InvoiceSort from "./InvoiceSort";
-import { useCompanyStore } from "../store/useCompany";
+import { useCompanyStore } from "@/store/useCompany";
 
 function InvoiceTable() {
   const { invoiceData, getInvoices } = useInvoiceStore();

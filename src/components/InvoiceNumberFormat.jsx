@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useCompanyStore } from "../store/useCompany";
+import { useCompanyStore } from "@/store/useCompany";
 
 export default function InvoiceNumberFormat() {
   const [invoiceFormat, setInvoiceFormat] = useState("");

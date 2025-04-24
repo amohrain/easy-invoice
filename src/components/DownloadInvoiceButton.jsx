@@ -1,5 +1,5 @@
 "use client";
-import { generatePdfDocDefinition } from "../lib/generatePdfDocDefinition";
+import { generatePdfDocDefinition } from "@/lib/generatePdfDocDefinition";
 
 export default function DownloadInvoiceButton({ template, invoice }) {
   const handleDownload = async () => {

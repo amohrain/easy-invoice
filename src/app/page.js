@@ -1,13 +1,13 @@
 "use client";
 // import BookmarkPreview from "@/components/BookmarkPreview";
-import Nav from "../components/Nav";
-import TypingPlaceholder from "../components/TypingPlaceholder";
-import PricingPlan from "../components/PricingPlan";
+import Nav from "@/components/Nav";
+import TypingPlaceholder from "@/components/TypingPlaceholder";
+import PricingPlan from "@/components/PricingPlan";
 import { useState } from "react";
 import Link from "next/link";
-import Footer from "../components/Footer";
-import SEO from "../components/SEO";
-import Plans from "../components/Plans";
+import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import Plans from "@/components/Plans";
 
 export default function Home() {
   const [text, setText] = useState("");

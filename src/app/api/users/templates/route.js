@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { getMongoUser } from "../../../../lib/getMongoUser";
-import Template from "../../../../models/template.model";
+import { getMongoUser } from "@/lib/getMongoUser";
+import Template from "@/models/template.model";
 
 // This route is used to get the user's templates
 export async function GET(request) {

@@ -1,9 +1,9 @@
 // File: app/api/templates/route.js
 import { NextResponse } from "next/server";
-import connectDB from "../../../lib/mongodb";
-import Template from "../../../models/template.model";
+import connectDB from "@/lib/mongodb";
+import Template from "@/models/template.model";
 import { auth } from "@clerk/nextjs/server";
-import { getMongoUser } from "../../../lib/getMongoUser";
+import { getMongoUser } from "@/lib/getMongoUser";
 
 export async function POST(request) {
   try {

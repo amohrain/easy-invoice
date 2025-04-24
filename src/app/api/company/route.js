@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import connectDB from "../../../lib/mongodb";
-import Company from "../../../models/company.model";
+import connectDB from "@/lib/mongodb";
+import Company from "@/models/company.model";
 import { auth } from "@clerk/nextjs/server";
-import { getMongoUser } from "../../../lib/getMongoUser";
+import { getMongoUser } from "@/lib/getMongoUser";
 
 // This function handles the POST request to create a new company
 
