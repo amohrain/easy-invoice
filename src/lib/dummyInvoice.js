@@ -11,15 +11,15 @@ export const dummyInvoice = {
   clientAddress: "New Delhi, India",
   clientTaxId: "GSTIN-11223344",
   invoiceNumber: "INV-123",
-  dueDate: "",
-  paymentTerms: "",
+  dueDate: "2025-05-24",
+  paymentTerms: "Net 30",
   subtotal: 300,
   tax: 40.5,
   discount: 120,
   totalAmount: 328.6,
   currencySymbol: "$",
-  notes: "dg",
-  paymentInstructions: "dg",
+  notes: "Thank you for your business!",
+  paymentInstructions: "Please make payment to the bank account provided.",
   items: [
     {
       description: "Toothbrush",
@@ -50,5 +50,5 @@ export const dummyInvoice = {
       percent: 9,
     },
   ],
-  issuedAt: "sdg",
+  issuedAt: "2025-04-24",
 };

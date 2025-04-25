@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { templates } from "@/lib/templatesData";
 
 export const useTemplateStore = create((set, get) => ({
   loading: false,
@@ -33,6 +34,9 @@ export const useTemplateStore = create((set, get) => ({
   // Fetch user templates
   userTemplates: null,
   getUsersTemplates: async (templateId) => {
+    set({ userTemplates: templates });
+    set({ template: templates[0] });
+    return;
     try {
       const response = await fetch("/api/users/templates");
       const data = await response.json();

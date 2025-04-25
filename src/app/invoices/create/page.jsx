@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import TypingPlaceholder from "@/components/TypingPlaceholder";
 import { handleInvoiceGenerate } from "@/lib/openai";
 import { Loading } from "@/components/Loading";
-import { InvoicePreview } from "@/components/InvoicePreview";
+import { InvoicePreview } from "../../../components/test/InvoicePreview";
 import LeftBar from "@/components/LeftBar";
 import InvoiceViewer from "@/components/InvoiceViewer";
 import DownloadInvoiceButton from "@/components/DownloadInvoiceButton";
@@ -31,7 +31,7 @@ function Dashboard() {
 
   useEffect(() => {
     async function fetchData() {
-      const templa = await getUsersTemplates();
+      await getUsersTemplates();
       await getCompanies();
       await getInvoiceId();
     }
@@ -41,8 +41,8 @@ function Dashboard() {
   const handleGenerate = async () => {
     try {
       setLoading(true);
-      const invoice = await handleInvoiceGenerate(text);
-      // const invoice = dummyInvoice;
+      // const invoice = await handleInvoiceGenerate(text);
+      const invoice = dummyInvoice;
       setInvoice(invoice);
       setLoading(false);
       setStep(2);
@@ -60,66 +60,37 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex flex-row h-screen">
-      <LeftBar className="" />
+    <div className="flex w-full flex-row h-screen">
+      {/* <LeftBar className="" /> */}
       <div className="flex flex-col w-full h-full bg-base-100 justify-center">
-        <div className="w-full px-8 self-center flex flex-row gap-8">
+        <div className="w-full px-8 h-full self-center flex flex-row gap-8 overflow-y-auto">
           {step == 2 && (
-            <div className="flex flex-col">
-              <InvoicePreview setStep={setStep} />
+            // <InvoicePreview setStep={setStep}/>
+            <InvoicePreview currentInvoice={invoice} />
+          )}
+          {step == 1 && (
+            <div className="flex w-full items-center justify-center flex-col gap-4">
+              <h1 className="text-center font-bold text-4xl space-x-10">
+                {step == 1 ? "Enter your prompt" : "Your invoice is ready!"}
+              </h1>
+              <div className="p-4 flex flex-col border w-full max-w-3xl border-gray-100 shadow-base shadow-2xl rounded-2xl">
+                <TypingPlaceholder text={text} setText={setText} />
+                <div className="flex flex-row">
+                  <div className="flex flex-row w-full gap-2">
+                    <button></button>
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleGenerate();
+                    }}
+                    className="btn btn-accent rounded-3xl"
+                  >
+                    Generate
+                  </button>
+                </div>
+              </div>
             </div>
           )}
-
-          <div className="flex w-full items-center justify-center flex-col gap-4">
-            <h1 className="text-center font-bold text-4xl space-x-10">
-              {step == 1 ? "Enter your prompt" : "Your invoice is ready!"}
-            </h1>
-            <div className="p-4 flex flex-col border w-full max-w-3xl border-gray-100 shadow-base shadow-2xl rounded-2xl">
-              <TypingPlaceholder text={text} setText={setText} />
-              <div className="flex flex-row">
-                <div className="flex flex-row w-full gap-2">
-                  <button></button>
-                </div>
-                <button
-                  onClick={() => {
-                    handleGenerate();
-                  }}
-                  className="btn btn-accent rounded-3xl"
-                >
-                  Generate
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* {step == 3 && (
-            <div className="mt-24 flex flex-col gap-4">
-              <h1 className="text-center font-bold text-4xl space-x-10">
-                Your generated invoice. Click to download or save, whatever
-              </h1>
-              <div className="h-fit p-4 flex flex-col justify-center items-center gap-4">
-                <InvoiceViewer
-                  invoice={invoice}
-                  template={template}
-                ></InvoiceViewer>
-                <DownloadInvoiceButton template={template} invoice={invoice} />
-                <div className="self-center flex">
-                  <button
-                    onClick={() => setStep((prev) => prev - 1)}
-                    className="btn btn-primary w-1/2"
-                  >
-                    Back
-                  </button>
-                  <button
-                    onClick={handleSaveInvoice}
-                    className="btn btn-primary w-1/2"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            </div>
-          )} */}
         </div>
       </div>
     </div>
