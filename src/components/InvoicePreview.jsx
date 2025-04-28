@@ -1,3 +1,4 @@
+import React from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { calculateInvoice } from "@/lib/calculate";
 import { useCompanyStore } from "@/store/useCompany";
@@ -15,25 +16,24 @@ import {
   Undo2,
 } from "lucide-react";
 import DownloadIcon from "./DownloadIcon";
-import { useStepsStore } from "@/store/useSteps";
-import { set } from "mongoose";
 import { useRouter } from "next/navigation";
 import { useClientStore } from "@/store/useClient";
-
-const getTextStyle = (section) => {
-  let style = "";
-  if (!section) return style;
-  if (section.bold) style += " font-bold";
-  if (section.italic) style += " italic";
-  if (section.alignment === "left") style += " text-left self-start";
-  if (section.alignment === "right") style += " text-right self-end";
-  if (section.alignment === "center") style += " text-center self-center";
-  // if (section.uppercase) style += " uppercase";
-  if (section.fontSize) style += ` text-[${section.fontSize}px]`;
-  return style;
-};
+import Link from "next/link";
 
 export function InvoicePreview({ setStep }) {
+  const getTextStyle = (section) => {
+    let style = "";
+    if (!section) return style;
+    if (section.bold) style += " font-bold";
+    if (section.italic) style += " italic";
+    if (section.alignment === "left") style += " text-left self-start";
+    if (section.alignment === "right") style += " text-right self-end";
+    if (section.alignment === "center") style += " text-center self-center";
+    // if (section.uppercase) style += " uppercase";
+    if (section.fontSize) style += ` text-[${section.fontSize}px]`;
+    return style;
+  };
+
   const { template, setTemplate, userTemplates } = useTemplateStore();
   const {
     invoice,
@@ -92,6 +92,11 @@ export function InvoicePreview({ setStep }) {
           invoiceId,
           company: company._id,
           invoiceNumber: `${invoicePrefix}/${invoiceId}/${invoiceSuffix}`,
+          issuedAt: new Date().toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
         };
 
         // Fetch client details based on clientId provided
@@ -177,112 +182,219 @@ export function InvoicePreview({ setStep }) {
   };
 
   return (
-    <div className="relative flex flex-row items-center gap-4">
-      <button
-        disabled={userTemplates.findIndex((t) => t == template) === 0}
-        onClick={() => {
-          const index = userTemplates.findIndex((t) => t === template);
-          setTemplate(userTemplates[index - 1]);
-        }}
-        className="btn btn-circle btn-neutral"
-      >
-        <ArrowLeftCircle className="size-8" />
-      </button>
-      <div className="flex flex-col bg-base-300 p-4 rounded-xl gap-4">
-        <div className="w-[210px] sm:w-[420px] aspect-[210/297] border border-gray-300 bg-white p-4 shadow-md sm:text-md text-sm rounded-md">
+    <div className="flex flex-col w-full h-full">
+      {/* Sticky Top Bar */}
+      <div className="sticky top-0 z-10 bg-base-200 rounded border-base-300 shadow-sm py-4 px-8 flex justify-between items-center">
+        <div className="flex items-center space-x-4">
+          <h3 className="font-bold text-lg">
+            {currentPath === "/invoices/create"
+              ? "New Invoice"
+              : "Edit Invoice"}
+          </h3>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="flex flex-row justify-around items-center gap-4">
+            <Undo2
+              className="cursor-pointer hover:text-accent"
+              onClick={handleBack}
+            />
+            <Save
+              className="cursor-pointer hover:text-accent"
+              onClick={() => {
+                handleSave();
+              }}
+            />
+
+            <DownloadIcon className="cursor-pointer hover:text-accent" />
+            {currentPath !== "/invoices/create" && (
+              <Link2
+                className="cursor-pointer hover:text-accent"
+                onClick={handleLinkShare}
+              />
+            )}
+            {invoice.changesSuggested && (
+              <Link href={currentPath + "/suggested"}>
+                <button className="btn btn-info">View Suggestions</button>
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="p-6 w-full max-w-5xl self-center">
+        <div className="flex flex-col w-full border shadow rounded-lg p-6 h-fit">
           {template.structure.map((section) => (
             <div
               key={section.section}
-              className={`flex flex-col text-md text-black ${getTextStyle(
+              className={`flex flex-col text-md mb-5 ${getTextStyle(
                 section.style
               )}`}
             >
-              {section.section === "horizontal-line" && (
-                <hr className="my-2 text-primary" />
+              {section.title &&
+                section.fields.some((field) => {
+                  const key = field.key;
+                  return (
+                    key in invoice &&
+                    invoice[key] !== undefined &&
+                    invoice[key] !== ""
+                  );
+                }) && <h3 className="font-bold mb-2">{section.title}</h3>}
+              {section.section === "title" && (
+                <h2
+                  className={`text-3xl font-semibold mb-4
+                    ${getTextStyle(section.style)}`}
+                >
+                  {invoice.invoiceTitle} Preview
+                </h2>
               )}
+              {section.section === "horizontal-line" && <hr className="" />}
               {section.section === "logo" && invoice.businessLogo && (
                 <img
                   src={invoice.businessLogo}
-                  className={`h-10 w-fit ${getTextStyle(section.style)}`}
+                  className={`h-16 w-fit ${getTextStyle(section.style)}`}
                 />
               )}
               {section.columns && (
-                <div className="flex w-full">
+                <div className="flex w-full justify-between">
                   {section.columns.map((col, colIndex) => (
                     <div
                       key={colIndex}
-                      className={`flex-1 ${getTextStyle(col.style)}`}
+                      className={`flex flex-col ${getTextStyle(col.style)}`}
                     >
-                      {col.fields?.map((field) =>
-                        field === "businessLogo" ? (
-                          <img
-                            key={field}
-                            src={invoice.businessLogo || null}
-                            className="h-10 w-auto"
-                          />
-                        ) : (
-                          <div
-                            key={field}
-                            className={invoice[field] ? "" : "text-gray-400"}
-                          >
-                            <strong
-                              onClick={(e) => e.target.nextSibling?.focus()}
-                              className="cursor-pointer"
+                      {col.fields?.map(
+                        ({ key, placeholder, value, bold, size }) =>
+                          key === "businessLogo" ? (
+                            <img
+                              key={key}
+                              src={invoice.businessLogo || null}
+                              className={`h-16 w-auto ${getTextStyle(
+                                col.style
+                              )}`}
+                            />
+                          ) : (
+                            <div
+                              key={key}
+                              className={invoice[key] ? "" : "text-gray-400"}
                             >
-                              {!invoice[field]
-                                ? template.labels?.[field] || field
-                                : ""}
-                            </strong>
-                            <span
-                              contentEditable
-                              suppressContentEditableWarning
-                              onBlur={(e) =>
-                                handleChange(field, e.target.innerText.trim())
-                              }
-                              className="whitespace-pre-wrap border-b border-dashed border-gray-200 cursor-text outline-none focus:text-black"
-                              onClick={(e) => e.target.focus()}
-                            >
-                              {invoice[field] ?? ""}
-                            </span>
-                          </div>
-                        )
+                              <strong
+                                onClick={(e) => e.target.nextSibling?.focus()} // Shift focus to input when label is clicked
+                                className="cursor-pointer"
+                              >
+                                {!invoice[key] || value
+                                  ? placeholder || key
+                                  : ""}
+                              </strong>
+                              <span
+                                contentEditable
+                                suppressContentEditableWarning
+                                onBlur={(e) =>
+                                  handleChange(key, e.target.innerText.trim())
+                                }
+                                className={`cursor-text outline-none focus: ${
+                                  bold && "font-bold"
+                                }`}
+                                onClick={(e) => e.target.focus()} // Ensure clicking text also focuses
+                              >
+                                {invoice[key] ?? ""}
+                              </span>
+                            </div>
+                          )
                       )}
+                      {/* {col.fields?.map((field) =>
+                    field === "businessLogo" ? (
+                      <img
+                        key={field}
+                        src={invoice.businessLogo || null}
+                        className="h-16 w-auto"
+                      />
+                    ) : (
+                      <div
+                        key={field}
+                        className={invoice[field] ? "" : "text-base-content/50"}
+                      >
+                        <strong
+                          onClick={(e) => e.target.nextSibling?.focus()}
+                          className="cursor-pointer"
+                        >
+                          {!invoice[field] || template.labels[field][1]
+                            ? template.labels?.[field][0] || field
+                            : ""}
+                        </strong>
+                        <span
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) =>
+                            handleChange(field, e.target.innerText.trim())
+                          }
+                          className={`cursor-text outline-none focus: ${
+                            template.labels[field][2] && "font-bold "
+                          }`}
+                          onClick={(e) => e.target.focus()}
+                        >
+                          {invoice[field] ?? ""}
+                        </span>
+                      </div>
+                    )
+                  )} */}
                     </div>
                   ))}
                 </div>
               )}
-              {section.fields?.map((field) => (
-                <div
-                  key={field}
-                  className={invoice[field] ? "" : "text-gray-400"}
-                >
-                  <strong
-                    onClick={(e) => e.target.nextSibling?.focus()} // Shift focus to input when label is clicked
-                    className="cursor-pointer"
+              {section.fields?.map(
+                ({ key, placeholder, value, bold, size }) => (
+                  <div
+                    key={key}
+                    className={invoice[key] ? "" : "text-gray-400"}
                   >
-                    {!invoice[field] ? template.labels?.[field] || field : ""}
-                  </strong>
-                  <span
-                    contentEditable
-                    suppressContentEditableWarning
-                    onBlur={(e) =>
-                      handleChange(field, e.target.innerText.trim())
-                    }
-                    className="whitespace-pre-wrap border-b border-dashed border-gray-200 cursor-text outline-none focus:text-black"
-                    onClick={(e) => e.target.focus()} // Ensure clicking text also focuses
-                  >
-                    {invoice[field] ?? ""}
-                  </span>
-                </div>
-              ))}
+                    <strong
+                      onClick={(e) => e.target.nextSibling?.focus()} // Shift focus to input when label is clicked
+                      className="cursor-pointer"
+                    >
+                      {!invoice[key] || value ? placeholder || key : ""}
+                    </strong>
+                    <span
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) =>
+                        handleChange(key, e.target.innerText.trim())
+                      }
+                      className={`cursor-text outline-none focus: ${
+                        bold && "font-bold"
+                      }`}
+                      onClick={(e) => e.target.focus()} // Ensure clicking text also focuses
+                    >
+                      {invoice[key] ?? ""}
+                    </span>
+                  </div>
+                )
+              )}
 
+              {/* // Todo borders */}
               {section.section === "items" && (
-                <table className="w-full border-collapse text-xs mt-2">
+                <table className="w-full mt-2 border-collapse">
                   <thead>
-                    <tr className="border-b">
-                      {section.items.map((col) => (
-                        <th key={col} className="text-center">
-                          {col.charAt(0).toUpperCase() + col.slice(1)}
+                    <tr
+                      className={`${
+                        section.tableStyle.headerFillColor
+                          ? `bg-[${section.tableStyle.headerFillColor}]`
+                          : ""
+                      }`}
+                    >
+                      {section.items?.map((col) => (
+                        <th
+                          key={col.key}
+                          className={`text-${col.alignment || "left"} ${
+                            col.bold ? "font-bold" : ""
+                          } p-2`}
+                          style={{
+                            fontSize: col.size,
+                            border: section.tableStyle.border
+                              ? "1px solid #ddd"
+                              : "none",
+                          }}
+                        >
+                          {col.placeholder ||
+                            col.key.charAt(0).toUpperCase() + col.key.slice(1)}
                         </th>
                       ))}
                     </tr>
@@ -291,20 +403,31 @@ export function InvoicePreview({ setStep }) {
                     {invoice.items?.map((item, index) => (
                       <tr key={index}>
                         {section.items.map((col) => (
-                          <td key={col} className="text-center">
+                          <td
+                            key={col.key}
+                            className={`text-${col.alignment || "left"} font-${
+                              col.bold ? "bold" : "normal"
+                            } p-2`}
+                            style={{
+                              fontSize: col.size,
+                              border: section.tableStyle.border
+                                ? "1px solid #ddd"
+                                : "none",
+                            }}
+                          >
                             <span
                               contentEditable
                               suppressContentEditableWarning
                               onBlur={(e) =>
                                 handleItemChange(
                                   index,
-                                  col,
+                                  col.key,
                                   e.target.innerText.trim()
                                 )
                               }
-                              className="border-b border-dashed cursor-text"
+                              className="cursor-text"
                             >
-                              {item[col] ?? "-"}
+                              {item[col.key] ?? "-"}
                             </span>
                           </td>
                         ))}
@@ -315,150 +438,127 @@ export function InvoicePreview({ setStep }) {
               )}
 
               {section.section === "totals" && (
-                <div className="mt-2 text-right">
-                  <div>
-                    {template.labels?.subtotal || "Sub total "}:
-                    <span
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={(e) =>
-                        handleChange(
-                          "subtotal",
-                          e.target.innerText.trim() || "0"
-                        )
-                      }
-                      className="border-b border-dashed cursor-text"
-                    >
-                      {invoice.subtotal ?? ""}
-                    </span>
-                  </div>
-
-                  {invoice.deductions?.map((deduct, index) => (
-                    <div key={index}>
+                <div className="flex justify-end">
+                  <div className="w-64">
+                    <div className="flex justify-between">
+                      {template.labels?.subtotal || "Sub Total: "}
                       <span
                         contentEditable
                         suppressContentEditableWarning
-                        onBlur={(e) => {
-                          const deductions = [...invoice.deductions];
-                          deductions[index].description =
-                            e.target.innerText.trim();
-                          setInvoice({
-                            ...invoice,
-                            deductions,
-                          });
-                        }}
-                        className="border-b border-dashed cursor-text"
+                        onBlur={(e) =>
+                          handleChange(
+                            "subtotal",
+                            e.target.innerText.trim() || "0"
+                          )
+                        }
+                        className="cursor-text"
                       >
-                        {deduct.description ?? ""}
-                      </span>
-                      -
-                      <span
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => {
-                          const deductions = [...invoice.deductions];
-                          deductions[index].amount =
-                            e.target.innerText.trim() || "0";
-                          setInvoice({
-                            ...invoice,
-                            deductions,
-                          });
-                        }}
-                        className="border-b border-dashed cursor-text"
-                      >
-                        {deduct.amount ?? "0"}
+                        {invoice.subtotal ?? ""}
                       </span>
                     </div>
-                  ))}
 
-                  {invoice.additions?.map((add, index) => (
-                    <div key={index}>
+                    {invoice.deductions?.map((deduct, index) => (
+                      <div key={index} className="flex justify-between">
+                        <span
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => {
+                            const deductions = [...invoice.deductions];
+                            deductions[index].description =
+                              e.target.innerText.trim();
+                            setInvoice({
+                              ...invoice,
+                              deductions,
+                            });
+                          }}
+                          className="cursor-text"
+                        >
+                          {deduct.description ?? ""}
+                        </span>
+                        <span
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => {
+                            const deductions = [...invoice.deductions];
+                            deductions[index].amount =
+                              e.target.innerText.trim() || "0";
+                            setInvoice({
+                              ...invoice,
+                              deductions,
+                            });
+                          }}
+                          className="cursor-text"
+                        >
+                          {deduct.amount ?? "0"}
+                        </span>
+                      </div>
+                    ))}
+                    {invoice.additions?.map((add, index) => (
+                      <div key={index} className="flex justify-between">
+                        <span
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => {
+                            const newAdditions = [...invoice.additions];
+                            newAdditions[index].description =
+                              e.target.innerText.trim();
+                            setInvoice({
+                              ...invoice,
+                              additions: newAdditions,
+                            });
+                          }}
+                          className="cursor-text"
+                        >
+                          {add.description ?? ""}
+                        </span>
+                        <span
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => {
+                            const newAdditions = [...invoice.additions];
+                            newAdditions[index].amount =
+                              e.target.innerText.trim() || "0";
+                            setInvoice({
+                              ...invoice,
+                              additions: newAdditions,
+                            });
+                          }}
+                          className=" cursor-text"
+                        >
+                          {add.amount ?? "0"}
+                        </span>
+                      </div>
+                    ))}
+
+                    <div className="flex justify-between font-bold border-t border-gray-300 pt-2 mt-2">
+                      {template.labels?.totalAmount || "Total"}
                       <span
                         contentEditable
                         suppressContentEditableWarning
-                        onBlur={(e) => {
-                          const newAdditions = [...invoice.additions];
-                          newAdditions[index].description =
-                            e.target.innerText.trim();
-                          setInvoice({
-                            ...invoice,
-                            additions: newAdditions,
-                          });
-                        }}
-                        className="border-b border-dashed cursor-text"
+                        onBlur={(e) =>
+                          handleChange(
+                            "totalAmount",
+                            e.target.innerText.trim() || "0"
+                          )
+                        }
+                        className=" cursor-text"
                       >
-                        {add.description ?? ""}
-                      </span>
-                      +
-                      <span
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => {
-                          const newAdditions = [...invoice.additions];
-                          newAdditions[index].amount =
-                            e.target.innerText.trim() || "0";
-                          setInvoice({
-                            ...invoice,
-                            additions: newAdditions,
-                          });
-                        }}
-                        className="border-b border-dashed cursor-text"
-                      >
-                        {add.amount ?? "0"}
+                        {invoice.totalAmount ?? ""}
                       </span>
                     </div>
-                  ))}
-
-                  <div className="font-bold">
-                    {template.labels?.totalAmount || "Total"}
-                    <span
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={(e) =>
-                        handleChange(
-                          "totalAmount",
-                          e.target.innerText.trim() || "0"
-                        )
-                      }
-                      className="border-b border-dashed cursor-text"
-                    >
-                      {invoice.totalAmount ?? ""}
-                    </span>
                   </div>
                 </div>
               )}
             </div>
           ))}
-        </div>
-        <div className="flex flex-row justify-around gap-4">
-          <Undo2 className="cursor-pointer" onClick={handleBack} />
-          <Save
-            className="cursor-pointer"
-            onClick={() => {
-              handleSave();
-            }}
-          />
-
-          <DownloadIcon className="cursor-pointer" />
-          {currentPath !== "/invoices/create" && (
-            <Link2 className="cursor-pointer" onClick={handleLinkShare} />
-          )}
+          {/* <FixedBottomBar
+          onBack={handleBack}
+          onSave={handleSave}
+          onLinkShare={handleLinkShare}
+          currentPath={currentPath}
+        /> */}
         </div>
       </div>
-
-      <button
-        disabled={
-          userTemplates.findIndex((t) => t == template) ===
-          userTemplates.length - 1
-        }
-        onClick={() => {
-          const index = userTemplates.findIndex((t) => t === template);
-          setTemplate(userTemplates[index + 1]);
-        }}
-        className="btn btn-circle btn-neutral"
-      >
-        <ArrowRightCircle className="size-8" />
-      </button>
       {showModal && <ShareLinkModal setShowModal={setShowModal} />}
     </div>
   );

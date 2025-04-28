@@ -1,179 +1,437 @@
+// Function to map border style
+function mapBorderStyle(borderStyle) {
+  switch (borderStyle) {
+    case "allBorders":
+      return {
+        outsideBorders: true,
+        insideVerticalBorders: true,
+        dashedBorders: false,
+      };
+    case "noBorders":
+      return {
+        outsideBorders: false,
+        insideVerticalBorders: false,
+        insideHorizontalBorders: false,
+        dashedBorders: false,
+      };
+    case "headerLineOnly":
+      return {
+        outsideBorders: false,
+        insideVerticalBorders: false,
+        insideHorizontalBorders: false,
+        headerHorizontalBorder: true,
+        dashedBorders: false,
+        borderWidth: 2,
+        cellPadding: 0,
+      };
+    case "dashedBorders":
+      return {
+        outsideBorders: true,
+        insideVerticalBorders: true,
+        insideHorizontalBorders: true,
+        headerHorizontalBorder: true,
+        dashedBorders: true,
+      };
+    case "vibeBorders":
+      return {
+        outsideBorders: true,
+        insideVerticalBorders: true,
+        insideHorizontalBorders: false,
+        headerHorizontalBorder: true,
+        dashedBorders: false,
+      };
+    case "supermanBorders":
+      return {
+        outsideBorders: true,
+        insideVerticalBorders: true,
+        insideHorizontalBorders: true,
+        dashedBorders: false,
+        borderColor: "#ff0000",
+        borderWidth: 2,
+      };
+
+    default:
+      return {
+        outsideBorders: true,
+        insideVerticalBorders: true,
+        insideHorizontalBorders: true,
+        headerHorizontalBorder: true,
+        dashedBorders: false,
+      };
+  }
+}
+
+// Function to resolve colors
+function resolveColor(template, colorKey) {
+  const colors = template.style?.colors || {};
+  return colors[colorKey] || "#000000";
+}
+
+// Function to control table borders
+export function getCustomTableLayout(tableStyle = {}, template) {
+  const {
+    outsideBorders = true,
+    insideVerticalBorders = true,
+    insideHorizontalBorders = true,
+    headerHorizontalBorder = false,
+    borderColor = "content",
+    borderWidth = 1,
+    dashedBorders = false,
+    cellPadding = 4,
+  } = tableStyle;
+
+  const lineStyle = dashedBorders
+    ? { dash: { length: 4 } } // small dashes
+    : undefined;
+
+  return {
+    paddingLeft: () => cellPadding,
+    paddingRight: () => cellPadding,
+    paddingTop: () => cellPadding,
+    paddingBottom: () => cellPadding,
+
+    // hLineWidth: function (i, node) {
+    //   if (i === 0 && headerHorizontalBorder) return borderWidth; // top header line
+    //   if (i === node.table.body.length) return outsideBorders ? borderWidth : 0; // bottom line
+    //   return insideHorizontalBorders ? borderWidth : 0; // inside lines
+    // },
+
+    hLineWidth: function (i, node) {
+      const headerRows = node.table.headerRows || 1; // how many header rows (usually 1)
+
+      if (i === headerRows && headerHorizontalBorder) return borderWidth; // bottom of header
+      if (i === 0 && outsideBorders) return borderWidth; // top outside border
+      if (i === node.table.body.length && outsideBorders) return borderWidth; // bottom outside border
+      return insideHorizontalBorders ? borderWidth : 0; // inside row lines
+    },
+
+    vLineWidth: function (i, node) {
+      if (i === 0 || i === node.table.widths.length)
+        return outsideBorders ? borderWidth : 0; // left and right outside
+      return insideVerticalBorders ? borderWidth : 0; // inside verticals
+    },
+
+    hLineColor: function (i, node) {
+      return resolveColor(template, borderColor);
+    },
+
+    vLineColor: function (i, node) {
+      return resolveColor(template, borderColor);
+    },
+
+    ...(lineStyle && {
+      hLineStyle: function (i, node) {
+        return lineStyle;
+      },
+      vLineStyle: function (i, node) {
+        return lineStyle;
+      },
+    }),
+  };
+}
+
+// pdfMake version of your invoice rendering logic
 export function generatePdfDocDefinition(template, invoice) {
   const content = [];
 
-  template.structure.forEach(async (section) => {
-    // Title
-    if (section.title) {
+  if (template.style.borders) {
+    const margin = template.style.borders.margins;
+    const radius = template.style.borders.radius;
+    content.push({
+      canvas: [
+        {
+          type: "rect",
+          x: 10 + margin,
+          y: 10 + margin,
+          w: 575 - 2 * margin,
+          h: 822 - 2 * margin,
+          r: radius,
+          lineColor: resolveColor(template, template.style.borders.color),
+          lineWidth: 1,
+        },
+      ],
+      absolutePosition: { x: 0, y: 0 },
+    });
+  }
+
+  template.structure.forEach((section) => {
+    const sectionContent = [];
+
+    if (section.section === "title") {
       content.push({
-        text: section.title,
-        style: section.style,
-        bold: true,
-        margin: [0, 10, 0, 0],
+        text: invoice.invoiceTitle || "Invoicey",
+        bold: section.style.bold || true,
+        alignment: section.style.alignment,
+        fontSize: section.style.size || 22,
       });
     }
-    // Horizontal line
+
+    if (section.title && section.fields?.some((field) => invoice[field.key])) {
+      sectionContent.push({
+        text: section.title,
+        alignment: section.style.alignment,
+        margin: [0, 0, 0, 8],
+        bold: true,
+      });
+    }
+
     if (section.section === "horizontal-line") {
-      content.push({
+      sectionContent.push({
         canvas: [
           {
             type: "line",
             x1: 0,
-            y1: 20,
-            x2: 520,
-            y2: 20,
-            lineWidth: 2,
-            marginbottom: 20,
+            y1: 0,
+            x2: 515,
+            y2: 0,
+            lineColor: resolveColor(template, section.style.color),
+            lineWidth: section.style.width || 2,
           },
         ],
       });
-      return;
     }
 
-    // Logo
     if (section.section === "logo" && invoice.businessLogo) {
-      content.push({
-        image: invoice.businessLogo,
-        fit: [50, 50],
-        style: section.style,
-        // margin: [0, 0, 0, 0],
+      sectionContent.push({
+        image: invoice.businessLogo, // base64 or URL
+        alignment: section.style?.alignment || "left",
+        fit: [150, 50],
+        margin: [0, 0, 0, 0],
       });
-      return;
     }
 
-    // Columns (e.g. header)
     if (section.columns) {
-      const cols = section.columns.map((col) => {
-        const fieldTexts = col.fields
-          ?.map((field) => {
-            if (field === "businessLogo") {
-              return {
-                image: invoice.businessLogo,
-                fit: [50, 50],
-                alignment: col.style?.alignment || "left",
-                // margin: [0, 0, 0, 0],
-              };
+      const columns = section.columns.map((col) => {
+        const colContent = [];
+
+        col.fields?.forEach(({ key, placeholder, value, bold, size }) => {
+          if (!invoice[key]) return;
+          if (key === "businessLogo" && invoice.businessLogo) {
+            colContent.push({
+              image: invoice.businessLogo,
+              fit: [150, 50],
+              margin: [0, 0, 0, 0],
+            });
+          } else {
+            const inlineContent = [];
+
+            // If "value" is true, show the placeholder first (in bold)
+            if (value) {
+              inlineContent.push({
+                text: placeholder || key,
+                bold: true,
+                fontSize: size || 12,
+              });
             }
 
-            const val = invoice[field];
-            // || template.labels?.[field] || field;
-            return {
-              text: val,
-              style: col.style || {},
-              bold: !invoice[field],
-              marginbottom:
-                field === col.fields?.[col.fields.length - 1] // last field
-                  ? 10
-                  : 0,
-            };
-          })
-          .filter((item) => item?.text || item?.image);
+            // Then show the actual field value
+            inlineContent.push({
+              text: invoice[key] || "",
+              bold: bold || false,
+              fontSize: size || 12,
+            });
 
-        return {
-          stack: fieldTexts?.length ? fieldTexts : [{ text: " " }],
-          width: "*",
-        };
+            colContent.push({
+              text: inlineContent, // <-- use inline array here
+              alignment: col.style?.alignment || "left",
+              margin: [0, 2, 0, 2],
+            });
+          }
+        });
+
+        return { stack: colContent, width: "*", style: col.style || {} };
       });
-
-      content.push({ columns: cols, columnGap: 10 });
-      return;
+      sectionContent.push({ columns, columnGap: 20 });
     }
 
-    // Items Table
+    if (section.fields) {
+      section.fields.forEach(({ key, placeholder, value, bold, size }) => {
+        if (!invoice[key]) return;
+        const inlineContent = [];
+        // If "value" is true, show placeholder first (in bold)
+        if (value) {
+          inlineContent.push({
+            text: placeholder || key,
+            bold: true,
+            alignment: section.style.alignment || "left",
+            fontSize: size || 12,
+          });
+        }
+
+        // Then the actual field value
+        inlineContent.push({
+          text: invoice[key] || "",
+          bold: bold || false,
+          fontSize: size || 12,
+        });
+
+        sectionContent.push({
+          text: inlineContent, // inline array
+          margin: [0, 2, 0, 2],
+        });
+      });
+    }
 
     if (section.section === "items") {
-      const tableBody = [
-        section.items.map((col) => ({
-          text: col.charAt(0).toUpperCase() + col.slice(1),
-          bold: true,
-        })),
-        ...invoice.items.map((item) =>
-          section.items.map((col) => ({
-            text: item[col]?.toString() || "-",
-          }))
-        ),
-      ];
+      const tableBody = [];
 
-      content.push({
+      tableBody.push(
+        section.items.map((col) => ({
+          text: col.placeholder || col.key,
+          margin: Array(4).fill(section.tableStyle?.cellPadding ?? 2),
+          bold: col.bold || true,
+          fontSize: col.size || 12,
+          alignment: col.alignment || "left",
+          fillColor: section.tableStyle?.headerFillColor || undefined,
+        }))
+      );
+
+      invoice.items?.forEach((item) => {
+        const row = section.items.map((col) => ({
+          text: item[col.key] ?? "-",
+          margin: Array(4).fill(section.tableStyle?.cellPadding ?? 2),
+          fontSize: col.size || 12,
+          alignment: col.alignment || "left",
+        }));
+        tableBody.push(row);
+      });
+
+      sectionContent.push({
         table: {
           headerRows: 1,
-          widths: section.items.map((col) =>
-            col === "description" ? "*" : "auto"
-          ),
-
-          //   widths: Array(section.items.length).fill("*"),
+          widths: ["*", ...Array(section.items.length - 1).fill("auto")],
           body: tableBody,
         },
-        layout: "headerLineOnly",
-        margin: [0, 10, 0, 10],
-      });
 
-      return;
+        layout: getCustomTableLayout(
+          {
+            ...section.tableStyle,
+            ...mapBorderStyle(section.tableStyle.borderStyle),
+          },
+          template
+        ),
+      });
     }
 
-    // Totals
     if (section.section === "totals") {
-      const totals = [];
+      const totalRows = [];
 
-      totals.push({
-        text: `${template.labels?.subtotal || "Subtotal"}: ${
-          invoice.currencySymbol
-        }${invoice.subtotal || 0}`,
-        style: section.style || {},
+      // Subtotal
+      totalRows.push([
+        {
+          text: template.labels?.subtotal || "Subtotal:",
+          alignment: "left",
+          border: [false, false, false, false],
+        },
+        {
+          text: invoice.subtotal ?? "",
+          alignment: "right",
+          border: [false, false, false, false],
+        },
+      ]);
+
+      // Deductions
+      invoice.deductions?.forEach((deduct) => {
+        totalRows.push([
+          {
+            text: deduct.description ?? "",
+            alignment: "left",
+            border: [false, false, false, false],
+          },
+          {
+            text: deduct.amount ?? "0",
+            alignment: "right",
+            border: [false, false, false, false],
+          },
+        ]);
       });
 
-      invoice.deductions?.forEach((d) => {
-        totals.push({
-          text: `${d.description} -${invoice.currencySymbol}${d.amount}`,
-          style: section.style || {},
-        });
+      // Additions
+      invoice.additions?.forEach((add) => {
+        totalRows.push([
+          {
+            text: add.description ?? "",
+            alignment: "left",
+            border: [false, false, false, false],
+          },
+          {
+            text: add.amount ?? "0",
+            alignment: "right",
+            border: [false, false, false, false],
+          },
+        ]);
       });
 
-      invoice.additions?.forEach((a) => {
-        totals.push({
-          text: `${a.description} +${invoice.currencySymbol}${a.amount}`,
-          style: section.style || {},
-        });
-      });
+      // Total Amount row (with top border only)
+      totalRows.push([
+        {
+          text: template.labels?.totalAmount || "Total:",
+          alignment: "left",
+          bold: true,
+          border: [false, true, false, false], // top border
+        },
+        {
+          text: invoice.totalAmount ?? "",
+          alignment: "right",
+          bold: true,
+          border: [false, true, false, false], // top border
+        },
+      ]);
 
-      totals.push({
-        text: `${template.labels?.totalAmount || "Total"} ${
-          invoice.currencySymbol
-        }${invoice.totalAmount || 0}`,
-        bold: true,
-        style: section.style || {},
-        margin: [0, 10, 0, 10],
-      });
+      const borderWidth = section.style?.borderWidth || 1;
+      const borderColor = resolveColor(template, section.style?.borderColor);
 
-      content.push(...totals);
-      return;
+      const totalsTable = {
+        table: {
+          widths: ["*", "auto"],
+          body: totalRows,
+        },
+        layout: {
+          defaultBorder: false, // no auto borders
+          hLineColor: function (i, node) {
+            return i === node.table.body.length - 1 ? borderColor : "#000000"; // default black if not defined
+          },
+          hLineWidth: function (i) {
+            return borderWidth;
+          },
+          paddingLeft: function (i) {
+            return i === 0 && 0;
+          },
+          paddingRight: function (i, node) {
+            return i === node.table.widths.length - 1 ? 0 : 8;
+          },
+          paddingTop: function (i, node) {
+            return i === node.table.body.length - 1 && 8;
+          },
+          paddingBottom: function (i, node) {
+            return i === node.table.body.length - 2 && 8;
+          },
+        },
+        margin: [0, 8, 0, 0],
+      };
+
+      sectionContent.push({
+        columns: [
+          { width: "60%", text: "" }, // empty left side
+          { width: "40%", stack: [totalsTable] },
+        ],
+        columnGap: 10,
+      });
     }
 
-    // Fields
-    if (section.fields) {
-      content.push(
-        section.fields.map((field) => {
-          return {
-            text: invoice[field] || "",
-            style: section.style || {},
-            bold: !invoice[field],
-            marginBottom:
-              field === section.fields?.[section.fields.length - 1] ? 10 : 0,
-          };
-        })
-      );
-    }
+    content.push({
+      stack: sectionContent,
+      margin: [0, 0, 0, 10], // Consistent section spacing
+    });
   });
 
-  return {
+  const docDefinition = {
     content,
-    styles: {
-      header: { fontSize: 18, bold: true },
-      subheader: { fontSize: 14, bold: true },
-      small: { fontSize: 14 },
-    },
     defaultStyle: {
       fontSize: 14,
-      margin: [0, 10],
+      color: resolveColor(template, template.style.defaultStyle.fontColor),
     },
   };
+
+  return docDefinition;
 }

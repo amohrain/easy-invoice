@@ -34,7 +34,7 @@ function InvoicePage() {
     <div className="flex w-full h-screen">
       <LeftBar />
       <div className="flex w-full justify-center">
-        <div className="flex flex-col p-4 gap-4 justify-center self-center">
+        <div className="w-full h-full self-center flex flex-row gap-8 overflow-y-auto">
           <InvoicePreview />
         </div>
       </div>

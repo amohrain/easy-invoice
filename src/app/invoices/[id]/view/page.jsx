@@ -1,17 +1,13 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
 import React from "react";
+import { InvoiceView } from "../../../../components/InvoiceView";
 
 function InvoiceViewPage() {
-  const { user } = useUser();
-  if (!user) {
-    return (
-      <div className="flex w-full h-screen items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
-  return <div>InvoiceViewPage</div>;
+  return (
+    <div>
+      <InvoiceView />
+    </div>
+  );
 }
 
 export default InvoiceViewPage;

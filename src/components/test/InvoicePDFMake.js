@@ -1,30 +1,24 @@
-// import pdfMake from "pdfmake/build/pdfmake";
-// import pdfFonts from "pdfmake/build/vfs_fonts";
-
-// pdfMake.vfs = pdfFonts.pdfMake.vfs;
-
 import { getPdfMake } from "../../lib/pdfmake";
-
 const pdfMake = await getPdfMake();
 
-const generateInvoicePDF = (invoice, template) => {
-  // Set default styles based on template
-  const defaultStyle = {
-    fontSize: template.fontSize || 12,
-  };
+// // This file contains the functions to generate invoices with pdfMake
+// const pdfMake = require("pdfmake/build/pdfmake");
+// const pdfFonts = require("pdfmake/build/vfs_fonts");
+// pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-  // Helper function to create label-value text
-  const labelValue = (label, value) => {
-    if (!value) return null;
-    return { text: `${label}${value}`, margin: [0, 2, 0, 2] };
-  };
-
-  // Generate document content based on template structure
+/**
+ * Generates a PDF invoice document based on invoice data and template
+ * @param {Object} invoice - The invoice data
+ * @param {Object} template - The template configuration
+ * @returns {Object} - pdfMake document definition
+ */
+function generateInvoicePdf(invoice, template) {
+  // Initialize document definition
   const docDefinition = {
     content: [],
     styles: {
       header: {
-        fontSize: 16,
+        fontSize: 18,
         bold: true,
         margin: [0, 0, 0, 10],
       },
@@ -40,322 +34,400 @@ const generateInvoicePDF = (invoice, template) => {
         fillColor: "#f0f0f0",
       },
       totalsTable: {
-        margin: [0, 10, 0, 10],
+        margin: [0, 10, 0, 0],
       },
     },
-    defaultStyle: defaultStyle,
+    defaultStyle: {
+      fontSize: template.fontSize || 12,
+    },
   };
 
-  // Process each section of the template
+  // Process each section from the template structure
   template.structure.forEach((section) => {
     switch (section.section) {
       case "header":
-        const headerColumns = [];
-
-        section.columns.forEach((column) => {
-          const columnContent = [];
-
-          column.fields.forEach((field) => {
-            if (field === "businessLogo" && invoice.businessLogo) {
-              columnContent.push({
-                image: invoice.businessLogo,
-                width: 150,
-                alignment: column.style?.alignment || "left",
-              });
-            } else if (field === "businessName") {
-              columnContent.push({
-                text: invoice[field],
-                style: {
-                  fontSize: section.style?.fontSize || 16,
-                  bold: section.style?.bold || true,
-                  alignment: column.style?.alignment || "left",
-                },
-                margin: [0, 2, 0, 5],
-              });
-            } else {
-              const label = template.labels[field] || "";
-              columnContent.push(labelValue(label, invoice[field]));
-            }
-          });
-
-          headerColumns.push({
-            stack: columnContent,
-            width: "*",
-            alignment: column.style?.alignment || "left",
-          });
-        });
-
-        docDefinition.content.push({
-          columns: headerColumns,
-          margin: [0, 0, 0, 20],
-        });
+        addHeaderSection(docDefinition, section, invoice);
         break;
-
       case "horizontal-line":
-        docDefinition.content.push({
-          canvas: [
-            {
-              type: "line",
-              x1: 0,
-              y1: 0,
-              x2: 515,
-              y2: 0,
-              lineWidth: 1,
-              lineColor: "#cccccc",
-            },
-          ],
-          margin: [0, 10, 0, 10],
-        });
+        addHorizontalLine(docDefinition);
         break;
-
       case "clientDetails":
-        const clientStack = [];
-
-        if (section.title) {
-          clientStack.push({ text: section.title, style: "subheader" });
-        }
-
-        section.fields.forEach((field) => {
-          if (invoice[field]) {
-            const label = template.labels[field] || "";
-            clientStack.push(labelValue(label, invoice[field]));
-          }
-        });
-
-        docDefinition.content.push({
-          stack: clientStack,
-          margin: [0, 0, 0, 10],
-        });
+        addClientDetails(docDefinition, section, invoice);
         break;
-
       case "invoiceDetails":
-        const invoiceDetailsColumns = [];
-
-        section.columns.forEach((column) => {
-          const columnContent = [];
-
-          column.fields.forEach((field) => {
-            const label = template.labels[field] || "";
-            columnContent.push(labelValue(label, invoice[field]));
-          });
-
-          invoiceDetailsColumns.push({
-            stack: columnContent,
-            width: "*",
-            alignment: column.style?.alignment || "left",
-          });
-        });
-
-        docDefinition.content.push({
-          columns: invoiceDetailsColumns,
-          margin: [0, 0, 0, 10],
-        });
+        addInvoiceDetails(docDefinition, section, invoice);
         break;
-
       case "items":
-        // Define table headers
-        const tableHeaders = section.items.map((item) => ({
-          text: item.charAt(0).toUpperCase() + item.slice(1),
-          style: "tableHeader",
-        }));
-
-        // Define table body
-        const tableBody = invoice.items.map((item) => {
-          return section.items.map((field) => {
-            if (field === "rate" || field === "total") {
-              return {
-                text: `${invoice.currencySymbol}${item[field].toFixed(2)}`,
-                alignment: "right",
-              };
-            }
-            return { text: item[field].toString() };
-          });
-        });
-
-        docDefinition.content.push({
-          table: {
-            headerRows: 1,
-            widths: section.items.map((item) =>
-              item === "description" ? "*" : "auto"
-            ),
-            body: [tableHeaders, ...tableBody],
-          },
-          layout: {
-            hLineWidth: function (i, node) {
-              return 1;
-            },
-            vLineWidth: function (i, node) {
-              return 1;
-            },
-            hLineColor: function (i, node) {
-              return "#dddddd";
-            },
-            vLineColor: function (i, node) {
-              return "#dddddd";
-            },
-          },
-          margin: [0, 10, 0, 10],
-        });
+        addItemsTable(docDefinition, section, invoice);
         break;
-
       case "totals":
-        const totalsData = [];
-
-        // Subtotal
-        totalsData.push([
-          { text: "Subtotal:", alignment: "left" },
-          {
-            text: `${invoice.currencySymbol}${invoice.subtotal.toFixed(2)}`,
-            alignment: "right",
-          },
-        ]);
-
-        // Deductions
-        invoice.deductions.forEach((deduction) => {
-          totalsData.push([
-            { text: deduction.description, alignment: "left" },
-            {
-              text: `${invoice.currencySymbol}${deduction.amount.toFixed(2)}`,
-              alignment: "right",
-            },
-          ]);
-        });
-
-        // Additions
-        invoice.additions.forEach((addition) => {
-          totalsData.push([
-            { text: addition.description, alignment: "left" },
-            {
-              text: `${invoice.currencySymbol}${addition.amount.toFixed(2)}`,
-              alignment: "right",
-            },
-          ]);
-        });
-
-        // Total amount
-        totalsData.push([
-          { text: "Total:", alignment: "left", bold: true },
-          {
-            text: `${invoice.currencySymbol}${invoice.totalAmount.toFixed(2)}`,
-            alignment: "right",
-            bold: true,
-          },
-        ]);
-
-        docDefinition.content.push({
-          layout: "noBorders",
-          table: {
-            widths: ["*", "auto"],
-            body: totalsData,
-          },
-          style: "totalsTable",
-          margin: [0, 10, 0, 10],
-          alignment: "right",
-        });
+        addTotals(docDefinition, section, invoice);
         break;
-
-      case "footer":
-        const footerStack = [];
-
-        section.fields.forEach((field) => {
-          if (invoice[field]) {
-            const label = template.labels[field] || "";
-            footerStack.push({
-              text: label,
-              style: "subheader",
-              margin: [0, 10, 0, 0],
-            });
-            footerStack.push({ text: invoice[field], margin: [0, 5, 0, 0] });
-          }
-        });
-
-        if (footerStack.length > 0) {
-          docDefinition.content.push({
-            stack: footerStack,
-            margin: [0, 20, 0, 0],
-          });
-        }
+      case "notes":
+      case "Payment instructions":
+        addNotesSection(docDefinition, section, invoice);
         break;
-
       case "space":
         docDefinition.content.push({ text: "", margin: [0, 10, 0, 10] });
-        break;
-
-      case "break":
-        docDefinition.content.push({ text: "", pageBreak: "before" });
         break;
     }
   });
 
-  return pdfMake.createPdf(docDefinition);
-};
+  return docDefinition;
+}
 
-// Utility function to handle logo image for pdfmake
-const getBase64FromUrl = async (url) => {
-  if (!url) return null;
+/**
+ * Add header section with logo and business details
+ */
+function addHeaderSection(docDefinition, section, invoice) {
+  const headerColumns = [];
 
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
+  // Process each column in the header
+  section.columns.forEach((column) => {
+    const columnContent = [];
+
+    if (column.fields) {
+      column.fields.forEach((field) => {
+        if (field.key === "businessLogo" && invoice.businessLogo) {
+          // columnContent.push({
+          //   image: invoice.businessLogo,
+          //   width: 150,
+          //   alignment: column.style?.alignment || "left",
+          // });
+        } else if (invoice[field.key] && invoice[field.key] !== "") {
+          const fieldLabel = field.value ? field.placeholder : "";
+          const fieldText = fieldLabel
+            ? `${fieldLabel}${invoice[field.key]}`
+            : invoice[field.key];
+
+          columnContent.push({
+            text: fieldText,
+            bold: field.bold,
+            fontSize: field.size,
+            alignment: column.style?.alignment || "left",
+          });
+        }
+      });
+    }
+
+    if (columnContent.length > 0) {
+      headerColumns.push(columnContent);
+    }
+  });
+
+  // Only add the header if we have content
+  if (headerColumns.length > 0) {
+    docDefinition.content.push({
+      columns: headerColumns.map((column) => ({
+        stack: column,
+        width: "*",
+      })),
+      columnGap: 10,
     });
-  } catch (error) {
-    console.error("Error fetching image:", error);
-    return null;
   }
-};
 
-// Main function to generate and download the PDF
-export const generateAndDownloadInvoicePDF = async (invoice, template) => {
-  // If there's a logo, convert it to base64 for pdfMake
-  if (invoice.businessLogo) {
-    try {
-      const base64Logo = await getBase64FromUrl(invoice.businessLogo);
-      if (base64Logo) {
-        invoice = { ...invoice, businessLogo: base64Logo };
-      }
-    } catch (error) {
-      console.error("Error processing logo:", error);
+  // Add the invoice title
+  docDefinition.content.push({
+    text: "INVOICE",
+    style: "header",
+    alignment: "center",
+    margin: [0, 20, 0, 10],
+  });
+}
+
+/**
+ * Add horizontal line
+ */
+function addHorizontalLine(docDefinition) {
+  docDefinition.content.push({
+    canvas: [
+      {
+        type: "line",
+        x1: 0,
+        y1: 0,
+        x2: 515,
+        y2: 0,
+        lineWidth: 1,
+        lineColor: "#dddddd",
+      },
+    ],
+    margin: [0, 5, 0, 5],
+  });
+}
+
+/**
+ * Add client details section
+ */
+function addClientDetails(docDefinition, section, invoice) {
+  const clientContent = [];
+
+  if (section.title) {
+    clientContent.push({
+      text: section.title,
+      style: "subheader",
+    });
+  }
+
+  section.fields.forEach((field) => {
+    if (invoice[field.key] && invoice[field.key] !== "") {
+      const fieldLabel = field.value ? "" : field.placeholder;
+      const fieldText = fieldLabel
+        ? `${fieldLabel}${invoice[field.key]}`
+        : invoice[field.key];
+
+      clientContent.push({
+        text: fieldText,
+        bold: field.bold,
+        fontSize: field.size,
+        margin: [0, 2, 0, 0],
+      });
+    }
+  });
+
+  if (clientContent.length > 0) {
+    docDefinition.content.push({
+      stack: clientContent,
+      margin: [0, 10, 0, 10],
+    });
+  }
+}
+
+/**
+ * Add invoice details with columns layout
+ */
+function addInvoiceDetails(docDefinition, section, invoice) {
+  const detailColumns = [];
+
+  section.columns.forEach((column) => {
+    const columnContent = [];
+
+    if (column.fields) {
+      column.fields.forEach((field) => {
+        if (invoice[field.key] && invoice[field.key] !== "") {
+          const fieldLabel = field.placeholder || "";
+          const fieldText = `${fieldLabel}${invoice[field.key]}`;
+
+          columnContent.push({
+            text: fieldText,
+            bold: field.bold,
+            fontSize: field.size,
+            alignment: column.style?.alignment || "left",
+            margin: [0, 2, 0, 0],
+          });
+        }
+      });
+    }
+
+    if (columnContent.length > 0) {
+      detailColumns.push(columnContent);
+    }
+  });
+
+  if (detailColumns.length > 0) {
+    docDefinition.content.push({
+      columns: detailColumns.map((column) => ({
+        stack: column,
+        width: "*",
+      })),
+      columnGap: 10,
+      margin: [0, 10, 0, 10],
+    });
+  }
+}
+
+/**
+ * Add items table
+ */
+function addItemsTable(docDefinition, section, invoice) {
+  if (!invoice.items || invoice.items.length === 0) {
+    return;
+  }
+
+  // Create table headers based on columns
+  const tableHeaders = section.columns.map((col) => ({
+    text: col.placeholder || col.key,
+    style: "tableHeader",
+    alignment: col.alignment || "left",
+  }));
+
+  // Create table body rows from invoice items
+  const tableBody = invoice.items.map((item) => {
+    return section.columns.map((col) => ({
+      text: item[col.key] || "-",
+      alignment: col.alignment || "left",
+      bold: col.bold || false,
+    }));
+  });
+
+  // Combine headers and body
+  const tableData = [tableHeaders, ...tableBody];
+
+  // Define table layout
+  let layout = "lightHorizontalLines";
+  if (section.tableStyle) {
+    if (section.tableStyle.border) {
+      layout = "noBorders";
+    }
+    if (section.tableStyle.layout) {
+      layout = section.tableStyle.layout;
     }
   }
 
-  // Generate the PDF
-  const pdfDocGenerator = generateInvoicePDF(invoice, template);
+  docDefinition.content.push({
+    table: {
+      headerRows: 1,
+      widths: section.columns.map((col) => "*"),
+      body: tableData,
+    },
+    layout: layout,
+    margin: [0, 10, 0, 10],
+  });
+}
 
-  // Download the PDF
-  pdfDocGenerator.download(`invoice-${invoice.invoiceNumber}.pdf`);
+/**
+ * Add totals section
+ */
+function addTotals(docDefinition, section, invoice) {
+  const totalsData = [];
 
-  return pdfDocGenerator;
-};
-
-// Function to preview PDF in a new tab
-export const previewInvoicePDF = async (invoice, template) => {
-  // If there's a logo, convert it to base64 for pdfMake
-  if (invoice.businessLogo) {
-    try {
-      const base64Logo = await getBase64FromUrl(invoice.businessLogo);
-      if (base64Logo) {
-        invoice = { ...invoice, businessLogo: base64Logo };
-      }
-    } catch (error) {
-      console.error("Error processing logo:", error);
-    }
+  // Subtotal row
+  if (invoice.subtotal) {
+    totalsData.push([
+      { text: "Sub Total:", alignment: "right" },
+      { text: invoice.subtotal, alignment: "right" },
+    ]);
   }
 
-  // Generate the PDF
-  const pdfDocGenerator = generateInvoicePDF(invoice, template);
+  // Deductions
+  if (invoice.deductions && invoice.deductions.length > 0) {
+    invoice.deductions.forEach((deduct) => {
+      if (deduct.description && deduct.amount) {
+        totalsData.push([
+          { text: deduct.description, alignment: "right" },
+          { text: deduct.amount, alignment: "right" },
+        ]);
+      }
+    });
+  }
 
-  // Open the PDF in a new tab
-  pdfDocGenerator.open();
+  // Additions
+  if (invoice.additions && invoice.additions.length > 0) {
+    invoice.additions.forEach((add) => {
+      if (add.description && add.amount) {
+        totalsData.push([
+          { text: add.description, alignment: "right" },
+          { text: add.amount, alignment: "right" },
+        ]);
+      }
+    });
+  }
 
-  return pdfDocGenerator;
-};
+  // Total amount row
+  if (invoice.totalAmount) {
+    totalsData.push([
+      { text: "Total", alignment: "right", bold: true },
+      { text: invoice.totalAmount, alignment: "right", bold: true },
+    ]);
+  }
 
-export default {
-  generateAndDownloadInvoicePDF,
-  previewInvoicePDF,
+  if (totalsData.length > 0) {
+    docDefinition.content.push({
+      layout: "noBorders",
+      table: {
+        widths: ["*", 100],
+        body: totalsData,
+      },
+      style: "totalsTable",
+      margin: [0, 10, 0, 10],
+    });
+  }
+}
+
+/**
+ * Add notes or payment instructions section
+ */
+function addNotesSection(docDefinition, section, invoice) {
+  const content = [];
+
+  if (section.title) {
+    content.push({
+      text: section.title,
+      style: "subheader",
+    });
+  }
+
+  section.fields.forEach((field) => {
+    if (invoice[field.key] && invoice[field.key] !== "") {
+      const fieldLabel = field.value ? "" : field.placeholder;
+      const fieldText = fieldLabel
+        ? `${fieldLabel}${invoice[field.key]}`
+        : invoice[field.key];
+
+      content.push({
+        text: fieldText,
+        bold: field.bold,
+        fontSize: field.size,
+        margin: [0, 2, 0, 0],
+      });
+    }
+  });
+
+  if (content.length > 0) {
+    docDefinition.content.push({
+      stack: content,
+      margin: [0, 10, 0, 10],
+    });
+  }
+}
+
+/**
+ * Generate and download the PDF
+ */
+function downloadInvoicePdf(invoice, template, filename = "invoice.pdf") {
+  const docDefinition = generateInvoicePdf(invoice, template);
+  pdfMake.createPdf(docDefinition).download(filename);
+}
+
+/**
+ * Open the PDF in a new browser tab
+ */
+function openInvoicePdf(invoice, template) {
+  const docDefinition = generateInvoicePdf(invoice, template);
+  pdfMake.createPdf(docDefinition).open();
+}
+
+/**
+ * Get a data URL for the PDF
+ */
+async function getInvoicePdfDataUrl(invoice, template) {
+  return new Promise((resolve) => {
+    const docDefinition = generateInvoicePdf(invoice, template);
+    pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
+      resolve(dataUrl);
+    });
+  });
+}
+
+// Example usage:
+// const template = {...}; // Your template configuration
+// const invoice = {
+//   businessName: "Example Corp",
+//   businessAddress: "123 Main St",
+//   clientName: "John Doe",
+//   invoiceNumber: "INV-001",
+//   issuedAt: "2025-04-26",
+//   items: [
+//     { description: "Web Development", quantity: "1", rate: "1000", total: "1000" }
+//   ],
+//   subtotal: "1000",
+//   totalAmount: "1000"
+// };
+//
+// downloadInvoicePdf(invoice, template);
+
+export {
+  generateInvoicePdf,
+  downloadInvoicePdf,
+  openInvoicePdf,
+  getInvoicePdfDataUrl,
 };

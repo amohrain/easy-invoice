@@ -390,26 +390,212 @@ export const templates = [
   //     paymentInstructions: "Payment Instructions",
   //   },
   // },
+
+  // {
+  //   id: "4",
+  //   name: "Columns Business Invoice",
+  //   fontSize: 14,
+  //   structure: [
+  //     {
+  //       section: "header",
+  //       columns: [
+  //         {
+  //           fields: ["businessLogo"],
+  //           style: {
+  //             alignment: "left",
+  //           },
+  //         },
+  //         {
+  //           fields: [
+  //             "businessName",
+  //             "businessAddress",
+  //             "businessEmail",
+  //             "businessPhone",
+  //           ],
+  //           style: {
+  //             alignment: "right",
+  //           },
+  //         },
+  //       ],
+  //       style: {
+  //         alignment: "right",
+  //         // bold: true,
+  //         uppercase: true,
+  //         fontSize: 16,
+  //       },
+  //     },
+  //     { section: "horizontal-line" },
+  //     {
+  //       section: "clientDetails",
+  //       title: "Bill to",
+  //       style: {
+  //         alignment: "left",
+  //       },
+  //       fields: [
+  //         "clientName",
+  //         "clientAddress",
+  //         "clientPhone",
+  //         "clientEmail",
+  //         "clientTaxId",
+  //       ],
+  //     },
+
+  //     {
+  //       section: "invoiceDetails",
+  //       columns: [
+  //         {
+  //           style: {
+  //             alignment: "left",
+  //           },
+  //           fields: ["invoiceNumber", "issuedAt"],
+  //         },
+  //         {
+  //           style: {
+  //             alignment: "right",
+  //           },
+  //           fields: ["dueDate", "paymentTerms"],
+  //         },
+  //       ],
+  //     },
+  //     { section: "space" },
+  //     {
+  //       section: "items",
+
+  //       style: {
+  //         alignment: "left",
+  //       },
+
+  //       // columns: ["description", "quantity", "rate", "total"],
+  //       items: ["description", "quantity", "rate", "total"],
+  //     },
+  //     { section: "break" },
+  //     {
+  //       section: "totals",
+  //       style: {
+  //         alignment: "right",
+  //         // bold: true,
+  //       },
+  //     },
+  //     {
+  //       section: "notes",
+  //       title: "Notes",
+  //       fields: ["notes"],
+  //       style: {
+  //         alignment: "left",
+  //       },
+  //     },
+  //     {
+  //       section: "Payment instructions",
+  //       title: "Payment Instructions:",
+  //       fields: ["paymentInstructions"],
+  //       style: {
+  //         alignment: "left",
+  //       },
+  //     },
+  //   ],
+  //   labels: {
+  //     // Labels can be array
+  //     // First value is for Placeholder.
+  //     // Second Value is whether to print on invoice
+  //     // Third can be whether the field should be bold
+  //     // Fourth can be font size of each label
+  //     businessName: ["Company: ", false, true],
+  //     businessAddress: ["Address: ", false, false],
+  //     businessEmail: ["Email: ", false, false],
+  //     businessPhone: ["Phone: ", false, false],
+  //     businessLogo: ["", false, false],
+  //     clientName: ["Bill to: ", false, true],
+  //     clientEmail: ["Email: ", false, false],
+  //     clientPhone: ["Phone: ", false, false],
+  //     clientAddress: ["Address: ", false, false],
+  //     clientTaxId: ["", false, false],
+  //     invoiceNumber: ["Inv. No.: ", true, false],
+  //     issuedAt: ["Issue Date: ", true, false],
+  //     dueDate: ["Due Date: ", true, false],
+  //     paymentTerms: ["Payment terms: ", true, false],
+  //     subtotal: ["Sub Total: ", false, false],
+  //     tax: ["Add tax: ", false, false],
+  //     discount: ["Less: discount: ", false, false],
+  //     totalAmount: ["Total: ", false, false],
+  //     notes: ["Notes: ", false, false],
+  //     paymentInstructions: ["Payment instructions: ", false, false],
+  //   },
+  // },
+
   {
-    id: "4",
     name: "Columns Business Invoice",
-    fontSize: 14,
+    style: {
+      defaultStyle: {
+        size: 14,
+        fontColor: "content",
+      },
+      colors: {
+        content: "#111111",
+        primary: "#ebebeb",
+        accent: "#ebebeb",
+      },
+      borders: {
+        margins: 5,
+        lineWidth: 1,
+        radius: 0,
+        color: "primary",
+      },
+    },
     structure: [
+      {
+        section: "title",
+        style: {
+          bold: true,
+          size: 22,
+          alignment: "center",
+        },
+      },
       {
         section: "header",
         columns: [
           {
-            fields: ["businessLogo"],
+            fields: [],
             style: {
               alignment: "left",
             },
           },
           {
             fields: [
-              "businessName",
-              "businessAddress",
-              "businessEmail",
-              "businessPhone",
+              {
+                key: "businessLogo",
+                placeholder: "",
+                value: false,
+                bold: false,
+                size: 14,
+              },
+              {
+                key: "businessName",
+                placeholder: "Company: ",
+                value: false,
+                bold: true,
+                size: 20,
+              },
+              {
+                key: "businessAddress",
+                placeholder: "Address: ",
+                value: false,
+                bold: false,
+                size: 14,
+              },
+              {
+                key: "businessEmail",
+                placeholder: "Email: ",
+                value: true,
+                bold: false,
+                size: 14,
+              },
+              {
+                key: "businessPhone",
+                placeholder: "Phone: ",
+                value: false,
+                bold: false,
+                size: 14,
+              },
             ],
             style: {
               alignment: "right",
@@ -418,12 +604,16 @@ export const templates = [
         ],
         style: {
           alignment: "right",
-          // bold: true,
           uppercase: true,
           fontSize: 16,
         },
       },
-      { section: "horizontal-line" },
+      {
+        section: "horizontal-line",
+        style: {
+          color: "primary",
+        },
+      },
       {
         section: "clientDetails",
         title: "Bill to",
@@ -431,14 +621,43 @@ export const templates = [
           alignment: "left",
         },
         fields: [
-          "clientName",
-          "clientAddress",
-          "clientPhone",
-          "clientEmail",
-          "clientTaxId",
+          {
+            key: "clientName",
+            placeholder: "Bill to: ",
+            value: false,
+            bold: true,
+            size: 14,
+          },
+          {
+            key: "clientAddress",
+            placeholder: "Address: ",
+            value: false,
+            bold: false,
+            size: 14,
+          },
+          {
+            key: "clientPhone",
+            placeholder: "Phone: ",
+            value: false,
+            bold: false,
+            size: 14,
+          },
+          {
+            key: "clientEmail",
+            placeholder: "Email: ",
+            value: false,
+            bold: false,
+            size: 14,
+          },
+          {
+            key: "clientTaxId",
+            placeholder: "",
+            value: false,
+            bold: false,
+            size: 14,
+          },
         ],
       },
-
       {
         section: "invoiceDetails",
         columns: [
@@ -446,39 +665,115 @@ export const templates = [
             style: {
               alignment: "left",
             },
-            fields: ["invoiceNumber", "issuedAt"],
+            fields: [
+              {
+                key: "invoiceNumber",
+                placeholder: "Inv. No.: ",
+                value: true,
+                bold: false,
+                size: 14,
+              },
+              {
+                key: "issuedAt",
+                placeholder: "Issue Date: ",
+                value: true,
+                bold: false,
+                size: 14,
+              },
+            ],
           },
           {
             style: {
               alignment: "right",
             },
-            fields: ["dueDate", "paymentTerms"],
+            fields: [
+              {
+                key: "dueDate",
+                placeholder: "Due Date: ",
+                value: true,
+                bold: false,
+                size: 14,
+              },
+              {
+                key: "paymentTerms",
+                placeholder: "Payment terms: ",
+                value: true,
+                bold: false,
+                size: 14,
+              },
+            ],
           },
         ],
       },
       { section: "space" },
       {
         section: "items",
+        tableStyle: {
+          borderStyle: "headerLineOnly", // main style
+          borderColor: "primary",
+          border: true, // Just keeping for now for DOM's sake
+          // cellPadding: 4,
 
-        style: {
-          alignment: "left",
+          // Fine-grained overrides
+          // outsideBorders: true,
+          // insideVerticalBorders: true,
+          // insideHorizontalBorders: true,
+          // headerHorizontalBorder: true,
         },
-
-        // columns: ["description", "quantity", "rate", "total"],
-        items: ["description", "quantity", "rate", "total"],
+        items: [
+          {
+            key: "description",
+            placeholder: "Description",
+            bold: false,
+            alignment: "left",
+            size: 14,
+            border: true,
+          },
+          {
+            key: "quantity",
+            placeholder: "Quantity",
+            bold: false,
+            alignment: "center",
+            size: 14,
+          },
+          {
+            key: "rate",
+            placeholder: "Rate",
+            bold: false,
+            alignment: "center",
+            size: 14,
+          },
+          {
+            key: "total",
+            placeholder: "Total",
+            bold: true,
+            alignment: "center",
+            size: 14,
+          },
+        ],
       },
+
       { section: "break" },
       {
         section: "totals",
         style: {
+          borderColor: "primary",
+          borderWidth: 1,
           alignment: "right",
-          // bold: true,
         },
       },
       {
         section: "notes",
         title: "Notes",
-        fields: ["notes"],
+        fields: [
+          {
+            key: "notes",
+            placeholder: "Notes: ",
+            value: false,
+            bold: false,
+            size: 14,
+          },
+        ],
         style: {
           alignment: "left",
         },
@@ -486,39 +781,20 @@ export const templates = [
       {
         section: "Payment instructions",
         title: "Payment Instructions:",
-        fields: ["paymentInstructions"],
+        fields: [
+          {
+            key: "paymentInstructions",
+            placeholder: "Payment instructions: ",
+            value: true,
+            bold: false,
+            size: 14,
+          },
+        ],
         style: {
-          alignment: "left",
+          alignment: "right",
         },
       },
     ],
-    labels: {
-      // Labels can be array
-      // First value is for Placeholder.
-      // Second Value is whether to print on invoice
-      // Third can be whether the field should be bold
-      // Fourth can be font size of each label
-      businessName: ["Company: ", false, true],
-      businessAddress: ["Address: ", false, false],
-      businessEmail: ["Email: ", false, false],
-      businessPhone: ["Phone: ", false, false],
-      businessLogo: ["", false, false],
-      clientName: ["Bill to: ", false, true],
-      clientEmail: ["Email: ", false, false],
-      clientPhone: ["Phone: ", false, false],
-      clientAddress: ["Address: ", false, false],
-      clientTaxId: ["", false, false],
-      invoiceNumber: ["Inv. No.: ", true, false],
-      issuedAt: ["Issue Date: ", true, false],
-      dueDate: ["Due Date: ", true, false],
-      paymentTerms: ["Payment terms: ", true, false],
-      subtotal: ["Sub Total: ", false, false],
-      tax: ["Add tax: ", false, false],
-      discount: ["Less: discount: ", false, false],
-      totalAmount: ["Total: ", false, false],
-      notes: ["Notes: ", false, false],
-      paymentInstructions: ["Payment instructions: ", false, false],
-    },
   },
 
   {
@@ -551,7 +827,13 @@ export const templates = [
           fontSize: 16,
         },
       },
-      { section: "horizontal-line" },
+      {
+        section: "horizontal-line",
+        style: {
+          color: "primary",
+          width: 2,
+        },
+      },
       {
         section: "clientDetails",
 
@@ -617,7 +899,6 @@ export const templates = [
           alignment: "left",
         },
         columns: ["description", "quantity", "rate", "total"],
-
         items: ["description", "quantity", "rate", "total"],
       },
       { section: "break" },

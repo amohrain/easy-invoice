@@ -3,15 +3,14 @@ import { Download } from "lucide-react";
 import { generatePdfDocDefinition } from "@/lib/generatePdfDocDefinition";
 import { useInvoiceStore } from "@/store/useInvoice";
 import { useTemplateStore } from "@/store/useTemplate";
+import { getPdfMake } from "../lib/pdfmake.js";
 
-export default function DownloadIcon() {
+export default function DownloadIcon({ button }) {
   const { template } = useTemplateStore();
   const { invoice } = useInvoiceStore();
 
   const handleDownload = async () => {
-    const pdfMake = (await import("pdfmake/build/pdfmake")).default;
-    const pdfFonts = await import("pdfmake/build/vfs_fonts");
-    pdfMake.vfs = pdfFonts.vfs;
+    const pdfMake = await getPdfMake();
 
     // Convert logo image to base64 if needed
     const logoUrl = invoice.businessLogo;
@@ -27,8 +26,24 @@ export default function DownloadIcon() {
     }
 
     const docDefinition = generatePdfDocDefinition(template, invoice);
-    pdfMake.createPdf(docDefinition).download("invoice.pdf");
+    console.log("Doc Definition:", docDefinition);
+    pdfMake.createPdf(docDefinition).open();
+    // pdfMake.createPdf(docDefinition).download("invoice.pdf");
   };
 
-  return <Download className="cursor-pointer" onClick={handleDownload} />;
+  if (!button) {
+    return (
+      <Download
+        className="cursor-pointer hover:text-accent"
+        onClick={handleDownload}
+      />
+    );
+  }
+
+  return (
+    <button className="btn btn-success">
+      <Download className="cursor-pointer" onClick={handleDownload} />
+      Download
+    </button>
+  );
 }

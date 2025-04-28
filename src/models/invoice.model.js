@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { FaBalanceScaleRight } from "react-icons/fa";
 
 const invoiceSchema = new mongoose.Schema(
   {
@@ -13,6 +14,11 @@ const invoiceSchema = new mongoose.Schema(
     template: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Template",
+    },
+    invoiceTitle: {
+      type: String,
+      required: false,
+      default: "Invoice",
     },
     invoiceId: {
       type: Number,
@@ -147,6 +153,11 @@ const invoiceSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "pending",
+    },
+    changesSuggested: {
+      type: Boolean,
+      default: false,
+      required: false,
     },
   },
   { timestamps: true } // Handles createdAt and updatedAt automatically

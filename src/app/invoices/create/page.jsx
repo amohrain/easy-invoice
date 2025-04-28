@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import TypingPlaceholder from "@/components/TypingPlaceholder";
 import { handleInvoiceGenerate } from "@/lib/openai";
 import { Loading } from "@/components/Loading";
-import { InvoicePreview } from "../../../components/test/InvoicePreview";
+import { InvoicePreview } from "@/components/InvoicePreview";
 import LeftBar from "@/components/LeftBar";
 import InvoiceViewer from "@/components/InvoiceViewer";
 import DownloadInvoiceButton from "@/components/DownloadInvoiceButton";
@@ -61,15 +61,15 @@ function Dashboard() {
 
   return (
     <div className="flex w-full flex-row h-screen">
-      {/* <LeftBar className="" /> */}
+      <LeftBar className="" />
       <div className="flex flex-col w-full h-full bg-base-100 justify-center">
-        <div className="w-full px-8 h-full self-center flex flex-row gap-8 overflow-y-auto">
+        <div className="w-full h-full self-center flex flex-row gap-8 overflow-y-auto">
           {step == 2 && (
             // <InvoicePreview setStep={setStep}/>
-            <InvoicePreview currentInvoice={invoice} />
+            <InvoicePreview setStep={setStep} />
           )}
           {step == 1 && (
-            <div className="flex w-full items-center justify-center flex-col gap-4">
+            <div className="flex px-8 w-full items-center justify-center flex-col gap-4">
               <h1 className="text-center font-bold text-4xl space-x-10">
                 {step == 1 ? "Enter your prompt" : "Your invoice is ready!"}
               </h1>

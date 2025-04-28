@@ -127,4 +127,66 @@ export const useInvoiceStore = create((set, get) => ({
       console.log("Error creating client", error);
     }
   },
+  suggestion: null,
+  acceptSuggestions: async () => {
+    try {
+      const invoice = get().invoice;
+      const suggestion = get().suggestion;
+      const {
+        clientName,
+        clientAddress,
+        clientEmail,
+        clientPhone,
+        clientTaxId,
+      } = suggestion;
+
+      // Save invoice
+      const response = await fetch(`/api/invoice/${invoice._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...invoice,
+          clientName,
+          clientAddress,
+          clientEmail,
+          clientPhone,
+          clientTaxId,
+          changesSuggested: false,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error("Error saving invoice");
+      }
+
+      // Delete suggestion
+      const responseSuggestion = await fetch(
+        "/api/suggestion?id=" + suggestion._id,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!responseSuggestion.ok) {
+        console.error("Error saving invoice");
+      }
+
+      console.log("Suggestions accepted successfully");
+    } catch (error) {
+      console.error("Error accepting suggestions:", error);
+      // Toast
+    }
+  },
+  fetchSuggestion: async () => {
+    try {
+      const invoice = get().invoice;
+      const response = await fetch("/api/suggestion?id=" + invoice._id);
+      const data = await response.json();
+
+      // Todo toast
+      set({ suggestion: data.data });
+    } catch (error) {}
+  },
 }));

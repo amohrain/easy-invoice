@@ -9,6 +9,27 @@ export const useTemplateStore = create((set, get) => ({
 
   // Fetch all existing templates
   templatesData: null,
+  getTemplateById: async (templateId) => {
+    //  Todo
+    try {
+      set({ loading: true });
+      const response = await fetch("/api/templates/" + templateId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const template = data.data || [];
+
+      set({ template: template });
+      return template;
+    } catch (error) {
+      console.error("Error fetching templates: ", error);
+    } finally {
+      set({ loading: false });
+    }
+  },
   getTemplatesData: async (templateId) => {
     try {
       set({ loading: true });
@@ -34,9 +55,6 @@ export const useTemplateStore = create((set, get) => ({
   // Fetch user templates
   userTemplates: null,
   getUsersTemplates: async (templateId) => {
-    set({ userTemplates: templates });
-    set({ template: templates[0] });
-    return;
     try {
       const response = await fetch("/api/users/templates");
       const data = await response.json();
