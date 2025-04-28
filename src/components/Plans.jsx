@@ -9,36 +9,36 @@ export default function Plans(where) {
         price="Forever"
         mostPopular={false}
         features={[
-          "15 AI Documents per month",
-          "Upto 250 words per prompt",
-          "Unlimited non-AI Documents",
-          "Lifetime access",
+          "15 Invoices per month",
+          "Maximum 10 clients",
+          "Supports one business",
+          "Basic Templates",
         ]}
         where={where}
       />
       <PricingPlan
         name="Starter"
         amount={550}
-        price="Rs. 550/-"
+        price="$49.99"
         mostPopular={true}
         features={[
-          "Everything in free",
-          "Unlimited words per prompt",
-          "Monthly 100 AI Generated Documents",
-          "Email support",
+          "Unlimited invoices",
+          "Unlimited clients",
+          "Supports one business",
+          "Access to exclusive templates",
         ]}
         where={where}
       />
       <PricingPlan
         name="Pro"
         amount={850}
-        price="Rs. 850"
+        price="$99.99"
         mostPopular={false}
         features={[
-          "Everything in starter",
-          "Unlimited AI Generated Documents",
-          "Lifetime access",
-          "Priority Support",
+          "Unlimited invoices",
+          "Unlimited clients",
+          "Unlimited businesses",
+          "Create Own Templates",
         ]}
         where={where}
       />

@@ -26,7 +26,8 @@ function Dashboard() {
     useTemplateStore();
   const { loading, setLoading } = useLoadingStore();
 
-  const { invoice, setInvoice, getInvoiceId } = useInvoiceStore();
+  const { invoice, setInvoice, getInvoiceId, clearSuggestions } =
+    useInvoiceStore();
   const { company, setCompany, getCompanies } = useCompanyStore();
 
   useEffect(() => {
@@ -34,6 +35,7 @@ function Dashboard() {
       await getUsersTemplates();
       await getCompanies();
       await getInvoiceId();
+      clearSuggestions();
     }
     fetchData();
   }, []);

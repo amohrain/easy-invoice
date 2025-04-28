@@ -33,6 +33,8 @@ export async function PUT(request, { params }) {
   try {
     const userData = await request.json();
 
+    // A little check to see if nobody is changing subscription data
+
     const user = await User.findByIdAndUpdate(
       id,
       userData,

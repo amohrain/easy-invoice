@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import NavButton from "./NavButton";
-import { BiHome } from "react-icons/bi";
+import { BiCard, BiHome } from "react-icons/bi";
 import { PiInvoice } from "react-icons/pi";
 import { MdOutlineRoomPreferences } from "react-icons/md";
 import { BsBuilding } from "react-icons/bs";
@@ -59,7 +59,8 @@ function LeftBar() {
           <NavButton link="/invoices" name="Invoices" icon={<PiInvoice />} />
           <NavButton link="/company" name="Company" icon={<BsBuilding />} />
           <NavButton link="/clients" name="Clients" icon={<FaPeopleGroup />} />
-          <NavButton link="/templates" name="Templates" icon={<FaWpforms />} />
+          {/* <NavButton link="/templates" name="Templates" icon={<FaWpforms />} /> */}
+          <NavButton link="/billing" name="Billing" icon={<BiCard />} />
         </div>
       </div>
 

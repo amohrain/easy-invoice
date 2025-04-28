@@ -7,8 +7,6 @@ import { useTemplateStore } from "@/store/useTemplate";
 import { useLoadingStore } from "@/store/useLoading";
 import { useEffect, useState } from "react";
 import {
-  ArrowLeftCircle,
-  ArrowRightCircle,
   Copy,
   CopyCheck,
   Edit,
@@ -20,7 +18,6 @@ import {
 import DownloadIcon from "./DownloadIcon";
 import { useRouter } from "next/navigation";
 import { useClientStore } from "@/store/useClient";
-import Link from "next/link";
 import { templates } from "../lib/templatesData";
 
 export function InvoicePreview({ setStep, editable }) {
@@ -47,13 +44,14 @@ export function InvoicePreview({ setStep, editable }) {
     invoiceId,
     fetchClientId,
     createClient,
-    getInvoiceById,
     suggestion,
     fetchSuggestion,
     acceptSuggestions,
+    acceptOneSuggestion,
   } = useInvoiceStore();
   const { loading, setLoading } = useLoadingStore();
   const [showModal, setShowModal] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
   const { company } = useCompanyStore();
   const { clientId } = useClientStore();
@@ -94,6 +92,7 @@ export function InvoicePreview({ setStep, editable }) {
     // Return if not creating new invoice
     if (currentPath !== "/invoices/create") {
       console.log(currentPath);
+      setSaved(false);
       if (share) setShowModal(true);
       return;
     }
@@ -152,7 +151,7 @@ export function InvoicePreview({ setStep, editable }) {
     const updatedInvoice = { ...invoice };
 
     if (value.trim() === "") {
-      delete updatedInvoice[field];
+      updatedInvoice[field] = "";
     } else {
       updatedInvoice[field] = value;
     }
@@ -199,6 +198,7 @@ export function InvoicePreview({ setStep, editable }) {
       console.error("Error saving invoice:", error);
     } finally {
       setLoading(false);
+      setSaved(true);
     }
   };
 
@@ -341,6 +341,11 @@ export function InvoicePreview({ setStep, editable }) {
     await fetchSuggestion();
   };
 
+  const handleAcceptOneSuggestion = (key) => {
+    console.log("Suggesion key", key);
+    handleChange(key, suggestion[key]);
+  };
+
   return (
     <div className="flex flex-col w-full h-full">
       {/* Sticky Top Bar */}
@@ -359,7 +364,9 @@ export function InvoicePreview({ setStep, editable }) {
               onClick={handleBack}
             />
             <Save
-              className="cursor-pointer hover:text-accent"
+              className={`cursor-pointer hover:text-accent ${
+                saved && "text-gray-400"
+              }`}
               onClick={() => {
                 handleSave();
               }}
@@ -478,13 +485,24 @@ export function InvoicePreview({ setStep, editable }) {
                               </span>
                               {suggestion?.[key] !== undefined &&
                                 suggestion[key] !== invoice[key] && (
-                                  <span
-                                    className={`text-info ${
-                                      bold && "font-bold"
-                                    }`}
-                                  >
-                                    {suggestion[key]}
-                                  </span>
+                                  <div>
+                                    <span
+                                      className={`text-info ${
+                                        bold && "font-bold"
+                                      }`}
+                                    >
+                                      {suggestion[key]}
+                                    </span>
+                                    {/* <button
+                                      onClick={() => console.log("key")}
+                                      className="ml-2 p-0.5 btn btn-success btn-circle btn-xs"
+                                    >
+                                      <Check />
+                                    </button>
+                                    <button className="ml-2 p-0.5 btn btn-error btn-circle btn-xs">
+                                      <X />
+                                    </button> */}
+                                  </div>
                                 )}
                             </div>
                           )
@@ -529,6 +547,15 @@ export function InvoicePreview({ setStep, editable }) {
                       suggestion[key] !== invoice[key] && (
                         <span className={`text-info ${bold && "font-bold"}`}>
                           {suggestion[key]}
+                          {/* <button
+                            onClick={() => handleAcceptOneSuggestion(key)}
+                            className="ml-2 p-0.5 btn btn-success btn-circle btn-xs"
+                          >
+                            <Check />
+                          </button>
+                          <button className="ml-2 p-0.5 btn btn-error btn-circle btn-xs">
+                            <X />
+                          </button> */}
                         </span>
                       )}
                   </div>

@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "../store/useUser";
 
 // PaymentButton Component
 export default function PaymentButton({ name, planAmount, where }) {
   const page = where.where;
   const router = useRouter();
-  const { user } = useUser();
+  const { user } = useUserStore();
   const [loading, setLoading] = useState(false);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
-  const currentPlan = user?.publicMetadata?.plan;
+  const currentPlan = user?.subscriptionPlan;
 
   useEffect(() => {
     if (!window.Razorpay) {
@@ -89,7 +90,9 @@ export default function PaymentButton({ name, planAmount, where }) {
         if (page === "home") {
           router.push("/sign-in");
         } else {
-          handlePayment();
+          alert(
+            "This is a fake payment button. Eveything's free until I figure out pricing!"
+          );
         }
       }}
       disabled={(planAmount == 0 && page !== "home") || name === currentPlan}

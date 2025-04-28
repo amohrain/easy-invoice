@@ -179,6 +179,49 @@ export const useInvoiceStore = create((set, get) => ({
       // Toast
     }
   },
+
+  acceptOneSuggestion: async (key) => {
+    // let key received was clientName
+    try {
+      console.log("Accepting suggestion");
+      const invoice = { ...get().invoice };
+      const suggestion = get().suggestion;
+
+      const { [key]: value } = suggestion;
+
+      invoice[key] = value;
+
+      // Save invoice
+      const response = await fetch(`/api/invoice/${invoice._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(invoice),
+      });
+
+      if (!response.ok) {
+        console.error("Error saving invoice");
+      }
+
+      // // Delete suggestion
+      // const responseSuggestion = await fetch(
+      //   "/api/suggestion?id=" + suggestion._id,
+      //   {
+      //     method: "DELETE",
+      //   }
+      // );
+
+      // if (!responseSuggestion.ok) {
+      //   console.error("Error saving invoice");
+      // }
+
+      console.log("Suggestion accepted successfully");
+    } catch (error) {
+      console.error("Error accepting suggestion:", error);
+      // Toast
+    }
+  },
   fetchSuggestion: async () => {
     try {
       const invoice = get().invoice;
@@ -188,5 +231,8 @@ export const useInvoiceStore = create((set, get) => ({
       // Todo toast
       set({ suggestion: data.data });
     } catch (error) {}
+  },
+  clearSuggestions: () => {
+    set({ suggestion: null });
   },
 }));
