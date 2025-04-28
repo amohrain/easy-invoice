@@ -11,6 +11,7 @@ export const dummyInvoice = {
   clientPhone: "+91-1234567890",
   clientAddress: "New Delhi, India",
   clientTaxId: "GSTIN-11223344",
+  invoiceTitle: "Invoice",
   invoiceNumber: "INV-123",
   dueDate: "2025-05-24",
   paymentTerms: "Net 30",

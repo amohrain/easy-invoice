@@ -66,7 +66,7 @@ function Dashboard() {
         <div className="w-full h-full self-center flex flex-row gap-8 overflow-y-auto">
           {step == 2 && (
             // <InvoicePreview setStep={setStep}/>
-            <InvoicePreview setStep={setStep} />
+            <InvoicePreview setStep={setStep} editable={true} />
           )}
           {step == 1 && (
             <div className="flex px-8 w-full items-center justify-center flex-col gap-4">

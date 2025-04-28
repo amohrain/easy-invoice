@@ -1,5 +1,5 @@
 import React from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { calculateInvoice } from "@/lib/calculate";
 import { useCompanyStore } from "@/store/useCompany";
 import { useInvoiceStore } from "@/store/useInvoice";
@@ -11,7 +11,9 @@ import {
   ArrowRightCircle,
   Copy,
   CopyCheck,
+  Edit,
   Link2,
+  Loader,
   Save,
   Undo2,
 } from "lucide-react";
@@ -19,8 +21,9 @@ import DownloadIcon from "./DownloadIcon";
 import { useRouter } from "next/navigation";
 import { useClientStore } from "@/store/useClient";
 import Link from "next/link";
+import { templates } from "../lib/templatesData";
 
-export function InvoicePreview({ setStep }) {
+export function InvoicePreview({ setStep, editable }) {
   const getTextStyle = (section) => {
     let style = "";
     if (!section) return style;
@@ -34,7 +37,8 @@ export function InvoicePreview({ setStep }) {
     return style;
   };
 
-  const { template, setTemplate, userTemplates } = useTemplateStore();
+  const { template, getUsersTemplates, getTemplateById } = useTemplateStore();
+
   const {
     invoice,
     setInvoice,
@@ -43,25 +47,54 @@ export function InvoicePreview({ setStep }) {
     invoiceId,
     fetchClientId,
     createClient,
+    getInvoiceById,
+    suggestion,
+    fetchSuggestion,
+    acceptSuggestions,
   } = useInvoiceStore();
   const { loading, setLoading } = useLoadingStore();
   const [showModal, setShowModal] = useState(false);
+  const [showSuggestionModal, setShowSuggestionModal] = useState(false);
   const { company } = useCompanyStore();
   const { clientId } = useClientStore();
   const currentPath = usePathname();
   const router = useRouter();
-
   const searchParams = useSearchParams();
   const share = searchParams.get("share");
 
-  console.log("Client Id: ", clientId);
+  const { id } = useParams();
+
+  // Handling fetch in preview only
+  // useEffect(() => {
+  //   console.log("Fetching data");
+  //   async function fetchData() {
+  //     if (id) {
+  //       const inv = await getInvoiceById(id);
+  //       console.log("inv, ", inv);
+  //       await getTemplateById(inv.template);
+  //       // await getUsersTemplates(inv.template);
+  //       if (inv.changesSuggested) await fetchSuggestion();
+  //     } else {
+  //       await getUsersTemplates();
+  //     }
+  //   }
+  //   fetchData();
+  // }, []);
+
+  // use effect to fetch suggestions after they have been created
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!editable) await fetchSuggestion();
+    }
+    fetchData();
+  }, [showSuggestionModal]);
 
   useEffect(() => {
     // Return if not creating new invoice
     if (currentPath !== "/invoices/create") {
       console.log(currentPath);
       if (share) setShowModal(true);
-      console.log(typeof share);
       return;
     }
 
@@ -90,6 +123,7 @@ export function InvoicePreview({ setStep }) {
           businessPhone,
           businessLogo,
           invoiceId,
+          // invoiceTitle: "Invoice",
           company: company._id,
           invoiceNumber: `${invoicePrefix}/${invoiceId}/${invoiceSuffix}`,
           issuedAt: new Date().toLocaleDateString("en-US", {
@@ -176,9 +210,135 @@ export function InvoicePreview({ setStep }) {
     }
   };
 
-  // todo - implement share link
   const handleLinkShare = () => {
     setShowModal(true);
+  };
+
+  const SuggestEdits = () => {
+    const [suggestedData, setSuggestedData] = useState({
+      clientName: invoice?.clientName,
+      clientAddress: invoice?.clientAddress,
+      clientPhone: invoice?.clientPhone,
+      clientEmail: invoice?.clientEmail,
+      clientTaxId: invoice?.clientTaxId,
+    });
+
+    const handleCreateSuggestion = async () => {
+      const response = await fetch("/api/suggestion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...suggestedData, invoiceId: invoice._id }),
+      });
+      setShowSuggestionModal(false);
+    };
+
+    if (!invoice || !template) {
+      return (
+        <div className="flex w-full h-screen items-center justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      );
+    }
+
+    if (invoice.changesSuggested && !suggestion) {
+      return <Loader />;
+    }
+
+    return (
+      <dialog id="my_modal_1" className="modal modal-open glass">
+        <div className="modal-box">
+          <div className="">
+            <fieldset className="fieldset w-full bg-base-100 shadow p-4 rounded-lg">
+              <legend className="text-lg font-medium">Suggest Changes</legend>
+
+              <div className="mb-4 w-full">
+                <label className="fieldset-label block mb-2">Your Name</label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full"
+                  placeholder={invoice.clientName}
+                  value={suggestedData?.clientName || ""}
+                  onChange={(e) =>
+                    setSuggestedData((prev) => ({
+                      ...prev,
+                      clientName: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="mb-4 w-full">
+                <label className="fieldset-label block mb-2">
+                  Your Address
+                </label>
+                <textarea
+                  type="text"
+                  className="input input-bordered h-24 pt-2 w-full resize-none"
+                  placeholder={invoice.clientAddress}
+                  value={suggestedData?.clientAddress || ""}
+                  onChange={(e) =>
+                    setSuggestedData((prev) => ({
+                      ...prev,
+                      clientAddress: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="mb-4 w-full">
+                <label className="fieldset-label block mb-2">Your Phone</label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full"
+                  placeholder={invoice.clientPhone}
+                  value={suggestedData?.clientPhone || ""}
+                  onChange={(e) =>
+                    setSuggestedData((prev) => ({
+                      ...prev,
+                      clientPhone: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="mb-4 w-full">
+                <label className="fieldset-label block mb-2">Your tax ID</label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full"
+                  placeholder={invoice.clientEmail}
+                  value={suggestedData?.clientEmail || ""}
+                  onChange={(e) =>
+                    setSuggestedData((prev) => ({
+                      ...prev,
+                      clientEmail: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </fieldset>
+
+            <div className="modal-action">
+              <button
+                onClick={handleCreateSuggestion}
+                className="btn btn-success"
+              >
+                Submit
+              </button>
+              <button
+                onClick={() => setShowSuggestionModal(false)}
+                className="btn"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+    );
+  };
+
+  const handleAcceptSuggestions = async () => {
+    setLoading(true);
+    await acceptSuggestions();
+    await fetchSuggestion();
   };
 
   return (
@@ -212,10 +372,23 @@ export function InvoicePreview({ setStep }) {
                 onClick={handleLinkShare}
               />
             )}
-            {invoice.changesSuggested && (
-              <Link href={currentPath + "/suggested"}>
-                <button className="btn btn-info">View Suggestions</button>
-              </Link>
+            {editable && invoice.changesSuggested && (
+              <button
+                onClick={handleAcceptSuggestions}
+                className="btn btn-info"
+              >
+                <Edit />
+                Accept
+              </button>
+            )}
+            {!editable && (
+              <button
+                onClick={() => setShowSuggestionModal(true)}
+                className="btn btn-info"
+              >
+                <Edit />
+                Suggest
+              </button>
             )}
           </div>
         </div>
@@ -280,62 +453,42 @@ export function InvoicePreview({ setStep }) {
                                 onClick={(e) => e.target.nextSibling?.focus()} // Shift focus to input when label is clicked
                                 className="cursor-pointer"
                               >
-                                {!invoice[key] || value
+                                {!invoice[key] && !editable
+                                  ? ""
+                                  : !invoice[key] || value
                                   ? placeholder || key
                                   : ""}
                               </strong>
                               <span
-                                contentEditable
+                                contentEditable={editable}
                                 suppressContentEditableWarning
                                 onBlur={(e) =>
+                                  editable &&
                                   handleChange(key, e.target.innerText.trim())
                                 }
                                 className={`cursor-text outline-none focus: ${
                                   bold && "font-bold"
+                                } ${
+                                  suggestion?.[key] !== undefined &&
+                                  suggestion?.[key] !== invoice[key] &&
+                                  "text-red-500 line-through"
                                 }`}
-                                onClick={(e) => e.target.focus()} // Ensure clicking text also focuses
                               >
                                 {invoice[key] ?? ""}
                               </span>
+                              {suggestion?.[key] !== undefined &&
+                                suggestion[key] !== invoice[key] && (
+                                  <span
+                                    className={`text-info ${
+                                      bold && "font-bold"
+                                    }`}
+                                  >
+                                    {suggestion[key]}
+                                  </span>
+                                )}
                             </div>
                           )
                       )}
-                      {/* {col.fields?.map((field) =>
-                    field === "businessLogo" ? (
-                      <img
-                        key={field}
-                        src={invoice.businessLogo || null}
-                        className="h-16 w-auto"
-                      />
-                    ) : (
-                      <div
-                        key={field}
-                        className={invoice[field] ? "" : "text-base-content/50"}
-                      >
-                        <strong
-                          onClick={(e) => e.target.nextSibling?.focus()}
-                          className="cursor-pointer"
-                        >
-                          {!invoice[field] || template.labels[field][1]
-                            ? template.labels?.[field][0] || field
-                            : ""}
-                        </strong>
-                        <span
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={(e) =>
-                            handleChange(field, e.target.innerText.trim())
-                          }
-                          className={`cursor-text outline-none focus: ${
-                            template.labels[field][2] && "font-bold "
-                          }`}
-                          onClick={(e) => e.target.focus()}
-                        >
-                          {invoice[field] ?? ""}
-                        </span>
-                      </div>
-                    )
-                  )} */}
                     </div>
                   ))}
                 </div>
@@ -350,21 +503,34 @@ export function InvoicePreview({ setStep }) {
                       onClick={(e) => e.target.nextSibling?.focus()} // Shift focus to input when label is clicked
                       className="cursor-pointer"
                     >
-                      {!invoice[key] || value ? placeholder || key : ""}
+                      {!invoice[key] && !editable
+                        ? ""
+                        : !invoice[key] || value
+                        ? placeholder || key
+                        : ""}
                     </strong>
                     <span
-                      contentEditable
+                      contentEditable={editable}
                       suppressContentEditableWarning
                       onBlur={(e) =>
-                        handleChange(key, e.target.innerText.trim())
+                        editable && handleChange(key, e.target.innerText.trim())
                       }
                       className={`cursor-text outline-none focus: ${
                         bold && "font-bold"
+                      } ${
+                        suggestion?.[key] !== undefined &&
+                        suggestion?.[key] !== invoice[key] &&
+                        "text-red-500 line-through"
                       }`}
-                      onClick={(e) => e.target.focus()} // Ensure clicking text also focuses
                     >
                       {invoice[key] ?? ""}
                     </span>
+                    {suggestion?.[key] !== undefined &&
+                      suggestion[key] !== invoice[key] && (
+                        <span className={`text-info ${bold && "font-bold"}`}>
+                          {suggestion[key]}
+                        </span>
+                      )}
                   </div>
                 )
               )}
@@ -416,9 +582,10 @@ export function InvoicePreview({ setStep }) {
                             }}
                           >
                             <span
-                              contentEditable
+                              contentEditable={editable}
                               suppressContentEditableWarning
                               onBlur={(e) =>
+                                editable &&
                                 handleItemChange(
                                   index,
                                   col.key,
@@ -443,9 +610,10 @@ export function InvoicePreview({ setStep }) {
                     <div className="flex justify-between">
                       {template.labels?.subtotal || "Sub Total: "}
                       <span
-                        contentEditable
+                        contentEditable={editable}
                         suppressContentEditableWarning
                         onBlur={(e) =>
+                          editable &&
                           handleChange(
                             "subtotal",
                             e.target.innerText.trim() || "0"
@@ -460,9 +628,10 @@ export function InvoicePreview({ setStep }) {
                     {invoice.deductions?.map((deduct, index) => (
                       <div key={index} className="flex justify-between">
                         <span
-                          contentEditable
+                          contentEditable={editable}
                           suppressContentEditableWarning
                           onBlur={(e) => {
+                            if (!editable) return;
                             const deductions = [...invoice.deductions];
                             deductions[index].description =
                               e.target.innerText.trim();
@@ -476,9 +645,10 @@ export function InvoicePreview({ setStep }) {
                           {deduct.description ?? ""}
                         </span>
                         <span
-                          contentEditable
+                          contentEditable={editable}
                           suppressContentEditableWarning
                           onBlur={(e) => {
+                            if (!editable) return;
                             const deductions = [...invoice.deductions];
                             deductions[index].amount =
                               e.target.innerText.trim() || "0";
@@ -496,9 +666,10 @@ export function InvoicePreview({ setStep }) {
                     {invoice.additions?.map((add, index) => (
                       <div key={index} className="flex justify-between">
                         <span
-                          contentEditable
+                          contentEditable={editable}
                           suppressContentEditableWarning
                           onBlur={(e) => {
+                            if (!editable) return;
                             const newAdditions = [...invoice.additions];
                             newAdditions[index].description =
                               e.target.innerText.trim();
@@ -512,9 +683,10 @@ export function InvoicePreview({ setStep }) {
                           {add.description ?? ""}
                         </span>
                         <span
-                          contentEditable
+                          contentEditable={editable}
                           suppressContentEditableWarning
                           onBlur={(e) => {
+                            if (!editable) return;
                             const newAdditions = [...invoice.additions];
                             newAdditions[index].amount =
                               e.target.innerText.trim() || "0";
@@ -533,14 +705,15 @@ export function InvoicePreview({ setStep }) {
                     <div className="flex justify-between font-bold border-t border-gray-300 pt-2 mt-2">
                       {template.labels?.totalAmount || "Total"}
                       <span
-                        contentEditable
+                        contentEditable={editable}
                         suppressContentEditableWarning
-                        onBlur={(e) =>
+                        onBlur={(e) => {
+                          if (!editable) return;
                           handleChange(
                             "totalAmount",
                             e.target.innerText.trim() || "0"
-                          )
-                        }
+                          );
+                        }}
                         className=" cursor-text"
                       >
                         {invoice.totalAmount ?? ""}
@@ -560,6 +733,12 @@ export function InvoicePreview({ setStep }) {
         </div>
       </div>
       {showModal && <ShareLinkModal setShowModal={setShowModal} />}
+      {showSuggestionModal && (
+        <SuggestEdits
+        // setShowModal={setShowModal}
+        // data={suggestedData}
+        />
+      )}
     </div>
   );
 }

@@ -10,7 +10,7 @@ import DownloadIcon from "@/components/DownloadIcon";
 
 function InvoicePage() {
   const { id } = useParams();
-  const { invoice, setInvoice, getInvoiceById, saveInvoice } =
+  const { invoice, setInvoice, getInvoiceById, saveInvoice, fetchSuggestion } =
     useInvoiceStore();
   const { template, getUsersTemplates } = useTemplateStore();
 
@@ -18,6 +18,7 @@ function InvoicePage() {
     async function fetchData() {
       const inv = await getInvoiceById(id);
       const templates = await getUsersTemplates(inv.template);
+      if (inv.changesSuggested) await fetchSuggestion();
     }
     fetchData();
   }, []);
@@ -35,7 +36,7 @@ function InvoicePage() {
       <LeftBar />
       <div className="flex w-full justify-center">
         <div className="w-full h-full self-center flex flex-row gap-8 overflow-y-auto">
-          <InvoicePreview />
+          <InvoicePreview editable={true} />
         </div>
       </div>
     </div>

@@ -3,13 +3,11 @@ import { useInvoiceStore } from "@/store/useInvoice";
 import { useTemplateStore } from "@/store/useTemplate";
 import { useEffect, useState } from "react";
 import { Edit, Loader } from "lucide-react";
-import DownloadIcon from "./DownloadIcon";
+import DownloadIcon from "../DownloadIcon";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-export function InvoiceSuggest() {
+export function InvoiceView() {
   const { id } = useParams();
-  const router = useRouter();
 
   const getTextStyle = (section) => {
     let style = "";
@@ -24,33 +22,138 @@ export function InvoiceSuggest() {
   };
 
   const { template, getTemplateById } = useTemplateStore();
-  const {
-    invoice,
-    getInvoiceById,
-    suggestion,
-    fetchSuggestion,
-    acceptSuggestions,
-  } = useInvoiceStore();
-  const [loading, setLoading] = useState(false);
+  const { invoice, getInvoiceById, suggestion, fetchSuggestion } =
+    useInvoiceStore();
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     async function getInvoice() {
       console.log("Fetching invoice");
       const invoice = await getInvoiceById(id);
-      if (!invoice.changesSuggested) router.push("/invoices/" + invoice._id);
       await getTemplateById(invoice.template);
-      await fetchSuggestion();
+      if (invoice.changesSuggested) await fetchSuggestion();
     }
     getInvoice();
   }, []);
 
-  const handleSuggestions = async () => {
-    setLoading(true);
-    await acceptSuggestions();
-    router.push("/invoices/" + invoice._id);
+  const SuggestEdits = () => {
+    const [suggestedData, setSuggestedData] = useState({
+      clientName: invoice?.clientName,
+      clientAddress: invoice?.clientAddress,
+      clientPhone: invoice?.clientPhone,
+      clientEmail: invoice?.clientEmail,
+      clientTaxId: invoice?.clientTaxId,
+    });
+
+    const handleCreateSuggestion = async () => {
+      const response = await fetch("/api/suggestion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...suggestedData, invoiceId: invoice._id }),
+      });
+      setShowModal(false);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        // Todo show toast
+      } else {
+        // todo show toast
+      }
+    };
+
+    if (invoice.changesSuggested && !suggestion) {
+      return <Loader />;
+    }
+
+    return (
+      <dialog id="my_modal_1" className="modal modal-open glass">
+        <div className="modal-box">
+          <div className="">
+            <fieldset className="fieldset w-full bg-base-100 shadow p-4 rounded-lg">
+              <legend className="text-lg font-medium">Suggest Changes</legend>
+
+              <div className="mb-4 w-full">
+                <label className="fieldset-label block mb-2">Your Name</label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full"
+                  placeholder={invoice.clientName}
+                  value={suggestedData?.clientName || ""}
+                  onChange={(e) =>
+                    setSuggestedData((prev) => ({
+                      ...prev,
+                      clientName: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="mb-4 w-full">
+                <label className="fieldset-label block mb-2">
+                  Your Address
+                </label>
+                <textarea
+                  type="text"
+                  className="input input-bordered h-24 pt-2 w-full resize-none"
+                  placeholder={invoice.clientAddress}
+                  value={suggestedData?.clientAddress || ""}
+                  onChange={(e) =>
+                    setSuggestedData((prev) => ({
+                      ...prev,
+                      clientAddress: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="mb-4 w-full">
+                <label className="fieldset-label block mb-2">Your Phone</label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full"
+                  placeholder={invoice.clientPhone}
+                  value={suggestedData?.clientPhone || ""}
+                  onChange={(e) =>
+                    setSuggestedData((prev) => ({
+                      ...prev,
+                      clientPhone: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="mb-4 w-full">
+                <label className="fieldset-label block mb-2">Your tax ID</label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full"
+                  placeholder={invoice.clientEmail}
+                  value={suggestedData?.clientEmail || ""}
+                  onChange={(e) =>
+                    setSuggestedData((prev) => ({
+                      ...prev,
+                      clientEmail: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </fieldset>
+
+            <div className="modal-action">
+              <button
+                onClick={handleCreateSuggestion}
+                className="btn btn-success"
+              >
+                Submit
+              </button>
+              <button onClick={() => setShowModal(false)} className="btn">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+    );
   };
 
-  if (!template || !invoice || !suggestion || loading) return <Loader />;
+  if (!template || !invoice) return <Loader />;
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -63,9 +166,9 @@ export function InvoiceSuggest() {
         </div>
         <div className="flex items-center space-x-2">
           <div className="flex flex-row justify-around gap-4">
-            <button onClick={handleSuggestions} className="btn btn-info">
+            <button onClick={() => setShowModal(true)} className="btn btn-info">
               <Edit />
-              Accept
+              Suggest
             </button>
             <DownloadIcon button className="cursor-pointer hover:text-accent" />
           </div>
@@ -136,8 +239,9 @@ export function InvoiceSuggest() {
                                 className={`cursor-text outline-none focus: ${
                                   bold && "font-bold"
                                 } ${
-                                  suggestion[key] &&
+                                  invoice.changesSuggested &&
                                   suggestion[key] !== invoice[key] &&
+                                  suggestion[key] &&
                                   "text-red-500 line-through"
                                 }`}
                               >
@@ -290,6 +394,12 @@ export function InvoiceSuggest() {
           ))}
         </div>
       </div>
+      {showModal && (
+        <SuggestEdits
+        // setShowModal={setShowModal}
+        // data={suggestedData}
+        />
+      )}
     </div>
   );
 }

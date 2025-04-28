@@ -1,11 +1,39 @@
 "use client";
-import React from "react";
-import { InvoiceView } from "../../../../components/InvoiceView";
+import React, { useEffect } from "react";
+import { InvoicePreview } from "../../../../components/InvoicePreview";
+import { useParams } from "next/navigation";
+import { useInvoiceStore } from "../../../../store/useInvoice";
+import { Loader } from "lucide-react";
+import { useTemplateStore } from "../../../../store/useTemplate";
+import { InvoiceView } from "../../../../components/deprecated/InvoiceView";
 
 function InvoiceViewPage() {
+  const { invoice, getInvoiceById, fetchSuggestion } = useInvoiceStore();
+  const { template, getTemplateById, getUsersTemplates } = useTemplateStore();
+  const { id } = useParams();
+
+  useEffect(() => {
+    async function fetchData() {
+      const inv = await getInvoiceById(id);
+      const templates = await getTemplateById(inv.template);
+      if (inv.changesSuggested) await fetchSuggestion();
+    }
+    fetchData();
+  }, []);
+
+  console.log("Template, ", template);
+
+  if (!invoice || !template) {
+    return (
+      <div className="flex w-full h-screen items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <InvoiceView />
+      <InvoicePreview editable={false} />
     </div>
   );
 }
