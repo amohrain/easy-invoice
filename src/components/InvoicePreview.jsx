@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { useClientStore } from "@/store/useClient";
 import { templates } from "../lib/templatesData";
 
-export function InvoicePreview({ setStep, editable }) {
+export function InvoicePreview({ setStep, editable, preview }) {
   const getTextStyle = (section) => {
     let style = "";
     if (!section) return style;
@@ -349,58 +349,59 @@ export function InvoicePreview({ setStep, editable }) {
   return (
     <div className="flex flex-col w-full h-full">
       {/* Sticky Top Bar */}
-      <div className="sticky top-0 z-10 bg-base-200 rounded border-base-300 shadow-sm py-4 px-8 flex justify-between items-center">
-        <div className="flex items-center space-x-4">
-          <h3 className="font-bold text-lg">
-            {currentPath === "/invoices/create"
-              ? "New Invoice"
-              : "Edit Invoice"}
-          </h3>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="flex flex-row justify-around items-center gap-4">
-            <Undo2
-              className="cursor-pointer hover:text-accent"
-              onClick={handleBack}
-            />
-            <Save
-              className={`cursor-pointer hover:text-accent ${
-                saved && "text-gray-400"
-              }`}
-              onClick={() => {
-                handleSave();
-              }}
-            />
-
-            <DownloadIcon className="cursor-pointer hover:text-accent" />
-            {currentPath !== "/invoices/create" && (
-              <Link2
+      {!preview && (
+        <div className="sticky top-0 z-10 bg-base-200 rounded border-base-300 shadow-sm py-4 px-8 flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            <h3 className="font-bold text-lg">
+              {currentPath === "/invoices/create"
+                ? "New Invoice"
+                : "Edit Invoice"}
+            </h3>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="flex flex-row justify-around items-center gap-4">
+              <Undo2
                 className="cursor-pointer hover:text-accent"
-                onClick={handleLinkShare}
+                onClick={handleBack}
               />
-            )}
-            {editable && invoice.changesSuggested && (
-              <button
-                onClick={handleAcceptSuggestions}
-                className="btn btn-info"
-              >
-                <Edit />
-                Accept
-              </button>
-            )}
-            {!editable && (
-              <button
-                onClick={() => setShowSuggestionModal(true)}
-                className="btn btn-info"
-              >
-                <Edit />
-                Suggest
-              </button>
-            )}
+              <Save
+                className={`cursor-pointer hover:text-accent ${
+                  saved && "text-gray-400"
+                }`}
+                onClick={() => {
+                  handleSave();
+                }}
+              />
+
+              <DownloadIcon className="cursor-pointer hover:text-accent" />
+              {currentPath !== "/invoices/create" && (
+                <Link2
+                  className="cursor-pointer hover:text-accent"
+                  onClick={handleLinkShare}
+                />
+              )}
+              {editable && invoice.changesSuggested && (
+                <button
+                  onClick={handleAcceptSuggestions}
+                  className="btn btn-info"
+                >
+                  <Edit />
+                  Accept
+                </button>
+              )}
+              {!editable && (
+                <button
+                  onClick={() => setShowSuggestionModal(true)}
+                  className="btn btn-info"
+                >
+                  <Edit />
+                  Suggest
+                </button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-
+      )}
       <div className="p-6 w-full max-w-5xl self-center">
         <div className="flex flex-col w-full border shadow rounded-lg p-6 h-fit">
           {template.structure.map((section) => (
@@ -759,6 +760,7 @@ export function InvoicePreview({ setStep, editable }) {
         /> */}
         </div>
       </div>
+      {preview && <DownloadIcon className="cursor-pointer hover:text-accent" />}
       {showModal && <ShareLinkModal setShowModal={setShowModal} />}
       {showSuggestionModal && (
         <SuggestEdits

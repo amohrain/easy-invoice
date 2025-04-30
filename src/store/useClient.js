@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { clients } from "../constants/clients";
 
 export const useClientStore = create((set) => ({
   clientId: "",
@@ -6,6 +7,9 @@ export const useClientStore = create((set) => ({
     set({ clientId });
   },
   clients: null,
+  setSampleClients: () => {
+    set({ clients: clients });
+  },
   getClients: async () => {
     try {
       const response = await fetch("/api/client");

@@ -3,14 +3,62 @@
 import Nav from "@/components/Nav";
 import TypingPlaceholder from "@/components/TypingPlaceholder";
 import PricingPlan from "@/components/PricingPlan";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import Plans from "@/components/Plans";
+import { useClientStore } from "../store/useClient";
+import { useInvoiceStore } from "../store/useInvoice";
+import { InvoicePreview } from "../components/InvoicePreview";
+import { templates } from "../lib/templatesData";
+import { useTemplateStore } from "../store/useTemplate";
+import { clients } from "../constants/clients";
+import { dummyInvoice } from "../lib/dummyInvoice";
 
 export default function Home() {
+  const { setTemplate } = useTemplateStore();
+
+  const [loading, setLoading] = useState();
+  const { invoice, setInvoice } = useInvoiceStore();
+
   const [text, setText] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
+
+  const { clientId, setSampleClients } = useClientStore();
+
+  useEffect(() => {
+    setTemplate(templates[0]);
+    setSampleClients();
+  }, []);
+
+  const handleGenerate = async () => {
+    try {
+      setLoading(true);
+      const invoice = dummyInvoice;
+      const clientInfo = clients.find((client) => client._id === clientId);
+      setInvoice({ ...invoice, ...clientInfo });
+      setLoading(false);
+      setShowPreview(true);
+    } catch (error) {
+      console.log("Error generating invoice: ", error);
+    }
+  };
+
+  const PreviewModal = () => {
+    return (
+      <div className="fixed inset-0 bg-base-100 flex items-center justify-center z-50 overflow-y-auto">
+        {/* <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full p-6 relative "> */}
+        <button
+          onClick={() => setShowPreview(false)}
+          className="absolute top-3 right-3 text-gray-500 hover:text-black text-2xl font-bold"
+        ></button>
+        <InvoicePreview preview={true} editable={true} />
+        {/* </div> */}
+      </div>
+    );
+  };
+
   return (
     <>
       <SEO
@@ -19,74 +67,52 @@ export default function Home() {
         image="https://bulkmark.in/og-image.jpg"
         url="https://bulkmark.in"
       />
-      <Nav />
-      <div
-        className="hero min-h-screen"
-        style={{
-          backgroundImage:
-            "url(https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp)",
-        }}
-      >
-        <div className="hero-overlay"></div>
-        <div className="hero-content text-neutral-content text-center">
-          <div className="w-full">
+      <div className="p-4">
+        <Nav />
+      </div>
+      <div className="hero border mt-[-120px] min-h-screen">
+        {/* <div className="hero-overlay"></div> */}
+        <div className="hero-content text-center">
+          <div className="flex flex-col w-full">
             <h1 className="mb-5 text-5xl sm:text-6xl font-bold">
-              Create invoices in seconds
+              Create stunning invoices instantly
             </h1>
             <p className="mb-5 sm:text-2xl">
-              Hundreds of PDF bookmarks in seconds
+              Type a prompt, give it a human touch, and share with customers.
             </p>
-            <button className="btn btn-primary sm:btn-xl">
-              <Link href={"/sign-up"}>Get Started with Bulkmark</Link>
+            <button className=" w-fit self-center rounded-full btn btn-primary sm:btn-xl">
+              <Link href={"/sign-up"}>Get Started with Vibe Invoice</Link>
             </button>
           </div>
+          {/* <img width={400} src={"/Images.png"} /> */}
         </div>
       </div>
       <div className="min-h-screen flex flex-col items-center justify-center gap-12 py-16 px-8">
         <h2 className="text-center text-4xl sm:text-6xl font-bold">
-          Paste whatever you have in the prompt{" "}
+          A simple prompt is all you need.
         </h2>
         <div className="w-full max-w-4xl p-4 flex flex-col justify-center border border-gray-100 shadow-base shadow-2xl rounded-2xl">
-          <TypingPlaceholder
-            isUsingAI={true}
-            text={""}
-            setText={setText}
-            disabled="true"
-          />
+          <TypingPlaceholder isUsingAI={true} text={text} setText={setText} />
           <div className="flex flex-row">
             <div className="flex flex-row w-full gap-2"></div>
-            <button className="btn btn-neutral btn-circle">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="30"
-                height="30"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path
-                  d="M9 4h6a1 1 0 0 1 1 1v14l-4-2-4 2V5a1 1 0 0 1 1-1z"
-                  fill="currentColor"
-                />
-
-                <path
-                  d="M18 6h.01M20 4h.01M16 4h.01M19 9h.01M14 7h.01"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-              </svg>
+            <button
+              disabled={!clientId}
+              onClick={() => {
+                // setShowPreview(true);
+                handleGenerate();
+              }}
+              className="btn btn-accent rounded-3xl"
+            >
+              Generate
             </button>
           </div>
         </div>
       </div>
       <div className="min-h-screen w-full flex flex-col items-center justify-center gap-12 py-16 px-8">
         <h2 className="text-center text-4xl sm:text-6xl font-bold">
-          Automatically creates hierarcy structure
+          Perfect sharable invoice in seconds
         </h2>
-        {/* <BookmarkPreview /> */}
+        <img />
       </div>
       <div className="min-h-screen w-full flex flex-col items-center justify-center gap-12 py-16 px-8">
         <h2 className="text-center text-4xl sm:text-6xl font-bold">
@@ -98,6 +124,7 @@ export default function Home() {
         </h3>
       </div>
       <Footer />
+      {showPreview && <PreviewModal />}
     </>
   );
 }

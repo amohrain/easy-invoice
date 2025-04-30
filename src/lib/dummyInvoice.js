@@ -1,9 +1,9 @@
 export const dummyInvoice = {
   invoiceTitle: "Invoice",
-  businessName: "",
-  businessAddress: "",
-  businessEmail: "",
-  businessPhone: "",
+  businessName: "Sample Company",
+  businessAddress: "XYZ Street, USA",
+  businessEmail: "info@samplecompany.com",
+  businessPhone: "9876543210",
   businessLogo: "./chanel-1.jpg",
   clientId: "",
   clientName: "Abhishek Kumar",
