@@ -147,7 +147,7 @@ function Company() {
                     value={companyData?.businessEmail || ""}
                     onChange={(e) =>
                       setCompanyData({
-                        businesEmail: e.target.value,
+                        businessEmail: e.target.value,
                       })
                     }
                   />

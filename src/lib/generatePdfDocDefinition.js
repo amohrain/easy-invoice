@@ -132,6 +132,7 @@ export function getCustomTableLayout(tableStyle = {}, template) {
 
 // pdfMake version of your invoice rendering logic
 export function generatePdfDocDefinition(template, invoice) {
+  const currency = invoice.currency || "$";
   const content = [];
 
   if (template.style.borders) {
@@ -204,40 +205,42 @@ export function generatePdfDocDefinition(template, invoice) {
       const columns = section.columns.map((col) => {
         const colContent = [];
 
-        col.fields?.forEach(({ key, placeholder, value, bold, size }) => {
-          if (!invoice[key]) return;
-          if (key === "businessLogo" && invoice.businessLogo) {
-            colContent.push({
-              image: invoice.businessLogo,
-              fit: [150, 50],
-              margin: [0, 0, 0, 0],
-            });
-          } else {
-            const inlineContent = [];
+        col.fields?.forEach(
+          ({ key, placeholder, amount, value, bold, size }) => {
+            if (!invoice[key]) return;
+            if (key === "businessLogo" && invoice.businessLogo) {
+              colContent.push({
+                image: invoice.businessLogo,
+                fit: [150, 50],
+                margin: [0, 0, 0, 0],
+              });
+            } else {
+              const inlineContent = [];
 
-            // If "value" is true, show the placeholder first (in bold)
-            if (value) {
+              // If "value" is true, show the placeholder first (in bold)
+              if (value) {
+                inlineContent.push({
+                  text: placeholder || key,
+                  bold: true,
+                  fontSize: size || 12,
+                });
+              }
+
+              // Then show the actual field value
               inlineContent.push({
-                text: placeholder || key,
-                bold: true,
+                text: amount ? currency + invoice[key] : invoice[key] || "",
+                bold: bold || false,
                 fontSize: size || 12,
               });
+
+              colContent.push({
+                text: inlineContent, // <-- use inline array here
+                alignment: col.style?.alignment || "left",
+                margin: [0, 2, 0, 2],
+              });
             }
-
-            // Then show the actual field value
-            inlineContent.push({
-              text: invoice[key] || "",
-              bold: bold || false,
-              fontSize: size || 12,
-            });
-
-            colContent.push({
-              text: inlineContent, // <-- use inline array here
-              alignment: col.style?.alignment || "left",
-              margin: [0, 2, 0, 2],
-            });
           }
-        });
+        );
 
         return { stack: colContent, width: "*", style: col.style || {} };
       });
@@ -245,31 +248,33 @@ export function generatePdfDocDefinition(template, invoice) {
     }
 
     if (section.fields) {
-      section.fields.forEach(({ key, placeholder, value, bold, size }) => {
-        if (!invoice[key]) return;
-        const inlineContent = [];
-        // If "value" is true, show placeholder first (in bold)
-        if (value) {
+      section.fields.forEach(
+        ({ key, placeholder, amount, value, bold, size }) => {
+          if (!invoice[key]) return;
+          const inlineContent = [];
+          // If "value" is true, show placeholder first (in bold)
+          if (value) {
+            inlineContent.push({
+              text: placeholder || key,
+              bold: true,
+              alignment: section.style.alignment || "left",
+              fontSize: size || 12,
+            });
+          }
+
+          // Then the actual field value
           inlineContent.push({
-            text: placeholder || key,
-            bold: true,
-            alignment: section.style.alignment || "left",
+            text: amount ? currency + invoice[key] : invoice[key] || "",
+            bold: bold || false,
             fontSize: size || 12,
           });
+
+          sectionContent.push({
+            text: inlineContent, // inline array
+            margin: [0, 2, 0, 2],
+          });
         }
-
-        // Then the actual field value
-        inlineContent.push({
-          text: invoice[key] || "",
-          bold: bold || false,
-          fontSize: size || 12,
-        });
-
-        sectionContent.push({
-          text: inlineContent, // inline array
-          margin: [0, 2, 0, 2],
-        });
-      });
+      );
     }
 
     if (section.section === "items") {
@@ -324,7 +329,7 @@ export function generatePdfDocDefinition(template, invoice) {
           border: [false, false, false, false],
         },
         {
-          text: invoice.subtotal ?? "",
+          text: currency + invoice.subtotal.toFixed(2) ?? "",
           alignment: "right",
           border: [false, false, false, false],
         },
@@ -339,7 +344,7 @@ export function generatePdfDocDefinition(template, invoice) {
             border: [false, false, false, false],
           },
           {
-            text: deduct.amount ?? "0",
+            text: currency + deduct.amount.toFixed(2) ?? "0",
             alignment: "right",
             border: [false, false, false, false],
           },
@@ -355,7 +360,7 @@ export function generatePdfDocDefinition(template, invoice) {
             border: [false, false, false, false],
           },
           {
-            text: add.amount ?? "0",
+            text: currency + add.amount.toFixed(2) ?? "0",
             alignment: "right",
             border: [false, false, false, false],
           },
@@ -371,7 +376,7 @@ export function generatePdfDocDefinition(template, invoice) {
           border: [false, true, false, false], // top border
         },
         {
-          text: invoice.totalAmount ?? "",
+          text: currency + invoice.totalAmount.toFixed(2) ?? "",
           alignment: "right",
           bold: true,
           border: [false, true, false, false], // top border
@@ -428,7 +433,7 @@ export function generatePdfDocDefinition(template, invoice) {
   const docDefinition = {
     content,
     defaultStyle: {
-      fontSize: 14,
+      fontSize: 12,
       color: resolveColor(template, template.style.defaultStyle.fontColor),
     },
   };

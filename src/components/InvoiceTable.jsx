@@ -239,7 +239,7 @@ function InvoiceTable() {
               <td>{invoice.issuedAt}</td>
               <td>{invoice.clientName}</td>
               <td>{invoice.clientAddress}</td>
-              <td>{invoice.totalAmount}</td>
+              <td>{invoice.totalAmount.toFixed(2)}</td>
               <td>{invoice.status}</td>
             </tr>
           ))}

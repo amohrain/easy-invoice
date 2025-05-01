@@ -59,28 +59,11 @@ export function InvoicePreview({ setStep, editable, preview }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const share = searchParams.get("share");
-
   const { id } = useParams();
 
-  // Handling fetch in preview only
-  // useEffect(() => {
-  //   console.log("Fetching data");
-  //   async function fetchData() {
-  //     if (id) {
-  //       const inv = await getInvoiceById(id);
-  //       console.log("inv, ", inv);
-  //       await getTemplateById(inv.template);
-  //       // await getUsersTemplates(inv.template);
-  //       if (inv.changesSuggested) await fetchSuggestion();
-  //     } else {
-  //       await getUsersTemplates();
-  //     }
-  //   }
-  //   fetchData();
-  // }, []);
+  const currency = company.currency || "$";
 
   // use effect to fetch suggestions after they have been created
-
   useEffect(() => {
     async function fetchData() {
       if (!editable) await fetchSuggestion();
@@ -96,7 +79,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
       if (share) setShowModal(true);
       return;
     }
-
     async function createInvoice() {
       console.log("Creating new invoice", invoice);
 
@@ -124,6 +106,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
           invoiceId,
           // invoiceTitle: "Invoice",
           company: company._id,
+          currency: currency,
           invoiceNumber: `${invoicePrefix}/${invoiceId}/${invoiceSuffix}`,
           issuedAt: new Date().toLocaleDateString("en-US", {
             year: "numeric",
@@ -173,6 +156,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
   };
 
   const handleSave = async () => {
+    if (currentPath === "/") return router.push("/sign-up");
     try {
       setLoading(true);
 
@@ -204,6 +188,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
 
   const handleBack = () => {
     if (currentPath === "/invoices/create") {
+      setStep((prev) => prev - 1);
+    } else if (currentPath === "/") {
       setStep((prev) => prev - 1);
     } else {
       window.history.back();
@@ -349,7 +335,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
   return (
     <div className="flex flex-col w-full h-full">
       {/* Sticky Top Bar */}
-      {!preview && (
+      {/* {!preview && (
         <div className="sticky top-0 z-10 bg-base-200 rounded border-base-300 shadow-sm py-4 px-8 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <h3 className="font-bold text-lg">
@@ -401,13 +387,13 @@ export function InvoicePreview({ setStep, editable, preview }) {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       <div className="p-6 w-full max-w-5xl self-center">
         <div className="flex flex-col w-full border shadow rounded-lg p-6 h-fit">
           {template.structure.map((section) => (
             <div
               key={section.section}
-              className={`flex flex-col text-md mb-5 ${getTextStyle(
+              className={`flex flex-col w-full text-md mb-5 ${getTextStyle(
                 section.style
               )}`}
             >
@@ -420,13 +406,56 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     invoice[key] !== ""
                   );
                 }) && <h3 className="font-bold mb-2">{section.title}</h3>}
+
               {section.section === "title" && (
-                <h2
-                  className={`text-3xl font-semibold mb-4
+                <div className="flex w-full justify-between">
+                  <h2
+                    className={`text-3xl font-semibold mb-4
                     ${getTextStyle(section.style)}`}
-                >
-                  {invoice.invoiceTitle} Preview
-                </h2>
+                  >
+                    {invoice.invoiceTitle} Preview
+                  </h2>
+                  <div className="flex flex-row justify-around items-center gap-4">
+                    <Undo2
+                      className="cursor-pointer hover:text-accent"
+                      onClick={handleBack}
+                    />
+                    <Save
+                      className={`cursor-pointer hover:text-accent ${
+                        saved && "text-gray-400"
+                      }`}
+                      onClick={() => {
+                        handleSave();
+                      }}
+                    />
+
+                    <DownloadIcon className="cursor-pointer hover:text-accent" />
+                    {currentPath !== "/invoices/create" && (
+                      <Link2
+                        className="cursor-pointer hover:text-accent"
+                        onClick={handleLinkShare}
+                      />
+                    )}
+                    {/* {editable && invoice.changesSuggested && (
+                      <button
+                        onClick={handleAcceptSuggestions}
+                        className="btn btn-info"
+                      >
+                        <Edit />
+                        Accept
+                      </button>
+                    )} */}
+                    {!editable && (
+                      <button
+                        onClick={() => setShowSuggestionModal(true)}
+                        className="btn btn-info"
+                      >
+                        <Edit />
+                        Suggest
+                      </button>
+                    )}
+                  </div>
+                </div>
               )}
               {section.section === "horizontal-line" && <hr className="" />}
               {section.section === "logo" && invoice.businessLogo && (
@@ -443,7 +472,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                       className={`flex flex-col ${getTextStyle(col.style)}`}
                     >
                       {col.fields?.map(
-                        ({ key, placeholder, value, bold, size }) =>
+                        ({ key, placeholder, amount, value, bold, size }) =>
                           key === "businessLogo" ? (
                             <img
                               key={key}
@@ -482,6 +511,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                                   "text-red-500 line-through"
                                 }`}
                               >
+                                {amount && currency}
                                 {invoice[key] ?? ""}
                               </span>
                               {suggestion?.[key] !== undefined &&
@@ -513,7 +543,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                 </div>
               )}
               {section.fields?.map(
-                ({ key, placeholder, value, bold, size }) => (
+                ({ key, placeholder, amount, value, bold, size }) => (
                   <div
                     key={key}
                     className={invoice[key] ? "" : "text-gray-400"}
@@ -542,6 +572,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
                         "text-red-500 line-through"
                       }`}
                     >
+                      {" "}
+                      {amount && currency}
                       {invoice[key] ?? ""}
                     </span>
                     {suggestion?.[key] !== undefined &&
@@ -649,7 +681,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
                         }
                         className="cursor-text"
                       >
-                        {invoice.subtotal ?? ""}
+                        {currency}
+                        {invoice.subtotal?.toFixed(2) ?? ""}
                       </span>
                     </div>
 
@@ -673,21 +706,21 @@ export function InvoicePreview({ setStep, editable, preview }) {
                           {deduct.description ?? ""}
                         </span>
                         <span
-                          contentEditable={editable}
-                          suppressContentEditableWarning
-                          onBlur={(e) => {
-                            if (!editable) return;
-                            const deductions = [...invoice.deductions];
-                            deductions[index].amount =
-                              e.target.innerText.trim() || "0";
-                            setInvoice({
-                              ...invoice,
-                              deductions,
-                            });
-                          }}
+                          // contentEditable={editable}
+                          // suppressContentEditableWarning
+                          // onBlur={(e) => {
+                          //   if (!editable) return;
+                          //   const deductions = [...invoice.deductions];
+                          //   deductions[index].amount =
+                          //     e.target.innerText.trim() || "0";
+                          //   setInvoice({
+                          //     ...invoice,
+                          //     deductions,
+                          //   });
+                          // }}
                           className="cursor-text"
                         >
-                          {deduct.amount ?? "0"}
+                          {currency} {deduct.amount?.toFixed(2) ?? "0"}
                         </span>
                       </div>
                     ))}
@@ -711,21 +744,22 @@ export function InvoicePreview({ setStep, editable, preview }) {
                           {add.description ?? ""}
                         </span>
                         <span
-                          contentEditable={editable}
-                          suppressContentEditableWarning
-                          onBlur={(e) => {
-                            if (!editable) return;
-                            const newAdditions = [...invoice.additions];
-                            newAdditions[index].amount =
-                              e.target.innerText.trim() || "0";
-                            setInvoice({
-                              ...invoice,
-                              additions: newAdditions,
-                            });
-                          }}
+                          // contentEditable={editable}
+                          // suppressContentEditableWarning
+                          // onBlur={(e) => {
+                          //   if (!editable) return;
+                          //   const newAdditions = [...invoice.additions];
+                          //   newAdditions[index].amount =
+                          //     e.target.innerText.trim() || "0";
+                          //   setInvoice({
+                          //     ...invoice,
+                          //     additions: newAdditions,
+                          //   });
+                          // }}
                           className=" cursor-text"
                         >
-                          {add.amount ?? "0"}
+                          {currency}
+                          {add.amount?.toFixed(2) ?? "0"}
                         </span>
                       </div>
                     ))}
@@ -733,18 +767,19 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     <div className="flex justify-between font-bold border-t border-gray-300 pt-2 mt-2">
                       {template.labels?.totalAmount || "Total"}
                       <span
-                        contentEditable={editable}
-                        suppressContentEditableWarning
-                        onBlur={(e) => {
-                          if (!editable) return;
-                          handleChange(
-                            "totalAmount",
-                            e.target.innerText.trim() || "0"
-                          );
-                        }}
+                        // contentEditable={editable}
+                        // suppressContentEditableWarning
+                        // onBlur={(e) => {
+                        //   if (!editable) return;
+                        //   handleChange(
+                        //     "totalAmount",
+                        //     e.target.innerText.trim() || "0"
+                        //   );
+                        // }}
                         className=" cursor-text"
                       >
-                        {invoice.totalAmount ?? ""}
+                        {currency}
+                        {invoice.totalAmount?.toFixed(2) ?? ""}
                       </span>
                     </div>
                   </div>
@@ -752,15 +787,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
               )}
             </div>
           ))}
-          {/* <FixedBottomBar
-          onBack={handleBack}
-          onSave={handleSave}
-          onLinkShare={handleLinkShare}
-          currentPath={currentPath}
-        /> */}
         </div>
       </div>
-      {preview && <DownloadIcon className="cursor-pointer hover:text-accent" />}
       {showModal && <ShareLinkModal setShowModal={setShowModal} />}
       {showSuggestionModal && (
         <SuggestEdits

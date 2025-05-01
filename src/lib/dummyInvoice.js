@@ -1,6 +1,5 @@
 export const dummyInvoice = {
   invoiceTitle: "Invoice",
-  businessName: "Sample Company",
   businessAddress: "XYZ Street, USA",
   businessEmail: "info@samplecompany.com",
   businessPhone: "9876543210",

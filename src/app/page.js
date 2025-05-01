@@ -13,8 +13,14 @@ import { useInvoiceStore } from "../store/useInvoice";
 import { InvoicePreview } from "../components/InvoicePreview";
 import { templates } from "../lib/templatesData";
 import { useTemplateStore } from "../store/useTemplate";
+import { sampleCompany } from "../constants/sampleCompany";
+// import { useCompanyStore } from "../store/useCompany";
 import { clients } from "../constants/clients";
 import { dummyInvoice } from "../lib/dummyInvoice";
+import HowItWorks from "../components/HowItWorks";
+import { handleInvoiceGenerate } from "../lib/openai";
+import { calculateInvoice } from "../lib/calculate";
+import { Loading } from "../components/Loading";
 
 export default function Home() {
   const { setTemplate } = useTemplateStore();
@@ -23,23 +29,47 @@ export default function Home() {
   const { invoice, setInvoice } = useInvoiceStore();
 
   const [text, setText] = useState("");
-  const [showPreview, setShowPreview] = useState(false);
-
+  const [step, setStep] = useState(1);
   const { clientId, setSampleClients } = useClientStore();
+  // const { sampleCompany } = useCompanyStore();
 
   useEffect(() => {
     setTemplate(templates[0]);
     setSampleClients();
+    // sampleCompany();
   }, []);
 
   const handleGenerate = async () => {
     try {
       setLoading(true);
-      const invoice = dummyInvoice;
+
+      const invoiceInfo = {
+        issuedAt: new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        invoiceNumber: "INV-001",
+        dueDate: new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+      };
+
+      const invoice = await handleInvoiceGenerate(text);
+      // const invoice = dummyInvoice;
+      const updatedInvoice = calculateInvoice(invoice);
       const clientInfo = clients.find((client) => client._id === clientId);
-      setInvoice({ ...invoice, ...clientInfo });
+
+      setInvoice({
+        ...updatedInvoice,
+        ...clientInfo,
+        ...sampleCompany,
+        ...invoiceInfo,
+      });
       setLoading(false);
-      setShowPreview(true);
+      setStep(2);
     } catch (error) {
       console.log("Error generating invoice: ", error);
     }
@@ -48,16 +78,14 @@ export default function Home() {
   const PreviewModal = () => {
     return (
       <div className="fixed inset-0 bg-base-100 flex items-center justify-center z-50 overflow-y-auto">
-        {/* <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full p-6 relative "> */}
-        <button
-          onClick={() => setShowPreview(false)}
-          className="absolute top-3 right-3 text-gray-500 hover:text-black text-2xl font-bold"
-        ></button>
-        <InvoicePreview preview={true} editable={true} />
-        {/* </div> */}
+        <InvoicePreview setStep={setStep} preview={true} editable={true} />
       </div>
     );
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -67,30 +95,100 @@ export default function Home() {
         image="https://bulkmark.in/og-image.jpg"
         url="https://bulkmark.in"
       />
-      <div className="p-4">
-        <Nav />
-      </div>
-      <div className="hero border mt-[-120px] min-h-screen">
-        {/* <div className="hero-overlay"></div> */}
-        <div className="hero-content text-center">
-          <div className="flex flex-col w-full">
-            <h1 className="mb-5 text-5xl sm:text-6xl font-bold">
-              Create stunning invoices instantly
-            </h1>
-            <p className="mb-5 sm:text-2xl">
-              Type a prompt, give it a human touch, and share with customers.
-            </p>
-            <button className=" w-fit self-center rounded-full btn btn-primary sm:btn-xl">
-              <Link href={"/sign-up"}>Get Started with Vibe Invoice</Link>
+
+      <nav className="bg-gradient-to-r sm:px-12 from-primary/35 via-base-100 to-primary/10 px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* Logo */}
+          <div className="text-2xl font-bold">Vibe Invoice</div>
+
+          {/* Navigation Links (hidden on mobile) */}
+          <div className="hidden md:flex gap-6 text-base font-medium">
+            <a href="#how-it-works" className="hover:text-primary">
+              How it works
+            </a>
+            <a href="#interactive-demo" className="hover:text-primary">
+              Interactive Demo
+            </a>
+            <a href="#pricing" className="hover:text-primary">
+              Pricing
+            </a>
+            <a href="#faq" className="hover:text-primary">
+              FAQs
+            </a>
+          </div>
+
+          {/* Call to Action */}
+          <div className="hidden md:flex gap-2">
+            <Link href={"/sign-in"}>
+              <button className="btn btn-outline rounded-full">Login</button>
+            </Link>
+            <button className="btn btn-primary rounded-full">
+              Get Started
             </button>
           </div>
-          {/* <img width={400} src={"/Images.png"} /> */}
+
+          {/* Mobile Menu Icon (optional) */}
+          <div className="md:hidden">
+            <button>
+              <svg
+                className="w-6 h-6 text-primary"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div className="hero min-h-screen py-12 sm:px-4  bg-gradient-to-r from-primary/35 via-base-100 to-primary/10">
+        <div className="hero-content flex-col gap-8 lg:flex-row-reverse">
+          <img src="/Tested.png" className="w-fit rounded" />
+          <div className="flex flex-col justify-between h-full gap-12 text-center">
+            <div>
+              <h1 className="text-4xl sm:text-6xl font-bold">
+                Create stunning invoices within seconds!
+              </h1>
+              <p className="py-6">
+                Type a prompt to generate invoice, share with customers and get
+                paid
+              </p>
+            </div>
+
+            <button className="btn btn-primary w-fit self-center rounded-full py-6 px-6">
+              Get Started for free
+            </button>
+          </div>
         </div>
       </div>
-      <div className="min-h-screen flex flex-col items-center justify-center gap-12 py-16 px-8">
+
+      <div
+        id="how-it-works"
+        className="min-h-screen w-full flex flex-col items-center justify-center gap-12 py-16 px-8"
+      >
+        <h2 className="text-center text-4xl sm:text-6xl font-bold">
+          How it works
+        </h2>
+        <p className="italic">In three simple steps</p>
+        <HowItWorks />
+      </div>
+      <div
+        id="interactive-demo"
+        className="min-h-screen flex flex-col items-center justify-center gap-12 py-16 px-8"
+      >
         <h2 className="text-center text-4xl sm:text-6xl font-bold">
           A simple prompt is all you need.
         </h2>
+        <p className="italic rounded bg-amber-200 px-2">
+          Try it yourself below
+        </p>
         <div className="w-full max-w-4xl p-4 flex flex-col justify-center border border-gray-100 shadow-base shadow-2xl rounded-2xl">
           <TypingPlaceholder isUsingAI={true} text={text} setText={setText} />
           <div className="flex flex-row">
@@ -98,7 +196,6 @@ export default function Home() {
             <button
               disabled={!clientId}
               onClick={() => {
-                // setShowPreview(true);
                 handleGenerate();
               }}
               className="btn btn-accent rounded-3xl"
@@ -108,13 +205,10 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="min-h-screen w-full flex flex-col items-center justify-center gap-12 py-16 px-8">
-        <h2 className="text-center text-4xl sm:text-6xl font-bold">
-          Perfect sharable invoice in seconds
-        </h2>
-        <img />
-      </div>
-      <div className="min-h-screen w-full flex flex-col items-center justify-center gap-12 py-16 px-8">
+      <div
+        id="pricing"
+        className="min-h-screen w-full flex flex-col items-center justify-center gap-12 py-16 px-8"
+      >
         <h2 className="text-center text-4xl sm:text-6xl font-bold">
           One-time payment, no commitments
         </h2>
@@ -123,8 +217,9 @@ export default function Home() {
           All plans come with 30 day risk-free gurantee
         </h3>
       </div>
+
       <Footer />
-      {showPreview && <PreviewModal />}
+      {step == 2 && <PreviewModal />}
     </>
   );
 }

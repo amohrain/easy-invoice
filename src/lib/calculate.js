@@ -70,5 +70,6 @@ export function calculateInvoice(invoice) {
     ...invoice,
     subtotal: subtotal,
     totalAmount: totalAmount,
+    amountDue: totalAmount.toFixed(2),
   };
 }

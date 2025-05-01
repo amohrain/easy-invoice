@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { sampleCompany } from "../constants/sampleCompany";
 
 export const useCompanyStore = create((set, get) => ({
   company: {},
@@ -55,5 +56,8 @@ export const useCompanyStore = create((set, get) => ({
       (company) => company._id === companyId
     );
     set({ company: selectedCompany, companyData: selectedCompany });
+  },
+  sampleCompany: () => {
+    set({ company: sampleCompany });
   },
 }));

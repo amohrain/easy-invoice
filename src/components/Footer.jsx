@@ -41,8 +41,11 @@ function Footer() {
         </nav>
       </aside>
       <nav>
-        <h6 className="footer-title">Our Products</h6>
+        <h6 className="footer-title">All Products</h6>
         <Link href="/" className="link link-hover">
+          Vibe Invoice
+        </Link>
+        <Link href="https://www.bulkmark.in" className="link link-hover">
           Bulkmark
         </Link>
         <Link href="https://www.proker.io" className="link link-hover">
@@ -52,7 +55,7 @@ function Footer() {
       <nav>
         <h6 className="footer-title">Company</h6>
         <Link href="/about-us" className="link link-hover">
-          About us
+          About
         </Link>
         <Link href="/contact-us" className="link link-hover">
           Contact

@@ -12,11 +12,10 @@ export const handleInvoiceGenerate = async (prompt) => {
 ### Instructions:
 1. Extract relevant information from the user's text prompt and map it to the JSON structure.
 2. Fill as many fields as possible based on the input.
-3. Use intelligent parsing to categorize **items**, identifying attributes like **description**, **quantity**, **rate**, **discount**, and **total**.
+3. Use intelligent parsing to categorize **items**, identifying attributes like **description**, **quantity**, **rate**, and **total**.
 4. Always include the **additions** and **deductions** arrays in your output, even if empty.
 5. If a value is missing or unclear, leave the field blank ("") or use empty arrays where appropriate.
-6. Ensure **totalAmount** is calculated correctly: sum of all **items** (rate * quantity) minus total deductions, plus total additions.
-7. Maintain proper formatting (dates in **YYYY-MM-DD** format, numbers without currency symbols).
+7. Maintain proper formatting (dates in **Month Date, Year** format, numbers without currency symbols).
 8. Return only valid JSON output without explanations or additional text.
 9. Enter fields businessName, businessAddress, businessEmail and businessPhone if and only if there appear to be more than two parties.
 
@@ -31,14 +30,8 @@ export const handleInvoiceGenerate = async (prompt) => {
   "clientPhone": "",
   "clientAddress": "",
   "clientTaxId": "",
-  "invoiceNumber": "",
   "issuedAt": "",
   "dueDate": "",
-  "paymentTerms": "",
-  "subtotal": "",
-  "tax": "",
-  "discount": "",
-  "totalAmount": "",
   "notes": "",
   "currencySymbol": "",
   "paymentInstructions": "",

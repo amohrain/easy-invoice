@@ -15,6 +15,7 @@ import { Link2, Printer, Save } from "lucide-react";
 import DownloadIcon from "@/components/DownloadIcon";
 import { useStepsStore } from "@/store/useSteps";
 import { useLoadingStore } from "@/store/useLoading";
+import { calculateInvoice } from "../../../lib/calculate";
 
 function Dashboard() {
   const [step, setStep] = useState(1);
@@ -43,9 +44,10 @@ function Dashboard() {
   const handleGenerate = async () => {
     try {
       setLoading(true);
-      // const invoice = await handleInvoiceGenerate(text);
-      const invoice = dummyInvoice;
-      setInvoice(invoice);
+      const invoice = await handleInvoiceGenerate(text);
+      const updatedInvoice = calculateInvoice(invoice);
+      // const invoice = dummyInvoice;
+      setInvoice(updatedInvoice);
       setLoading(false);
       setStep(2);
     } catch (error) {
