@@ -8,14 +8,17 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useCompanyStore } from "../store/useCompany";
 
 const DailyRevenueChart = () => {
   const [dailyData, setDailyData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
   const currentDate = new Date();
   const month = currentDate.getMonth() + 1;
   const year = currentDate.getFullYear();
+
+  const { company } = useCompanyStore();
+  const currency = company.currency || "";
 
   useEffect(() => {
     const fetchDailyRevenue = async () => {
@@ -104,7 +107,7 @@ const DailyRevenueChart = () => {
                   className="text-xs text-base-content/70"
                 />
                 <YAxis
-                  tickFormatter={(value) => `$${value}`}
+                  tickFormatter={(value) => `${currency}${value}`}
                   className="text-xs text-base-content/70"
                 />
                 <Tooltip content={<CustomTooltip />} />

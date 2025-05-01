@@ -54,27 +54,26 @@ function Company() {
   }, [updateCompany]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen ">
       <LeftBar />
-      <div className="flex w-full flex-col p-4 gap-6 bg-base-200">
+      <div className="flex w-full flex-col p-4 gap-6 bg-base-200 overflow-y-auto">
         {/* Main content for the Company page */}
         <div className="">
           <h1 className="text-2xl font-bold">
             {companyData?.businessName || "My Company"}
           </h1>
           <p className="mt-2">
-            This is the company page. Here you can manage your company settings
-            and information.
+            This is the company page. Here you can manage your company details
+            and preferences.
           </p>
-          {/* Add your invoice management components here */}
         </div>
 
         <div className="px-4">
-          <fieldset className="fieldset w-xl bg-base-100 shadow p-4 rounded-lg">
+          <fieldset className="fieldset bg-base-100 shadow p-4 rounded-lg">
             {/* <legend className="text-lg font-medium">Company Information</legend> */}
 
             {/* Two-column layout for form fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {/* Left Column */}
               <div>
                 <div className="mb-4">
@@ -152,24 +151,9 @@ function Company() {
                     }
                   />
                 </div>
-
-                <div className="mb-4">
-                  <label className="fieldset-label block mb-2">Website</label>
-                  <input
-                    type="url"
-                    className="input input-bordered w-full"
-                    placeholder="https://easyinvoice.com"
-                    value={companyData?.businessWebsite || ""}
-                    onChange={(e) =>
-                      setCompanyData({
-                        businessWebsite: e.target.value,
-                      })
-                    }
-                  />
-                </div>
               </div>
 
-              {/* Right Column */}
+              {/* Middle Column */}
               <div>
                 <div className="mb-4">
                   <label className="fieldset-label block mb-2">Address</label>
@@ -207,22 +191,6 @@ function Company() {
                   </label>
                   <InvoiceNumberFormat />
                 </div>
-                <div className="mb-4">
-                  <label className="fieldset-label block mb-2">
-                    Tax ID / VAT Number
-                  </label>
-                  <input
-                    type="text"
-                    className="input input-bordered w-full"
-                    placeholder="123-45-6789"
-                    value={companyData?.businessTaxId || ""}
-                    onChange={(e) =>
-                      setCompanyData({
-                        businessTaxId: e.target.value,
-                      })
-                    }
-                  />
-                </div>
 
                 <div className="mb-4">
                   <label className="fieldset-label block mb-2">Currency</label>
@@ -242,14 +210,61 @@ function Company() {
                   </select>
                 </div>
               </div>
-            </div>
 
-            <button
-              className="btn btn-primary mt-4 w-full md:w-auto"
-              onClick={handleUpdateCompany}
-            >
-              Update Company Information
-            </button>
+              {/* Right Column */}
+              <div>
+                <div className="mb-4">
+                  <label className="fieldset-label block mb-2">
+                    Payment Instructions
+                  </label>
+                  <textarea
+                    className="textarea textarea-bordered w-full h-22 resize-none"
+                    placeholder="Please pay before the due date"
+                    value={companyData?.paymentInstructions || ""}
+                    onChange={(e) =>
+                      setCompanyData({
+                        paymentInstructions: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="fieldset-label block mb-2">Notes</label>
+                  <textarea
+                    className="textarea textarea-bordered w-full h-30 resize-none"
+                    placeholder="Thank you for the business!"
+                    value={companyData?.notes || ""}
+                    onChange={(e) =>
+                      setCompanyData({
+                        notes: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="fieldset-label block mb-2">Website</label>
+                  <input
+                    type="url"
+                    className="input input-bordered w-full"
+                    placeholder="https://easyinvoice.com"
+                    value={companyData?.businessWebsite || ""}
+                    onChange={(e) =>
+                      setCompanyData({
+                        businessWebsite: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <button
+                className="btn btn-primary mt-4 w-full md:w-fit"
+                onClick={handleUpdateCompany}
+              >
+                Update Company Information
+              </button>
+            </div>
           </fieldset>
         </div>
       </div>

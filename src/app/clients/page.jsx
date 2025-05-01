@@ -14,6 +14,7 @@ import {
 import { Loading } from "@/components/Loading";
 import LeftBar from "@/components/LeftBar";
 import { useInvoiceStore } from "@/store/useInvoice";
+import { toast } from "sonner";
 
 export default function ClientsPage() {
   const [clients, setClients] = useState([]);
@@ -28,20 +29,15 @@ export default function ClientsPage() {
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const { invoiceData, getInvoices } = useInvoiceStore();
 
-  useEffect(
-    () => {
-      async function fetchData() {
-        await getInvoices();
-        const response = await fetch("/api/client");
-        const data = await response.json();
-        setClients(data.data);
-      }
-      fetchData();
-    },
-    [
-      // Todo to decide
-    ]
-  );
+  useEffect(() => {
+    async function fetchData() {
+      await getInvoices();
+      const response = await fetch("/api/client");
+      const data = await response.json();
+      setClients(data.data);
+    }
+    fetchData();
+  }, []);
 
   // Form state for adding/editing clients
   const [formData, setFormData] = useState({
@@ -58,6 +54,7 @@ export default function ClientsPage() {
       clientEmail: "",
       clientPhone: "",
       clientAddress: "",
+      clientTaxId: "",
       status: "active",
     });
     setSelectedClient(null);
@@ -75,12 +72,12 @@ export default function ClientsPage() {
       clientEmail: client.clientEmail,
       clientPhone: client.clientPhone,
       clientAddress: client.clientAddress,
+      clientTaxId: client.clientTaxId,
       status: client.clientAddress,
     });
     setIsModalOpen(true);
   };
 
-  // Todo- Open modal to delete
   const openDeleteModal = (client) => {
     setClientToDelete(client);
     setIsDeleteModalOpen(true);
@@ -123,6 +120,15 @@ export default function ClientsPage() {
         }),
       }
     );
+
+    if (response.ok) {
+      toast.success(
+        `Client ${selectedClient ? "updated" : "created"} successfully`
+      );
+    } else {
+      toast.error(`Error ${selectedClient ? "updating" : "creating"} client`);
+    }
+
     setLoading(false);
     setIsModalOpen(false);
     resetForm();
@@ -137,8 +143,10 @@ export default function ClientsPage() {
 
       if (response.ok) {
         console.log("Deleted");
+        toast.success("Client deleted");
       } else {
         console.log("Error deleting client");
+        toast.error("Error deleting client");
       }
 
       setIsDeleteModalOpen(false);
@@ -337,27 +345,6 @@ export default function ClientsPage() {
                         >
                           <Trash2 size={16} />
                         </button>
-
-                        {/* Todo Client Actions */}
-                        {/* <div className="dropdown dropdown-end">
-                          <label tabIndex={0} className="btn btn-ghost btn-xs">
-                            <MoreHorizontal size={16} />
-                          </label>
-                          <ul
-                            tabIndex={0}
-                            className="dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-40"
-                          >
-                            <li>
-                              <a>View Details</a>
-                            </li>
-                            <li>
-                              <a>New Invoice</a>
-                            </li>
-                            <li>
-                              <a>Payment History</a>
-                            </li>
-                          </ul>
-                        </div> */}
                       </div>
                     </td>
                   </tr>
@@ -483,6 +470,20 @@ export default function ClientsPage() {
                     placeholder="Enter phone number"
                     className="input input-bordered"
                     value={formData.clientPhone}
+                    onChange={handleFormChange}
+                    required
+                  />
+                </div>
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Tax ID</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="clientTaxId"
+                    placeholder="Enter Tax number"
+                    className="input input-bordered"
+                    value={formData.clientTaxId}
                     onChange={handleFormChange}
                     required
                   />

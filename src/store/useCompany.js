@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { sampleCompany } from "../constants/sampleCompany";
+import { toast } from "sonner";
 
 export const useCompanyStore = create((set, get) => ({
   company: {},
@@ -39,23 +40,31 @@ export const useCompanyStore = create((set, get) => ({
         },
         body: JSON.stringify(data),
       });
+      if (response.ok) toast.success("Company updated successfully");
     } catch (error) {
       console.error("Error updating company:", error);
+      toast.error("Failed to update company");
     }
   },
   changeCompany: async (companyId) => {
-    await fetch("/api/users/company", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ company: companyId }),
-    });
-    const companies = get().companies;
-    const selectedCompany = companies.find(
-      (company) => company._id === companyId
-    );
-    set({ company: selectedCompany, companyData: selectedCompany });
+    try {
+      await fetch("/api/users/company", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ company: companyId }),
+      });
+      const companies = get().companies;
+      const selectedCompany = companies.find(
+        (company) => company._id === companyId
+      );
+      set({ company: selectedCompany, companyData: selectedCompany });
+      toast.success("Success");
+    } catch (error) {
+      console.error("Error updating company:", error);
+      toast.error("Failed to update company");
+    }
   },
   sampleCompany: () => {
     set({ company: sampleCompany });

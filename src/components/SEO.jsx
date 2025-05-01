@@ -7,9 +7,9 @@ const SEO = ({ title, description, image, url }) => {
       <meta name="description" content={description} />
       <meta
         name="keywords"
-        content="PDF bookmark tool, Bulk PDF bookmarking, legal documents, document organization, automated bookmarking"
+        content="invoice, invoicing tool, ai invoice, fast invoice, quick invoice, create invoice faster, vibe invoice"
       />
-      <meta name="author" content="Bulkmark" />
+      <meta name="author" content="Vibe Invoice" />
       <meta name="robots" content="index, follow" />
       <meta charSet="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -35,14 +35,14 @@ const SEO = ({ title, description, image, url }) => {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             name: "Bulkmark",
-            url: "https://bulkmark.in",
+            url: "https://vibeinvoice.com",
             image: image,
             description: description,
             applicationCategory: "Utility",
             operatingSystem: "Web-based",
             offers: {
               "@type": "Offer",
-              price: "5.00",
+              price: "49.00",
               priceCurrency: "USD",
             },
           }),

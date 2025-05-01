@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { create } from "zustand";
 
 export const useInvoiceStore = create((set, get) => ({
@@ -31,8 +32,10 @@ export const useInvoiceStore = create((set, get) => ({
         body: JSON.stringify({ ...invoice, template: templateId }),
       });
       const data = await response.json();
+      toast.success("Invoice saved");
     } catch (error) {
       console.error("Error saving invoice:", error);
+      toast.error("Error saving invoice");
     }
   },
   postInvoice: async (invoice) => {
@@ -46,9 +49,11 @@ export const useInvoiceStore = create((set, get) => ({
       });
       const data = await response.json();
       set({ invoice: data.data });
+      toast.success("Invoice created successfully");
       return data.data;
     } catch (error) {
       console.error("Error saving invoice:", error);
+      toast.error("Error creating invoice");
     }
   },
   invoiceId: null,
@@ -92,13 +97,11 @@ export const useInvoiceStore = create((set, get) => ({
   },
 
   // Function to create a new client
-  // Todo
   createClient: async () => {
     try {
       const currentInvoice = get().invoice;
 
       // Test if the client already exists
-
       const existingRes = await fetch(
         `/api/client/query?name=${currentInvoice.clientName}&email=${currentInvoice.clientEmail}`
       );
@@ -128,6 +131,23 @@ export const useInvoiceStore = create((set, get) => ({
     }
   },
   suggestion: null,
+  createSuggestion: async (data) => {
+    try {
+      const response = await fetch("/api/suggestion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, invoiceId: get().invoice._id }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        toast.success("Suggestion created successfully");
+      }
+    } catch (error) {
+      console.log("Error creating suggestion", error);
+      toast.error("Error creating suggestion");
+    }
+  },
   acceptSuggestions: async () => {
     try {
       const invoice = get().invoice;
@@ -172,14 +192,15 @@ export const useInvoiceStore = create((set, get) => ({
       if (!responseSuggestion.ok) {
         console.error("Error saving invoice");
       }
-
+      toast.success("Suggestions accepted successfully");
       console.log("Suggestions accepted successfully");
     } catch (error) {
       console.error("Error accepting suggestions:", error);
-      // Toast
+      toast.error("Error accepting sugestions");
     }
   },
 
+  // Todo - to add a later stage - not too late
   acceptOneSuggestion: async (key) => {
     // let key received was clientName
     try {
@@ -204,22 +225,9 @@ export const useInvoiceStore = create((set, get) => ({
         console.error("Error saving invoice");
       }
 
-      // // Delete suggestion
-      // const responseSuggestion = await fetch(
-      //   "/api/suggestion?id=" + suggestion._id,
-      //   {
-      //     method: "DELETE",
-      //   }
-      // );
-
-      // if (!responseSuggestion.ok) {
-      //   console.error("Error saving invoice");
-      // }
-
       console.log("Suggestion accepted successfully");
     } catch (error) {
       console.error("Error accepting suggestion:", error);
-      // Toast
     }
   },
   fetchSuggestion: async () => {
@@ -227,8 +235,6 @@ export const useInvoiceStore = create((set, get) => ({
       const invoice = get().invoice;
       const response = await fetch("/api/suggestion?id=" + invoice._id);
       const data = await response.json();
-
-      // Todo toast
       set({ suggestion: data.data });
     } catch (error) {}
   },

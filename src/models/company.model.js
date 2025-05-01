@@ -60,10 +60,6 @@ const companySchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  paymentInstructions: {
-    type: String,
-    required: false,
-  },
   paymentTerms: {
     type: String,
     required: false,

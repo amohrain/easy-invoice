@@ -10,6 +10,7 @@ export const useClientStore = create((set) => ({
   setSampleClients: () => {
     set({ clients: clients });
   },
+
   getClients: async () => {
     try {
       const response = await fetch("/api/client");

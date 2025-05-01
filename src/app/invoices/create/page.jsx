@@ -5,8 +5,6 @@ import { handleInvoiceGenerate } from "@/lib/openai";
 import { Loading } from "@/components/Loading";
 import { InvoicePreview } from "@/components/InvoicePreview";
 import LeftBar from "@/components/LeftBar";
-import InvoiceViewer from "@/components/InvoiceViewer";
-import DownloadInvoiceButton from "@/components/DownloadInvoiceButton";
 import { useCompanyStore } from "@/store/useCompany";
 import { useTemplateStore } from "@/store/useTemplate";
 import { dummyInvoice } from "@/lib/dummyInvoice";

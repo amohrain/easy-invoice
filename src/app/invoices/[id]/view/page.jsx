@@ -3,9 +3,7 @@ import React, { useEffect } from "react";
 import { InvoicePreview } from "../../../../components/InvoicePreview";
 import { useParams } from "next/navigation";
 import { useInvoiceStore } from "../../../../store/useInvoice";
-import { Loader } from "lucide-react";
 import { useTemplateStore } from "../../../../store/useTemplate";
-import { InvoiceView } from "../../../../components/deprecated/InvoiceView";
 
 function InvoiceViewPage() {
   const { invoice, getInvoiceById, fetchSuggestion } = useInvoiceStore();

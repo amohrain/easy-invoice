@@ -7,6 +7,7 @@ import { useTemplateStore } from "@/store/useTemplate";
 import { useLoadingStore } from "@/store/useLoading";
 import { useEffect, useState } from "react";
 import {
+  Check,
   Copy,
   CopyCheck,
   Edit,
@@ -45,6 +46,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
     fetchClientId,
     createClient,
     suggestion,
+    createSuggestion,
     fetchSuggestion,
     acceptSuggestions,
     acceptOneSuggestion,
@@ -90,6 +92,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
           businessEmail,
           businessPhone,
           businessLogo,
+          notes,
+          paymentInstructions,
           invoicePrefix,
           invoiceSuffix,
         } = company;
@@ -104,7 +108,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
           businessPhone,
           businessLogo,
           invoiceId,
-          // invoiceTitle: "Invoice",
           company: company._id,
           currency: currency,
           invoiceNumber: `${invoicePrefix}/${invoiceId}/${invoiceSuffix}`,
@@ -113,6 +116,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
             month: "long",
             day: "numeric",
           }),
+          notes,
+          paymentInstructions,
         };
 
         // Fetch client details based on clientId provided
@@ -210,11 +215,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
     });
 
     const handleCreateSuggestion = async () => {
-      const response = await fetch("/api/suggestion", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...suggestedData, invoiceId: invoice._id }),
-      });
+      await createSuggestion(suggestedData);
       setShowSuggestionModal(false);
     };
 
@@ -332,6 +333,14 @@ export function InvoicePreview({ setStep, editable, preview }) {
     handleChange(key, suggestion[key]);
   };
 
+  const hideShareModal = () => {
+    setShowModal(false);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("share"); // or params.delete(key) to remove
+    console.log(params);
+    router.push(`?${params.toString()}`);
+  };
+
   return (
     <div className="flex flex-col w-full h-full">
       {/* Sticky Top Bar */}
@@ -436,15 +445,16 @@ export function InvoicePreview({ setStep, editable, preview }) {
                         onClick={handleLinkShare}
                       />
                     )}
-                    {/* {editable && invoice.changesSuggested && (
+                    {editable && invoice.changesSuggested && (
                       <button
                         onClick={handleAcceptSuggestions}
                         className="btn btn-info"
                       >
-                        <Edit />
-                        Accept
+                        <Check />
+                        Accept All
                       </button>
-                    )} */}
+                    )}
+
                     {!editable && (
                       <button
                         onClick={() => setShowSuggestionModal(true)}
@@ -789,7 +799,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
           ))}
         </div>
       </div>
-      {showModal && <ShareLinkModal setShowModal={setShowModal} />}
+      {showModal && <ShareLinkModal hide={hideShareModal} />}
       {showSuggestionModal && (
         <SuggestEdits
         // setShowModal={setShowModal}
@@ -800,7 +810,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
   );
 }
 
-const ShareLinkModal = ({ setShowModal }) => {
+const ShareLinkModal = ({ hide }) => {
   const [copied, setCopied] = useState(false);
   return (
     <div className="modal modal-open modal-end">
@@ -840,7 +850,7 @@ const ShareLinkModal = ({ setShowModal }) => {
           </button>
         </div>
         <div className="modal-action">
-          <button className="btn" onClick={() => setShowModal(false)}>
+          <button className="btn" onClick={() => hide()}>
             Close
           </button>
         </div>

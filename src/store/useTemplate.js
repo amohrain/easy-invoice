@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { templates } from "@/lib/templatesData";
+import { toast } from "sonner";
 
 export const useTemplateStore = create((set, get) => ({
   loading: false,
@@ -10,7 +11,6 @@ export const useTemplateStore = create((set, get) => ({
   // Fetch all existing templates
   templatesData: null,
   getTemplateById: async (templateId) => {
-    //  Todo
     try {
       set({ loading: true });
       const response = await fetch("/api/templates/" + templateId);
@@ -90,8 +90,10 @@ export const useTemplateStore = create((set, get) => ({
       const templates = data.data || [];
       console.log("Added template: ", templates);
       set({ userTemplates: templates });
+      toast.success("Templated addes successfully");
     } catch (error) {
       console.error("Error adding template: ", error);
+      toast.error("Error adding template");
     }
   },
   removeTemplate: async (templateId) => {
@@ -114,8 +116,10 @@ export const useTemplateStore = create((set, get) => ({
       const data = await response.json();
       const templates = data.data || [];
       set({ userTemplates: templates });
+      toast.success("Template removed successfully");
     } catch (error) {
       console.error("Error removing template: ", error);
+      toast.error("Error removing template");
     }
   },
 }));
