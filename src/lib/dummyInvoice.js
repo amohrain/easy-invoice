@@ -18,7 +18,6 @@ export const dummyInvoice = {
   tax: 40.5,
   discount: 120,
   totalAmount: 328.6,
-  currencySymbol: "$",
   notes: "Thank you for your business!",
   paymentInstructions: "Please make payment to the bank account provided.",
   items: [

@@ -135,6 +135,8 @@ export function generatePdfDocDefinition(template, invoice) {
   const currency = invoice.currency || "$";
   const content = [];
 
+  console.log(template);
+
   if (template.style.borders) {
     const margin = template.style.borders.margins;
     const radius = template.style.borders.radius;
@@ -433,7 +435,7 @@ export function generatePdfDocDefinition(template, invoice) {
   const docDefinition = {
     content,
     defaultStyle: {
-      fontSize: 12,
+      fontSize: template.style.defaultStyle.size || 12,
       color: resolveColor(template, template.style.defaultStyle.fontColor),
     },
   };

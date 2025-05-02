@@ -17,18 +17,19 @@ function page() {
   return (
     <div className="flex w-full flex-row h-screen">
       <LeftBar className="" />
-      <div className="flex flex-col w-full h-full bg-base-100 justify-center">
-        <div className="flex flex-col items-center justify-center py-16 space-y-4">
+      <div className="flex flex-col w-full h-screen bg-base-100 overflow-y-auto p-12">
+        <div className="flex flex-col items-center justify-center gap-4">
           <h1 className="text-3xl text-center font-semibold">
             One-time payment, no commitments
           </h1>
-
           <Plans where="billing" />
+          <div>
+            <p className="text-center">
+              Current plan: {user?.subscriptionPlan}
+            </p>
+            <p className="text-center">Invoices created this month: {0}</p>
+          </div>
         </div>
-        <p className="text-center">Current plan: {user?.subscriptionPlan}</p>
-        <p className="text-center">
-          Invoices created this month: {"Lost count"}
-        </p>
       </div>
     </div>
   );

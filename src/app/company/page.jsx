@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import LeftBar from "@/components/LeftBar";
 import { useCompanyStore } from "@/store/useCompany";
 import InvoiceNumberFormat from "@/components/InvoiceNumberFormat";
+import { Plus } from "lucide-react";
+import { useUserStore } from "../../store/useUser";
 
 function Company() {
   const {
@@ -15,9 +17,19 @@ function Company() {
   } = useCompanyStore();
 
   const [logo, setLogo] = useState(null);
+  const [isPro, setIsPro] = useState(false);
+  const { getCurrentUser } = useUserStore();
   const [preview, setPreview] = useState(company?.businessLogo || null);
 
-  console.log("Company logo", preview);
+  useEffect(() => {
+    async function fetchData() {
+      const user = await getCurrentUser();
+      if (user.subscriptionPlan === "Pro") {
+        setIsPro(true);
+      }
+    }
+    fetchData();
+  }, []);
 
   async function uploadLogo() {
     if (!logo) return "";
@@ -36,13 +48,16 @@ function Company() {
   }
 
   const handleUpdateCompany = async () => {
-    const logoUrl = await uploadLogo();
     // const logoUrl = "";
     const updatedData = {
       ...companyData,
-      businessLogo: logoUrl,
     };
 
+    if (logo) {
+      const logoUrl = await uploadLogo();
+      updatedData.businessLogo = logoUrl;
+    }
+    console.log("Updating company with, ", updatedData);
     await updateCompany(updatedData);
   };
 
@@ -58,17 +73,25 @@ function Company() {
       <LeftBar />
       <div className="flex w-full flex-col p-4 gap-6 bg-base-200 overflow-y-auto">
         {/* Main content for the Company page */}
-        <div className="">
-          <h1 className="text-2xl font-bold">
-            {companyData?.businessName || "My Company"}
-          </h1>
-          <p className="mt-2">
-            This is the company page. Here you can manage your company details
-            and preferences.
-          </p>
+        <div className="flex justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">
+              {companyData?.businessName || "My Company"}
+            </h1>
+            <p className="mt-2">
+              This is the company page. Here you can manage your company details
+              and preferences.
+            </p>
+          </div>
+          {isPro && (
+            <button className="btn btn-primary">
+              <Plus />
+              Create new
+            </button>
+          )}
         </div>
 
-        <div className="px-4">
+        <div className="">
           <fieldset className="fieldset bg-base-100 shadow p-4 rounded-lg">
             {/* <legend className="text-lg font-medium">Company Information</legend> */}
 
@@ -80,10 +103,10 @@ function Company() {
                   <label className="fieldset-label block mb-2">
                     Company Logo
                   </label>
-                  <div className="flex justify-center mb-2">
-                    {preview && !logo && (
+                  <div className="flex justify-center h-10 mb-2">
+                    {company.businessLogo && !logo && (
                       <img
-                        src={preview}
+                        src={company.businessLogo}
                         alt="Company Logo"
                         className="h-10 w-auto object-contain rounded self-center"
                       />

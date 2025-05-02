@@ -30,6 +30,8 @@ function Templates() {
     return <div>Loading...</div>;
   }
 
+  // return <div>404</div>;
+
   return (
     <div className="flex flex-row h-screen">
       <LeftBar className="" />

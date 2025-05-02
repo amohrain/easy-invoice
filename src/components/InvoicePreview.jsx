@@ -37,6 +37,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
 
   const { template, getUsersTemplates, getTemplateById } = useTemplateStore();
 
+  // const template = templates[0];
+
   const {
     invoice,
     setInvoice,
@@ -78,12 +80,11 @@ export function InvoicePreview({ setStep, editable, preview }) {
     if (currentPath !== "/invoices/create") {
       console.log(currentPath);
       setSaved(false);
+      setInvoice(calculateInvoice(invoice));
       if (share) setShowModal(true);
       return;
     }
     async function createInvoice() {
-      console.log("Creating new invoice", invoice);
-
       let updatedInvoice = calculateInvoice(invoice);
       if (!updatedInvoice.businessName) {
         const {
@@ -98,8 +99,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
           invoiceSuffix,
         } = company;
 
-        // Logic to get invoice number
-
         updatedInvoice = {
           ...updatedInvoice,
           businessName,
@@ -109,7 +108,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
           businessLogo,
           invoiceId,
           company: company._id,
-          currency: currency,
+          currencySymbol: currency,
           invoiceNumber: `${invoicePrefix}/${invoiceId}/${invoiceSuffix}`,
           issuedAt: new Date().toLocaleDateString("en-US", {
             year: "numeric",
@@ -124,15 +123,14 @@ export function InvoicePreview({ setStep, editable, preview }) {
         if (clientId) {
           const clientInfo = await fetchClientId(clientId);
           updatedInvoice = { ...updatedInvoice, ...clientInfo };
-
-          console.log("updatedInvoice: ", updatedInvoice);
         }
+        console.log("updatedInvoice: ", updatedInvoice);
 
-        setInvoice(updatedInvoice);
+        setInvoice(calculateInvoice(updatedInvoice));
       }
     }
     createInvoice();
-  }, [invoice]);
+  }, []);
 
   const handleChange = (field, value) => {
     // if (Object.values(template.labels).includes(value)) return;
@@ -143,6 +141,9 @@ export function InvoicePreview({ setStep, editable, preview }) {
     } else {
       updatedInvoice[field] = value;
     }
+
+    console.log("invoice updated: ", updatedInvoice);
+
     // Calculate new values
     setInvoice(calculateInvoice(updatedInvoice));
   };
@@ -343,60 +344,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
 
   return (
     <div className="flex flex-col w-full h-full">
-      {/* Sticky Top Bar */}
-      {/* {!preview && (
-        <div className="sticky top-0 z-10 bg-base-200 rounded border-base-300 shadow-sm py-4 px-8 flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <h3 className="font-bold text-lg">
-              {currentPath === "/invoices/create"
-                ? "New Invoice"
-                : "Edit Invoice"}
-            </h3>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="flex flex-row justify-around items-center gap-4">
-              <Undo2
-                className="cursor-pointer hover:text-accent"
-                onClick={handleBack}
-              />
-              <Save
-                className={`cursor-pointer hover:text-accent ${
-                  saved && "text-gray-400"
-                }`}
-                onClick={() => {
-                  handleSave();
-                }}
-              />
-
-              <DownloadIcon className="cursor-pointer hover:text-accent" />
-              {currentPath !== "/invoices/create" && (
-                <Link2
-                  className="cursor-pointer hover:text-accent"
-                  onClick={handleLinkShare}
-                />
-              )}
-              {editable && invoice.changesSuggested && (
-                <button
-                  onClick={handleAcceptSuggestions}
-                  className="btn btn-info"
-                >
-                  <Edit />
-                  Accept
-                </button>
-              )}
-              {!editable && (
-                <button
-                  onClick={() => setShowSuggestionModal(true)}
-                  className="btn btn-info"
-                >
-                  <Edit />
-                  Suggest
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )} */}
       <div className="p-6 w-full max-w-5xl self-center">
         <div className="flex flex-col w-full border shadow rounded-lg p-6 h-fit">
           {template.structure.map((section) => (
@@ -419,7 +366,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
               {section.section === "title" && (
                 <div className="flex w-full justify-between">
                   <h2
-                    className={`text-3xl font-semibold mb-4
+                    className={`text-xl sm:text-2xl font-semibold mb-4
                     ${getTextStyle(section.style)}`}
                   >
                     {invoice.invoiceTitle} Preview
@@ -494,7 +441,9 @@ export function InvoicePreview({ setStep, editable, preview }) {
                           ) : (
                             <div
                               key={key}
-                              className={invoice[key] ? "" : "text-gray-400"}
+                              className={`${
+                                invoice[key] ? "" : "text-gray-400"
+                              }`}
                             >
                               <strong
                                 onClick={(e) => e.target.nextSibling?.focus()} // Shift focus to input when label is clicked
@@ -506,6 +455,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                                   ? placeholder || key
                                   : ""}
                               </strong>
+                              {amount && <span>{currency}</span>}
                               <span
                                 contentEditable={editable}
                                 suppressContentEditableWarning
@@ -513,15 +463,15 @@ export function InvoicePreview({ setStep, editable, preview }) {
                                   editable &&
                                   handleChange(key, e.target.innerText.trim())
                                 }
-                                className={`cursor-text outline-none focus: ${
-                                  bold && "font-bold"
+                                className={`cursor-text outline-none whitespace-pre-wrap ${
+                                  bold ? "font-bold" : ""
                                 } ${
                                   suggestion?.[key] !== undefined &&
-                                  suggestion?.[key] !== invoice[key] &&
-                                  "text-red-500 line-through"
+                                  suggestion?.[key] !== invoice[key]
+                                    ? "text-red-500 line-through"
+                                    : ""
                                 }`}
                               >
-                                {amount && currency}
                                 {invoice[key] ?? ""}
                               </span>
                               {suggestion?.[key] !== undefined &&
@@ -535,14 +485,14 @@ export function InvoicePreview({ setStep, editable, preview }) {
                                       {suggestion[key]}
                                     </span>
                                     {/* <button
-                                      onClick={() => console.log("key")}
-                                      className="ml-2 p-0.5 btn btn-success btn-circle btn-xs"
-                                    >
-                                      <Check />
-                                    </button>
-                                    <button className="ml-2 p-0.5 btn btn-error btn-circle btn-xs">
-                                      <X />
-                                    </button> */}
+                                    onClick={() => console.log("key")}
+                                    className="ml-2 p-0.5 btn btn-success btn-circle btn-xs"
+                                  >
+                                    <Check />
+                                  </button>
+                                  <button className="ml-2 p-0.5 btn btn-error btn-circle btn-xs">
+                                    <X />
+                                  </button> */}
                                   </div>
                                 )}
                             </div>
@@ -568,24 +518,26 @@ export function InvoicePreview({ setStep, editable, preview }) {
                         ? placeholder || key
                         : ""}
                     </strong>
+                    {amount && <span>{currency}</span>}
+
                     <span
                       contentEditable={editable}
                       suppressContentEditableWarning
                       onBlur={(e) =>
                         editable && handleChange(key, e.target.innerText.trim())
                       }
-                      className={`cursor-text outline-none focus: ${
-                        bold && "font-bold"
+                      className={`cursor-text outline-none whitespace-pre-wrap ${
+                        bold ? "font-bold" : ""
                       } ${
                         suggestion?.[key] !== undefined &&
-                        suggestion?.[key] !== invoice[key] &&
-                        "text-red-500 line-through"
+                        suggestion?.[key] !== invoice[key]
+                          ? "text-red-500 line-through"
+                          : ""
                       }`}
                     >
-                      {" "}
-                      {amount && currency}
                       {invoice[key] ?? ""}
                     </span>
+
                     {suggestion?.[key] !== undefined &&
                       suggestion[key] !== invoice[key] && (
                         <span className={`text-info ${bold && "font-bold"}`}>
@@ -730,7 +682,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
                           // }}
                           className="cursor-text"
                         >
-                          {currency} {deduct.amount?.toFixed(2) ?? "0"}
+                          {currency}
+                          {deduct.amount?.toFixed(2) ?? "0"}
                         </span>
                       </div>
                     ))}

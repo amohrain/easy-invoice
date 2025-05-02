@@ -2,7 +2,15 @@ import React from "react";
 import PaymentButton from "./PaymentButton";
 import { useRouter } from "next/navigation";
 
-function PricingPlan({ name, price, mostPopular, features, amount, where }) {
+function PricingPlan({
+  name,
+  price,
+  mostPopular,
+  features,
+  amount,
+  where,
+  currency,
+}) {
   const router = useRouter();
   return (
     <div
@@ -57,7 +65,12 @@ function PricingPlan({ name, price, mostPopular, features, amount, where }) {
           ))}
         </ul>
         <div className="mt-6">
-          <PaymentButton name={name} planAmount={amount * 100} where={where} />
+          <PaymentButton
+            name={name}
+            planAmount={amount * 100}
+            currency={currency}
+            where={where}
+          />
         </div>
       </div>
     </div>

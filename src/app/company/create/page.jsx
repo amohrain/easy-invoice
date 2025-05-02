@@ -1,36 +1,30 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import LeftBar from "@/components/LeftBar";
+import { useCompanyStore } from "@/store/useCompany";
+import InvoiceNumberFormat from "@/components/InvoiceNumberFormat";
+import { Loading } from "../../../components/Loading";
+import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
+import { useUserStore } from "../../../store/useUser";
 import { useRouter } from "next/navigation";
-import { Loading } from "../../components/Loading";
-import { useUserStore } from "../../store/useUser";
 
-export default function Onboarding() {
+function Company() {
+  const { user, getCurrentUser } = useUserStore();
   const router = useRouter();
-  const { user } = useUser();
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: user?.firstName || "",
-    position: "",
-    industry: "",
-  });
-
-  const { getCurrentUser } = useUserStore();
 
   useEffect(() => {
-    async function checkIfOnboarded() {
-      const response = await fetch("/api/company");
-      const data = await response.json();
-      const companies = data.data;
-
-      if (companies?.length > 0) router.push("/dashboard");
+    async function fetchData() {
+      const user = await getCurrentUser();
+      if (user.subscriptionPlan !== "Pro") {
+        router.push("/dashboard");
+        toast.info(
+          "Creating multiple companies isn't supported in current plan"
+        );
+      }
     }
-    checkIfOnboarded();
+    fetchData();
   }, []);
-
-  const [logo, setLogo] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   const [companyData, setCompanyData] = useState({
     businessLogo: "",
@@ -39,8 +33,12 @@ export default function Onboarding() {
     businessEmail: "",
     businessPhone: "",
     businessTaxId: "",
+    notes: "",
+    paymentInstructions: "",
     currency: "$",
   });
+  const [loading, setLoading] = useState(false);
+  const [logo, setLogo] = useState(null);
 
   async function uploadLogo() {
     if (!logo) return "";
@@ -54,61 +52,30 @@ export default function Onboarding() {
     });
 
     const data = await res.json();
-    console.log("Uploaded Image URL:", data.url);
     return data.url;
   }
 
-  const handleNext = async () => {
-    if (step === 2) {
-      setLoading(true);
-      try {
-        // Call an API route to update publicMetadata
-        const response = await fetch("/api/users/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: user.fullName,
-            email: user.emailAddresses[0].emailAddress,
-            position: formData.position,
-            industry: formData.industry,
-            subscriptionPlan: "Free",
-          }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to update user data");
-        }
-        setStep((prev) => prev + 1);
-      } catch (error) {
-        console.error("Error creating user:", error);
-      } finally {
-        setLoading(false);
+  const handleCreateCompany = async () => {
+    setLoading(true);
+    try {
+      const data = { ...companyData };
+      if (logo) {
+        const logoUrl = await uploadLogo();
+        data.businessLogo = logoUrl;
       }
-    } else if (step === 3) {
-      setLoading(true);
-      try {
-        const data = { ...companyData };
-        if (logo) {
-          const logoUrl = await uploadLogo();
-          data.businessLogo = logoUrl;
-        }
-        console.log("company data", data);
-        const response = await fetch("/api/company", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to create company");
-        }
-        setStep((prev) => prev + 1);
-      } catch (error) {
-        console.error("Error creating company:", error);
-      } finally {
-        setLoading(false);
-      }
-    } else if (step === 4) {
-      router.push("/invoices/create");
-    } else setStep((prev) => prev + 1);
+      console.log("company data", data);
+      const response = await fetch("/api/company", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      toast.success("Company created successfully");
+    } catch (error) {
+      console.error("Error creating company:", error);
+      toast.error("Error creating company");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
@@ -116,40 +83,21 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-24 p-6 bg-base border rounded-lg shadow-md">
-      {step === 1 && (
-        <div>
-          <h2 className="text-2xl font-bold">Welcome, {user?.firstName}!</h2>
-          <p className="mt-2">Let's get you set up with Easy Invoice.</p>
-        </div>
-      )}
-      {step === 2 && (
-        <div>
-          <h2 className="text-xl font-bold">What describes you the best</h2>
-          <input
-            type="text"
-            placeholder="Your Position"
-            className="input input-bordered w-full mt-4"
-            value={formData.position}
-            onChange={(e) =>
-              setFormData({ ...formData, position: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Your Industry"
-            className="input input-bordered w-full mt-2"
-            value={formData.industry}
-            onChange={(e) =>
-              setFormData({ ...formData, industry: e.target.value })
-            }
-          />
-        </div>
-      )}
-      {step === 3 && (
+    <div className="flex h-screen ">
+      <LeftBar />
+      <div className="flex w-full flex-col p-4 gap-6 bg-base-200 overflow-y-auto">
+        {/* Main content for the Company page */}
         <div className="">
-          <fieldset className="fieldset bg-base-100 shadow p-2 rounded-lg">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <h1 className="text-2xl font-bold">Create New Company</h1>
+          <p className="mt-2"></p>
+        </div>
+
+        <div className="px-4">
+          <fieldset className="fieldset bg-base-100 shadow p-4 rounded-lg">
+            {/* <legend className="text-lg font-medium">Company Information</legend> */}
+
+            {/* Two-column layout for form fields */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {/* Left Column */}
               <div>
                 <div className="mb-4">
@@ -259,6 +207,12 @@ export default function Onboarding() {
                     }
                   />
                 </div>
+                <div className="mb-4">
+                  <label className="fieldset-label block mb-2">
+                    Invoice Number Format
+                  </label>
+                  <InvoiceNumberFormat />
+                </div>
 
                 <div className="mb-4">
                   <label className="fieldset-label block mb-2">Currency</label>
@@ -279,28 +233,69 @@ export default function Onboarding() {
                   </select>
                 </div>
               </div>
+
+              {/* Right Column */}
+              <div>
+                <div className="mb-4">
+                  <label className="fieldset-label block mb-2">
+                    Payment Instructions
+                  </label>
+                  <textarea
+                    className="textarea textarea-bordered w-full h-22 resize-none"
+                    placeholder="Please pay before the due date"
+                    value={companyData?.paymentInstructions || ""}
+                    onChange={(e) =>
+                      setCompanyData({
+                        ...companyData,
+                        paymentInstructions: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="fieldset-label block mb-2">Notes</label>
+                  <textarea
+                    className="textarea textarea-bordered w-full h-30 resize-none"
+                    placeholder="Thank you for the business!"
+                    value={companyData?.notes || ""}
+                    onChange={(e) =>
+                      setCompanyData({
+                        ...companyData,
+                        notes: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="fieldset-label block mb-2">Website</label>
+                  <input
+                    type="url"
+                    className="input input-bordered w-full"
+                    placeholder="https://easyinvoice.com"
+                    value={companyData?.businessWebsite || ""}
+                    onChange={(e) =>
+                      setCompanyData({
+                        ...companyData,
+                        businessWebsite: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <button
+                className="btn btn-primary mt-4 w-full md:w-fit"
+                onClick={handleCreateCompany}
+              >
+                Create Company
+              </button>
             </div>
           </fieldset>
         </div>
-      )}
-      {step === 4 && (
-        <div>
-          <h2 className="text-2xl font-bold">You're all set!</h2>
-          <p className="mt-2">
-            Click finish button to get started with your first project
-          </p>
-        </div>
-      )}
-      <button className="btn btn-accent mt-6 w-full" onClick={handleNext}>
-        {step === 3 ? "Finish" : "Next"}
-      </button>
-      <button
-        onClick={() => {
-          console.log(companyData);
-        }}
-      >
-        Log Company
-      </button>
+      </div>
     </div>
   );
 }
+
+export default Company;

@@ -18,7 +18,7 @@ export default function InvoicingDashboard() {
   const [stats, setStats] = useState([]);
   const { invoiceData } = useInvoiceStore();
   const { company } = useCompanyStore();
-  const currency = company.currency;
+  const currency = company?.currency;
 
   useEffect(() => {
     if (!invoiceData) return;

@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../store/useUser";
+import { Loader2 } from "lucide-react";
 
 // PaymentButton Component
-export default function PaymentButton({ name, planAmount, where }) {
+export default function PaymentButton({ name, planAmount, where, currency }) {
   const page = where.where;
   const router = useRouter();
   const { user } = useUserStore();
@@ -33,7 +34,7 @@ export default function PaymentButton({ name, planAmount, where }) {
       const res = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: planAmount }), // Send amount in body
+        body: JSON.stringify({ amount: planAmount, currency: currency }), // Send amount in body
       });
 
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
@@ -41,14 +42,14 @@ export default function PaymentButton({ name, planAmount, where }) {
       const text = await res.text();
       if (!text) throw new Error("Empty response from server");
 
-      const { orderId, currency, amount, key } = JSON.parse(text);
+      const { orderId, amount, key } = JSON.parse(text);
 
       const options = {
         key,
         amount,
         currency,
-        name: "Bulkmark Payment",
-        description: "One-time payment for Bulkmark access",
+        name: "Vibe Invoice Payment",
+        description: "One-time payment for Vibe Invoice access",
         order_id: orderId,
         handler: async function (response) {
           try {
@@ -84,15 +85,15 @@ export default function PaymentButton({ name, planAmount, where }) {
     setLoading(false);
   };
 
+  if (loading) return <Loader2 />;
+
   return (
     <button
       onClick={() => {
         if (page === "home") {
           router.push("/sign-in");
         } else {
-          alert(
-            "This is a fake payment button. Eveything's free until I figure out pricing!"
-          );
+          handlePayment();
         }
       }}
       disabled={(planAmount == 0 && page !== "home") || name === currentPlan}

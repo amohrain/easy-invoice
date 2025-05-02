@@ -70,6 +70,6 @@ export function calculateInvoice(invoice) {
     ...invoice,
     subtotal: subtotal,
     totalAmount: totalAmount,
-    amountDue: totalAmount.toFixed(2),
+    amountDue: invoice.currencySymbol + totalAmount.toFixed(2),
   };
 }

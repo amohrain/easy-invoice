@@ -2,7 +2,8 @@
 
 export const templates = [
   {
-    name: "Columns Business Invoice",
+    isPublic: true,
+    name: "Vibe",
     style: {
       defaultStyle: {
         size: 12,
@@ -13,19 +14,19 @@ export const templates = [
         primary: "#ebebeb",
         accent: "#ebebeb",
       },
-      borders: {
-        margins: 5,
-        lineWidth: 1,
-        radius: 0,
-        color: "primary",
-      },
+      // borders: {
+      //   margins: 5,
+      //   lineWidth: 1,
+      //   radius: 0,
+      //   color: "primary",
+      // },
     },
     structure: [
       {
         section: "title",
         style: {
           bold: true,
-          size: 22,
+          size: 18,
           alignment: "center",
         },
       },
@@ -64,7 +65,7 @@ export const templates = [
               {
                 key: "businessEmail",
                 placeholder: "Email: ",
-                value: true,
+                value: false,
                 bold: false,
                 size: 12,
               },
@@ -98,6 +99,7 @@ export const templates = [
         title: "Bill to",
         style: {
           alignment: "left",
+          size: 14,
         },
         fields: [
           {
@@ -115,15 +117,15 @@ export const templates = [
             size: 12,
           },
           {
-            key: "clientPhone",
-            placeholder: "Phone: ",
+            key: "clientEmail",
+            placeholder: "Email: ",
             value: false,
             bold: false,
             size: 12,
           },
           {
-            key: "clientEmail",
-            placeholder: "Email: ",
+            key: "clientPhone",
+            placeholder: "Phone: ",
             value: false,
             bold: false,
             size: 12,
@@ -265,13 +267,13 @@ export const templates = [
           {
             key: "paymentInstructions",
             placeholder: "Payment instructions: ",
-            value: true,
+            value: false,
             bold: false,
             size: 12,
           },
         ],
         style: {
-          alignment: "right",
+          alignment: "left",
         },
       },
     ],

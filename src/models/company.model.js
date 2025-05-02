@@ -58,7 +58,8 @@ const companySchema = new mongoose.Schema({
   },
   notes: {
     type: String,
-    required: false,
+    required: true,
+    default: "Thank you for the business!",
   },
   paymentTerms: {
     type: String,

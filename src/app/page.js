@@ -1,11 +1,8 @@
 "use client";
-// import BookmarkPreview from "@/components/BookmarkPreview";
-import Nav from "@/components/Nav";
 import TypingPlaceholder from "@/components/TypingPlaceholder";
-import PricingPlan from "@/components/PricingPlan";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Footer from "@/Sections/Footer";
+import Footer from "@/sections/Footer";
 import SEO from "@/components/SEO";
 import Plans from "@/components/Plans";
 import { useClientStore } from "../store/useClient";
@@ -14,10 +11,9 @@ import { InvoicePreview } from "../components/InvoicePreview";
 import { templates } from "../lib/templatesData";
 import { useTemplateStore } from "../store/useTemplate";
 import { sampleCompany } from "../constants/sampleCompany";
-// import { useCompanyStore } from "../store/useCompany";
 import { clients } from "../constants/clients";
 import { dummyInvoice } from "../lib/dummyInvoice";
-import HowItWorks from "../Sections/HowItWorks";
+import HowItWorks from "@/sections/HowItWorks";
 import { handleInvoiceGenerate } from "../lib/openai";
 import { calculateInvoice } from "../lib/calculate";
 import { Loading } from "../components/Loading";
@@ -31,12 +27,10 @@ export default function Home() {
   const [text, setText] = useState("");
   const [step, setStep] = useState(1);
   const { clientId, setSampleClients } = useClientStore();
-  // const { sampleCompany } = useCompanyStore();
 
   useEffect(() => {
     setTemplate(templates[0]);
     setSampleClients();
-    // sampleCompany();
   }, []);
 
   const handleGenerate = async () => {
@@ -90,10 +84,10 @@ export default function Home() {
   return (
     <>
       <SEO
-        title="Bulkmark - PDF Bookmarks in One Click"
-        description="Create hundreds of PDF bookmarks instantly with Bulkmark. Save time and boost efficiency!"
-        image="https://bulkmark.in/og-image.jpg"
-        url="https://bulkmark.in"
+        title="Vibe Invoice - Create and share invoices in seconds"
+        description="Create stunning invoices in seconds. Type a prompt to generate invoice, share with customers and get paid faster!"
+        image="https://vibeinvoice.com/og-image.jpg"
+        url="https://vibeinvoice.com"
       />
 
       <nav className="bg-gradient-to-r sm:px-12 from-primary/35 via-base-100 to-primary/10 px-6 py-4">
@@ -122,9 +116,11 @@ export default function Home() {
             <Link href={"/sign-in"}>
               <button className="btn btn-outline rounded-full">Login</button>
             </Link>
-            <button className="btn btn-primary rounded-full">
-              Get Started
-            </button>
+            <Link href={"/sign-up"}>
+              <button className="btn btn-primary rounded-full">
+                Get Started
+              </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Icon (optional) */}
@@ -161,10 +157,11 @@ export default function Home() {
                 paid
               </p>
             </div>
-
-            <button className="btn btn-primary w-fit self-center rounded-full py-6 px-6">
-              Get Started for free
-            </button>
+            <Link href={"/sign-up"}>
+              <button className="btn btn-primary w-fit self-center rounded-full py-6 px-6">
+                Get Started for free
+              </button>
+            </Link>
           </div>
         </div>
       </div>

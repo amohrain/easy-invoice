@@ -44,6 +44,10 @@ export async function POST(request) {
     // Create a new company
     const company = new Company({ ...companyData, user });
     await company.save();
+
+    user.company = company._id;
+    await user.save();
+
     // Return the created company
     return NextResponse.json(
       {

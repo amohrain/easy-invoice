@@ -6,5 +6,6 @@ export const useUserStore = create((set) => ({
     const response = await fetch("/api/users");
     const data = await response.json();
     set({ user: data.data });
+    return data.data;
   },
 }));

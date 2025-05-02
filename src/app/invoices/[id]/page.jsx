@@ -5,8 +5,6 @@ import { useInvoiceStore } from "@/store/useInvoice";
 import { useParams } from "next/navigation";
 import LeftBar from "@/components/LeftBar";
 import { useTemplateStore } from "@/store/useTemplate";
-import { Link, Link2, Printer, Save } from "lucide-react";
-import DownloadIcon from "@/components/DownloadIcon";
 
 function InvoicePage() {
   const { id } = useParams();

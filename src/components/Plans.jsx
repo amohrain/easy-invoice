@@ -1,8 +1,12 @@
+import useUserCountry from "../hooks/useUserCountry";
 import PricingPlan from "./PricingPlan";
 
 export default function Plans(where) {
+  const country = useUserCountry();
+  const isIndia = country === "IN";
+
   return (
-    <div className="p-4 self-center flex flex-row flex-wrap gap-6">
+    <div className="flex flex-row flex-wrap w-full gap-6">
       <PricingPlan
         name="Free"
         amount={0}
@@ -18,8 +22,13 @@ export default function Plans(where) {
       />
       <PricingPlan
         name="Starter"
-        amount={550}
-        price="$49.99"
+        amount={isIndia ? 4000 : 49.99}
+        price={
+          isIndia
+            ? `₹${new Intl.NumberFormat("en-IN").format(3999)}`
+            : `$${new Intl.NumberFormat("en-US").format(49.99)}`
+        }
+        currency={isIndia ? "INR" : "USD"}
         mostPopular={true}
         features={[
           "Unlimited invoices",
@@ -31,8 +40,13 @@ export default function Plans(where) {
       />
       <PricingPlan
         name="Pro"
-        amount={850}
-        price="$99.99"
+        amount={isIndia ? 7999 : 99.99}
+        price={
+          isIndia
+            ? `₹${new Intl.NumberFormat("en-IN").format(7999)}`
+            : `$${new Intl.NumberFormat("en-US").format(99.99)}`
+        }
+        currency={isIndia ? "INR" : "USD"}
         mostPopular={false}
         features={[
           "Unlimited invoices",
