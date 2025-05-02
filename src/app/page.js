@@ -52,8 +52,8 @@ export default function Home() {
       };
 
       const invoice = await handleInvoiceGenerate(text);
-      // const invoice = dummyInvoice;
       const updatedInvoice = calculateInvoice(invoice);
+      // const invoice = dummyInvoice;
       const clientInfo = clients.find((client) => client._id === clientId);
 
       setInvoice({

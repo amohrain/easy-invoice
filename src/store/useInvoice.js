@@ -183,7 +183,7 @@ export const useInvoiceStore = create((set, get) => ({
 
       // Delete suggestion
       const responseSuggestion = await fetch(
-        "/api/suggestion?id=" + suggestion._id,
+        "/api/suggestion/" + suggestion._id,
         {
           method: "DELETE",
         }
@@ -197,6 +197,20 @@ export const useInvoiceStore = create((set, get) => ({
     } catch (error) {
       console.error("Error accepting suggestions:", error);
       toast.error("Error accepting sugestions");
+    }
+  },
+  deleteSuggestion: async (id) => {
+    try {
+      const response = await fetch("/api/suggestion/" + id, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        console.log("Suggestion deleted succesfully");
+        toast.success("Suggestion deleted successfully");
+      }
+    } catch (error) {
+      console.error("Error deleting suggestions, ", error);
+      toast.error("Error deleting suggestion");
     }
   },
 
@@ -233,12 +247,24 @@ export const useInvoiceStore = create((set, get) => ({
   fetchSuggestion: async () => {
     try {
       const invoice = get().invoice;
-      const response = await fetch("/api/suggestion?id=" + invoice._id);
+      const response = await fetch("/api/suggestion/" + invoice._id);
       const data = await response.json();
       set({ suggestion: data.data });
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching suggestion: ", error);
+    }
   },
   clearSuggestions: () => {
     set({ suggestion: null });
+  },
+  suggestions: null,
+  fetchSuggestions: async () => {
+    try {
+      const response = await fetch("/api/suggestion");
+      const data = await response.json();
+      set({ suggestions: data.data });
+    } catch (error) {
+      console.error("Error fetching suggestions: ", error);
+    }
   },
 }));

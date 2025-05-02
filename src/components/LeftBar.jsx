@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import NavButton from "./NavButton";
-import { BiCard, BiHome } from "react-icons/bi";
+import { BiCard, BiHome, BiNotification } from "react-icons/bi";
 import { PiInvoice } from "react-icons/pi";
 import { BsBuilding } from "react-icons/bs";
 import { PanelLeftCloseIcon, PanelsTopLeftIcon } from "lucide-react";
@@ -89,6 +89,11 @@ function LeftBar() {
               link="/billing"
               name={!collapsed && "Billing"}
               icon={<BiCard />}
+            />
+            <NavButton
+              link="/suggestions"
+              name={!collapsed && "Review"}
+              icon={<BiNotification />}
             />
           </div>
         </div>

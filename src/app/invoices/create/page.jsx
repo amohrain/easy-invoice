@@ -38,9 +38,9 @@ function Dashboard() {
   const handleGenerate = async () => {
     try {
       setLoading(true);
-      // const invoice = await handleInvoiceGenerate(text);
-      // const updatedInvoice = calculateInvoice(invoice);
-      const invoice = dummyInvoice;
+      const invoice = await handleInvoiceGenerate(text);
+      const updatedInvoice = calculateInvoice(invoice);
+      // const invoice = dummyInvoice;
       setInvoice(invoice);
       setLoading(false);
       setStep(2);

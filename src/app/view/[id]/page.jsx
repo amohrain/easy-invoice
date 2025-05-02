@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect } from "react";
-import { InvoicePreview } from "../../../../components/InvoicePreview";
+import { InvoicePreview } from "@/components/InvoicePreview";
 import { useParams } from "next/navigation";
-import { useInvoiceStore } from "../../../../store/useInvoice";
-import { useTemplateStore } from "../../../../store/useTemplate";
+import { useInvoiceStore } from "@/store/useInvoice";
+import { useTemplateStore } from "@/store/useTemplate";
 
 function InvoiceViewPage() {
   const { invoice, getInvoiceById, fetchSuggestion } = useInvoiceStore();
@@ -13,6 +13,7 @@ function InvoiceViewPage() {
   useEffect(() => {
     async function fetchData() {
       const inv = await getInvoiceById(id);
+      console.log(inv);
       const templates = await getTemplateById(inv.template);
       if (inv.changesSuggested) await fetchSuggestion();
     }

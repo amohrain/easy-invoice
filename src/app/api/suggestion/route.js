@@ -105,26 +105,19 @@ export async function GET(request) {
       );
     }
 
-    // Get invoice id from params
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
-
-    const suggestion = await Suggestion.findOne({
-      invoice: id,
+    const suggestions = await Suggestion.find({
+      user: user._id,
     });
-
-    if (!suggestion) {
+    if (!suggestions) {
       return NextResponse.json({
         success: true,
         message: "No suggestion found",
       });
     }
 
-    // Todo- Add check if authorized
-
     return NextResponse.json({
       success: true,
-      data: suggestion,
+      data: suggestions,
     });
   } catch (error) {
     console.error("Error fetching suggestion", error);
@@ -132,61 +125,5 @@ export async function GET(request) {
       success: false,
       error,
     });
-  }
-}
-
-export async function DELETE(request) {
-  try {
-    await connectDB();
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Unauthorized",
-        },
-        { status: 401 }
-      );
-    }
-    const user = await getMongoUser(userId);
-    if (!user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "User not found",
-        },
-        { status: 404 }
-      );
-    }
-
-    // get company id from query params
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
-
-    if (!id) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Suggestion ID is required",
-        },
-        { status: 400 }
-      );
-    }
-
-    // Delete the company
-    await Suggestion.deleteOne({ _id: id });
-
-    return NextResponse.json({
-      success: true,
-    });
-  } catch (error) {
-    console.error("Error deleting suggestion:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message,
-      },
-      { status: 500 }
-    );
   }
 }

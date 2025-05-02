@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in",
   "/sign-up",
   "/",
+  "/view/:id",
   "/terms",
   "/sample.mp4",
   "/privacy-policy",
@@ -16,9 +17,15 @@ const isPublicRoute = createRouteMatcher([
   "/robots.txt",
 ]);
 
+const isPublicAPIRoute = createRouteMatcher([
+  "/api/suggestion",
+  "/api/suggestion/:id",
+  "/api/templates/:id",
+  "/api/invoice/:id",
+]);
+
 export default clerkMiddleware(async (auth, req) => {
-  const { userId, sessionClaims } = await auth();
-  // const user = await getMongoUser(userId);
+  const { userId } = await auth();
 
   const isAccessingHome = new URL(req.url).pathname === "/";
 
@@ -28,7 +35,7 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   // Redirect unauthenticated users trying to access protected routes
-  if (!userId && !isPublicRoute(req)) {
+  if (!userId && !isPublicRoute(req) && !isPublicAPIRoute(req)) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 

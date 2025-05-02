@@ -764,6 +764,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
 }
 
 const ShareLinkModal = ({ hide }) => {
+  const { invoice } = useInvoiceStore();
   const [copied, setCopied] = useState(false);
   return (
     <div className="modal modal-open modal-end">
@@ -775,13 +776,15 @@ const ShareLinkModal = ({ hide }) => {
             id="input-link"
             type="text"
             className="input input-bordered w-full pr-10" // extra padding for icon space
-            value={window.location.href + "/view"}
+            value={process.env.NEXT_PUBLIC_BASE_URL + "/view/" + invoice._id}
             readOnly
           />
           <button
             onClick={() => {
               setCopied(true);
-              navigator.clipboard.writeText(window.location.href);
+              navigator.clipboard.writeText(
+                process.env.NEXT_PUBLIC_BASE_URL + "/view/" + invoice._id
+              );
               document.getElementById("input-link").select();
               setTimeout(() => {
                 setCopied(false);
