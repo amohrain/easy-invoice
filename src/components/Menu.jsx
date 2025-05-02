@@ -1,3 +1,4 @@
+"use client";
 import { MenuIcon, X } from "lucide-react";
 import React, { useState } from "react";
 import NavButton from "./NavButton";

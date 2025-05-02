@@ -6,6 +6,10 @@ const templateSchema = new Schema({
     type: String,
     required: true,
   },
+  isPublic: {
+    type: Boolean,
+    default: false,
+  },
   style: {
     defaultStyle: {
       size: { type: Number, default: 14 },

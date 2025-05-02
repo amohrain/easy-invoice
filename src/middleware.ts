@@ -17,7 +17,9 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId } = await auth();
+  const { userId, sessionClaims } = await auth();
+  // const user = await getMongoUser(userId);
+
   const isAccessingHome = new URL(req.url).pathname === "/";
 
   // Redirect logged-in users from public routes (except dashboard)
