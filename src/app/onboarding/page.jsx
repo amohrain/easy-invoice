@@ -58,55 +58,48 @@ export default function Onboarding() {
     return data.url;
   }
 
+  const handleSubmit = async () => {
+    try {
+      // Call an API route to update publicMetadata
+      const resUser = await fetch("/api/users/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: user.fullName,
+          email: user.emailAddresses[0].emailAddress,
+          subscriptionPlan: "Free",
+        }),
+      });
+      if (!resUser.ok) {
+        throw new Error("Failed to update user data");
+      }
+      const data = { ...companyData };
+      if (logo) {
+        const logoUrl = await uploadLogo();
+        data.businessLogo = logoUrl;
+      }
+      console.log("company data", data);
+      const resCompany = await fetch("/api/company", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!resCompany.ok) {
+        throw new Error("Failed to create company");
+      }
+    } catch (error) {
+      console.error("Error creating user:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleNext = async () => {
     if (step === 2) {
-      setLoading(true);
-      try {
-        // Call an API route to update publicMetadata
-        const response = await fetch("/api/users/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: user.fullName,
-            email: user.emailAddresses[0].emailAddress,
-            position: formData.position,
-            industry: formData.industry,
-            subscriptionPlan: "Free",
-          }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to update user data");
-        }
-        setStep((prev) => prev + 1);
-      } catch (error) {
-        console.error("Error creating user:", error);
-      } finally {
-        setLoading(false);
-      }
+      await handleSubmit();
+      setStep((prev) => prev + 1);
+      return;
     } else if (step === 3) {
-      setLoading(true);
-      try {
-        const data = { ...companyData };
-        if (logo) {
-          const logoUrl = await uploadLogo();
-          data.businessLogo = logoUrl;
-        }
-        console.log("company data", data);
-        const response = await fetch("/api/company", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to create company");
-        }
-        setStep((prev) => prev + 1);
-      } catch (error) {
-        console.error("Error creating company:", error);
-      } finally {
-        setLoading(false);
-      }
-    } else if (step === 4) {
       router.push("/invoices/create");
     } else setStep((prev) => prev + 1);
   };
@@ -124,30 +117,10 @@ export default function Onboarding() {
         </div>
       )}
       {step === 2 && (
-        <div>
-          <h2 className="text-xl font-bold">What describes you the best</h2>
-          <input
-            type="text"
-            placeholder="Your Position"
-            className="input input-bordered w-full mt-4"
-            value={formData.position}
-            onChange={(e) =>
-              setFormData({ ...formData, position: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Your Industry"
-            className="input input-bordered w-full mt-2"
-            value={formData.industry}
-            onChange={(e) =>
-              setFormData({ ...formData, industry: e.target.value })
-            }
-          />
-        </div>
-      )}
-      {step === 3 && (
         <div className="">
+          <h2 className="text-xl text-center font-bold">
+            Your Company Details
+          </h2>
           <fieldset className="fieldset bg-base-100 shadow p-2 rounded-lg">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Left Column */}
@@ -283,7 +256,7 @@ export default function Onboarding() {
           </fieldset>
         </div>
       )}
-      {step === 4 && (
+      {step === 3 && (
         <div>
           <h2 className="text-2xl font-bold">You're all set!</h2>
           <p className="mt-2">
@@ -293,13 +266,6 @@ export default function Onboarding() {
       )}
       <button className="btn btn-accent mt-6 w-full" onClick={handleNext}>
         {step === 3 ? "Finish" : "Next"}
-      </button>
-      <button
-        onClick={() => {
-          console.log(companyData);
-        }}
-      >
-        Log Company
       </button>
     </div>
   );

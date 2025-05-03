@@ -31,7 +31,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   // Redirect logged-in users from public routes (except dashboard)
   if (userId && isPublicRoute(req) && isAccessingHome) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+    return NextResponse.redirect(new URL("/post-auth", req.url));
   }
 
   // Redirect unauthenticated users trying to access protected routes

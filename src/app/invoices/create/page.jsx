@@ -10,6 +10,7 @@ import { useTemplateStore } from "@/store/useTemplate";
 import { dummyInvoice } from "@/lib/dummyInvoice";
 import { useInvoiceStore } from "@/store/useInvoice";
 import { useLoadingStore } from "@/store/useLoading";
+import { calculateInvoice } from "../../../lib/calculate";
 
 function Dashboard() {
   const [step, setStep] = useState(1);

@@ -8,8 +8,6 @@ import Link from "next/link";
 import DailyRevenueChart from "@/components/DailyRevenueChart";
 import { Loading } from "@/components/Loading";
 import { useCompanyStore } from "@/store/useCompany";
-import { useUserStore } from "@/store/useUser";
-import { useRouter } from "next/navigation";
 
 // This is a simple invoicing dashboard page using React and Tailwind CSS.
 
@@ -19,26 +17,6 @@ export default function InvoicingDashboard() {
   const [stats, setStats] = useState([]);
   const { invoiceData } = useInvoiceStore();
   const { company } = useCompanyStore();
-  const { getCurrentUser } = useUserStore();
-  const router = useRouter();
-
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const res = await fetch("/api/company");
-        if (!res.ok) {
-          throw new Error("User not in DB");
-        }
-        const data = await res.json();
-        // Optionally check user data for roles, etc.
-      } catch (err) {
-        router.replace("/onboarding");
-      }
-    };
-
-    checkUser();
-  }, []);
-
   const currency = company?.currency;
 
   useEffect(() => {

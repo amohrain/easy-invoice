@@ -6,7 +6,7 @@ function SignUpPage() {
     <div className="flex h-screen items-center justify-center">
       <SignUp
         routing="hash"
-        fallbackRedirectUrl="/onboarding"
+        fallbackRedirectUrl="/post-auth"
         className="self-center"
       />
     </div>
