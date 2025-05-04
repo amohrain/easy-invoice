@@ -22,7 +22,7 @@ export default function Plans(where) {
       />
       <PricingPlan
         name="Starter"
-        amount={isIndia ? 4000 : 49.99}
+        amount={isIndia ? 3999 : 49.99}
         price={
           isIndia
             ? `₹${new Intl.NumberFormat("en-IN").format(3999)}`
@@ -40,11 +40,11 @@ export default function Plans(where) {
       />
       <PricingPlan
         name="Pro"
-        amount={isIndia ? 7999 : 99.99}
+        amount={isIndia ? 6599 : 79.99}
         price={
           isIndia
-            ? `₹${new Intl.NumberFormat("en-IN").format(7999)}`
-            : `$${new Intl.NumberFormat("en-US").format(99.99)}`
+            ? `₹${new Intl.NumberFormat("en-IN").format(6599)}`
+            : `$${new Intl.NumberFormat("en-US").format(79.99)}`
         }
         currency={isIndia ? "INR" : "USD"}
         mostPopular={false}

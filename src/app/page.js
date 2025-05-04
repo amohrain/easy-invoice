@@ -17,6 +17,7 @@ import HowItWorks from "@/sections/HowItWorks";
 import { handleInvoiceGenerate } from "../lib/openai";
 import { calculateInvoice } from "../lib/calculate";
 import { Loading } from "../components/Loading";
+import { Menu, X } from "lucide-react";
 
 export default function Home() {
   const { setTemplate } = useTemplateStore();
@@ -69,6 +70,41 @@ export default function Home() {
     }
   };
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const MobileMenu = () => {
+    return (
+      <div
+        className={`
+        fixed top-0 right-0 h-full w-64 bg-base-100 shadow-lg z-20 transform transition-transform duration-300 ease-in-out
+        ${isMenuOpen ? "translate-x-0" : "translate-x-full"}
+        md:hidden
+      `}
+      >
+        {/* Close Button */}
+        <div className="flex justify-between p-4">
+          {/* Menu Content */}
+          <div className="flex flex-col w-full justify-center p-4 space-y-4">
+            <Link href={"/sign-in"}>
+              <button className="btn btn-outline rounded-full">Login</button>
+            </Link>
+            <Link href={"/sign-up"}>
+              <button className="btn btn-primary rounded-full">
+                Get Started
+              </button>
+            </Link>
+          </div>
+          <button
+            className="p-2 self-start rounded-md"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <X size={24} />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   const PreviewModal = () => {
     return (
       <div className="fixed inset-0 bg-base-100 flex items-center justify-center z-50 overflow-y-auto">
@@ -89,6 +125,7 @@ export default function Home() {
         image="https://vibeinvoice.com/og-image.jpg"
         url="https://vibeinvoice.com"
       />
+      {isMenuOpen && <MobileMenu />}
 
       <nav className="bg-gradient-to-r sm:px-12 from-primary/35 via-base-100 to-primary/10 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -127,20 +164,8 @@ export default function Home() {
 
           {/* Mobile Menu Icon (optional) */}
           <div className="md:hidden">
-            <button>
-              <svg
-                className="w-6 h-6 text-primary"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
+            <button onClick={() => setIsMenuOpen(true)}>
+              <Menu />
             </button>
           </div>
         </div>

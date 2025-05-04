@@ -57,9 +57,8 @@ function Dashboard() {
     try {
       setLoading(true);
       const invoice = await handleInvoiceGenerate(text);
-      const updatedInvoice = calculateInvoice(invoice);
+      // const updatedInvoice = calculateInvoice(invoice);
       // const invoice = dummyInvoice;
-
       // Todo - invoice validation check to reduce errors
 
       setInvoice(invoice);

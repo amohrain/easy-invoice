@@ -5,7 +5,13 @@ import { useUserStore } from "../store/useUser";
 import { Loader2 } from "lucide-react";
 
 // PaymentButton Component
-export default function PaymentButton({ name, planAmount, where, currency }) {
+export default function PaymentButton({
+  name,
+  planAmount,
+  where,
+  currency,
+  setInvoiceLink,
+}) {
   const page = where.where;
   const router = useRouter();
   const { user } = useUserStore();
@@ -61,13 +67,18 @@ export default function PaymentButton({ name, planAmount, where, currency }) {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 plan: name,
+                currency,
+                amount,
               }),
               headers: { "Content-Type": "application/json" },
             });
 
             if (!verifyRes.ok) throw new Error("Payment verification failed");
 
-            window.location.reload(); // Refresh to update payment status
+            const data = await verifyRes.json();
+            const invoiceLink = `${process.env.NEXT_PUBLIC_BASE_URL}/view/${data.data}`;
+            setInvoiceLink(invoiceLink);
+            // window.location.reload(); // Refresh to update payment status
           } catch (error) {
             console.error("Error handling payment:", error);
             alert("Something went wrong. Please contact support.");
@@ -85,7 +96,12 @@ export default function PaymentButton({ name, planAmount, where, currency }) {
     setLoading(false);
   };
 
-  if (loading) return <Loader2 />;
+  if (loading)
+    return (
+      <div className="flex justify-center">
+        <span className="loading loading-spinner loading-md self-center"></span>
+      </div>
+    );
 
   return (
     <button

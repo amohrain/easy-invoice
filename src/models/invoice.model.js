@@ -89,9 +89,9 @@ const invoiceSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    currencySymbol: {
+    currency: {
       type: String,
-      required: false,
+      required: true,
     },
 
     items: [

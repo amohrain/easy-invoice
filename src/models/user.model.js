@@ -27,6 +27,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "Free",
   },
+  invoice: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Invoice",
+    required: false,
+  },
   invoiceCount: {
     type: Number,
     default: 0,

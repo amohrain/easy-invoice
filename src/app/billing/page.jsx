@@ -36,6 +36,16 @@ function page() {
             <p className="text-center">
               Invoices created this month: {invoiceCount}
             </p>
+            {user?.invoice && (
+              <p className="text-center">
+                <a
+                  className="link"
+                  href={`${process.env.NEXT_PUBLIC_BASE_URL}/view/${user.invoice}`}
+                >
+                  Download invoice
+                </a>
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PaymentButton from "./PaymentButton";
 import { useRouter } from "next/navigation";
 
@@ -12,6 +12,33 @@ function PricingPlan({
   currency,
 }) {
   const router = useRouter();
+  const [invoiceLink, setInvoiceLink] = useState("");
+
+  const ShareLinkModal = ({}) => {
+    return (
+      <div className="modal modal-open items-center">
+        <div className="modal-box min-h-40 text-center border">
+          <div className="flex flex-col gap-4">
+            <h2 className="font-bold text-2xl">Thank you for the payment</h2>
+            <p>Please download your invoice using below link:</p>
+            <a className="link mb-4 " href={invoiceLink} target="_blank">
+              Click here
+            </a>
+          </div>
+          <button
+            onClick={() => {
+              setInvoiceLink("");
+              window.location.reload();
+            }}
+            className="btn btn-primary rounded-full"
+          >
+            Dismiss
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div
       className={`card w-fit ${
@@ -70,9 +97,11 @@ function PricingPlan({
             planAmount={amount * 100}
             currency={currency}
             where={where}
+            setInvoiceLink={setInvoiceLink}
           />
         </div>
       </div>
+      {invoiceLink && <ShareLinkModal />}
     </div>
   );
 }

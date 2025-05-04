@@ -2,9 +2,16 @@
 import { MenuIcon, X } from "lucide-react";
 import React, { useState } from "react";
 import NavButton from "./NavButton";
-import { BiCard, BiHome } from "react-icons/bi";
+import {
+  BiCard,
+  BiDollar,
+  BiEdit,
+  BiHome,
+  BiNotification,
+} from "react-icons/bi";
 import { PiInvoice } from "react-icons/pi";
 import { BsBuilding } from "react-icons/bs";
+import { PanelLeftCloseIcon, PanelsTopLeftIcon } from "lucide-react";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { UserButton, useUser } from "@clerk/nextjs";
 
@@ -51,12 +58,17 @@ function Menu() {
         </div>
 
         {/* Navigation */}
-        <div className="flex flex-col h-fit justify-between">
-          <NavButton link="/dashboard" name="Dashboard" icon={<BiHome />} />
-          <NavButton link="/invoices" name="Invoices" icon={<PiInvoice />} />
-          <NavButton link="/company" name="Company" icon={<BsBuilding />} />
-          <NavButton link="/clients" name="Clients" icon={<FaPeopleGroup />} />
-          <NavButton link="/billing" name="Billing" icon={<BiCard />} />
+        <div className="flex flex-col gap-1">
+          <NavButton link="/dashboard" name={"Dashboard"} icon={<BiHome />} />
+          <NavButton link="/invoices" name={"Invoices"} icon={<BiDollar />} />
+          <NavButton link="/company" name={"Company"} icon={<BsBuilding />} />
+          <NavButton
+            link="/clients"
+            name={"Clients"}
+            icon={<FaPeopleGroup />}
+          />
+          <NavButton link="/billing" name={"Billing"} icon={<PiInvoice />} />
+          <NavButton link="/suggestions" name={"Review"} icon={<BiEdit />} />
         </div>
       </div>
     </>

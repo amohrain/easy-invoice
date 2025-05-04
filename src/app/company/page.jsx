@@ -219,17 +219,17 @@ function Company() {
                   <label className="fieldset-label block mb-2">Currency</label>
                   <select
                     className="select select-bordered w-full"
-                    value={companyData?.currency || "$"}
+                    value={companyData?.currency || "USD"}
                     onChange={(e) =>
                       setCompanyData({
                         currency: e.target.value,
                       })
                     }
                   >
-                    <option value="$">USD ($)</option>
-                    <option value="€">EUR (€)</option>
-                    <option value="£">GBP (£)</option>
-                    <option value="₹">INR (₹)</option>
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="INR">INR (₹)</option>
                   </select>
                 </div>
               </div>

@@ -1,3 +1,5 @@
+import { formatCurrency } from "./formatCurrency";
+
 // Function to map border style
 function mapBorderStyle(borderStyle) {
   switch (borderStyle) {
@@ -132,7 +134,7 @@ export function getCustomTableLayout(tableStyle = {}, template) {
 
 // pdfMake version of your invoice rendering logic
 export function generatePdfDocDefinition(template, invoice) {
-  const currency = invoice.currency || "$";
+  const currency = invoice.currency || "USD";
   const content = [];
 
   console.log(template);
@@ -230,7 +232,7 @@ export function generatePdfDocDefinition(template, invoice) {
 
               // Then show the actual field value
               inlineContent.push({
-                text: amount ? currency + invoice[key] : invoice[key] || "",
+                text: invoice[key] || "",
                 bold: bold || false,
                 fontSize: size || 12,
               });
@@ -266,7 +268,7 @@ export function generatePdfDocDefinition(template, invoice) {
 
           // Then the actual field value
           inlineContent.push({
-            text: amount ? currency + invoice[key] : invoice[key] || "",
+            text: invoice[key] || "",
             bold: bold || false,
             fontSize: size || 12,
           });
@@ -331,7 +333,7 @@ export function generatePdfDocDefinition(template, invoice) {
           border: [false, false, false, false],
         },
         {
-          text: currency + invoice.subtotal.toFixed(2) ?? "",
+          text: formatCurrency(invoice.subtotal, currency) ?? "",
           alignment: "right",
           border: [false, false, false, false],
         },
@@ -346,7 +348,7 @@ export function generatePdfDocDefinition(template, invoice) {
             border: [false, false, false, false],
           },
           {
-            text: currency + deduct.amount.toFixed(2) ?? "0",
+            text: formatCurrency(deduct.amount, currency) ?? "",
             alignment: "right",
             border: [false, false, false, false],
           },
@@ -362,7 +364,7 @@ export function generatePdfDocDefinition(template, invoice) {
             border: [false, false, false, false],
           },
           {
-            text: currency + add.amount.toFixed(2) ?? "0",
+            text: formatCurrency(add.amount, currency) ?? "",
             alignment: "right",
             border: [false, false, false, false],
           },
@@ -378,7 +380,7 @@ export function generatePdfDocDefinition(template, invoice) {
           border: [false, true, false, false], // top border
         },
         {
-          text: currency + invoice.totalAmount.toFixed(2) ?? "",
+          text: formatCurrency(invoice.totalAmount, currency) ?? "",
           alignment: "right",
           bold: true,
           border: [false, true, false, false], // top border

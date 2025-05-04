@@ -20,6 +20,7 @@ import DownloadIcon from "./DownloadIcon";
 import { useRouter } from "next/navigation";
 import { useClientStore } from "@/store/useClient";
 import { templates } from "../lib/templatesData";
+import { formatCurrency } from "../lib/formatCurrency";
 
 export function InvoicePreview({ setStep, editable, preview }) {
   const getTextStyle = (section) => {
@@ -65,8 +66,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
   const share = searchParams.get("share");
   const { id } = useParams();
 
-  const currency = company.currency || "$";
-
   // use effect to fetch suggestions after they have been created
   useEffect(() => {
     async function fetchData() {
@@ -85,7 +84,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
       return;
     }
     async function createInvoice() {
-      let updatedInvoice = calculateInvoice(invoice);
+      let updatedInvoice = { ...invoice };
       if (!updatedInvoice.businessName) {
         const {
           businessName,
@@ -108,7 +107,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
           businessLogo,
           invoiceId,
           company: company._id,
-          currencySymbol: currency,
+          currency: company.currency || "USD",
           invoiceNumber: `${invoicePrefix}/${invoiceId}/${invoiceSuffix}`,
           issuedAt: new Date().toLocaleDateString("en-US", {
             year: "numeric",
@@ -373,21 +372,25 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     {invoice.invoiceTitle} Preview
                   </h2>
                   <div className="flex flex-row justify-around items-center gap-4">
-                    <Undo2
-                      className="cursor-pointer hover:text-accent"
-                      onClick={handleBack}
-                    />
-                    <Save
-                      className={`cursor-pointer hover:text-accent ${
-                        saved && "text-gray-400"
-                      }`}
-                      onClick={() => {
-                        handleSave();
-                      }}
-                    />
+                    {editable && (
+                      <Undo2
+                        className="cursor-pointer hover:text-accent"
+                        onClick={handleBack}
+                      />
+                    )}
+                    {editable && (
+                      <Save
+                        className={`cursor-pointer hover:text-accent ${
+                          saved && "text-gray-400"
+                        }`}
+                        onClick={() => {
+                          handleSave();
+                        }}
+                      />
+                    )}
 
                     <DownloadIcon className="cursor-pointer hover:text-accent" />
-                    {currentPath !== "/invoices/create" && (
+                    {currentPath !== "/invoices/create" && editable && (
                       <Link2
                         className="cursor-pointer hover:text-accent"
                         onClick={handleLinkShare}
@@ -456,7 +459,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
                                   ? placeholder || key
                                   : ""}
                               </strong>
-                              {amount && <span>{currency}</span>}
                               <span
                                 contentEditable={editable}
                                 suppressContentEditableWarning
@@ -519,8 +521,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
                         ? placeholder || key
                         : ""}
                     </strong>
-                    {amount && <span>{currency}</span>}
-
                     <span
                       contentEditable={editable}
                       suppressContentEditableWarning
@@ -644,8 +644,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
                         }
                         className="cursor-text"
                       >
-                        {currency}
-                        {invoice.subtotal?.toFixed(2) ?? ""}
+                        {formatCurrency(invoice.subtotal, invoice.currency) ??
+                          ""}
                       </span>
                     </div>
 
@@ -683,8 +683,11 @@ export function InvoicePreview({ setStep, editable, preview }) {
                           // }}
                           className="cursor-text"
                         >
-                          {currency}
-                          {deduct.amount?.toFixed(2) ?? "0"}
+                          {/* {invoice.currencySymbol}
+                          {deduct.amount?.toFixed(2) ?? "0"} */}
+
+                          {formatCurrency(deduct.amount, invoice.currency) ??
+                            ""}
                         </span>
                       </div>
                     ))}
@@ -722,8 +725,9 @@ export function InvoicePreview({ setStep, editable, preview }) {
                           // }}
                           className=" cursor-text"
                         >
-                          {currency}
-                          {add.amount?.toFixed(2) ?? "0"}
+                          {/* {invoice.currencySymbol}
+                          {add.amount?.toFixed(2) ?? "0"} */}
+                          {formatCurrency(add.amount, invoice.currency) ?? ""}
                         </span>
                       </div>
                     ))}
@@ -742,8 +746,12 @@ export function InvoicePreview({ setStep, editable, preview }) {
                         // }}
                         className=" cursor-text"
                       >
-                        {currency}
-                        {invoice.totalAmount?.toFixed(2) ?? ""}
+                        {/* {invoice.currencySymbol}
+                        {invoice.totalAmount?.toFixed(2) ?? ""} */}
+                        {formatCurrency(
+                          invoice.totalAmount,
+                          invoice.currency
+                        ) ?? ""}
                       </span>
                     </div>
                   </div>
