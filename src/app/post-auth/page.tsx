@@ -13,7 +13,7 @@ export default function PostAuthRedirect() {
         if (!res.ok) {
           router.replace("/onboarding");
         } else {
-          router.replace("/dashboard");
+          router.replace("/invoices/create");
         }
         // Optionally check user data for roles, etc.
       } catch (err) {

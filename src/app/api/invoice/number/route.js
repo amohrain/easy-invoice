@@ -22,7 +22,6 @@ export async function GET(request) {
       );
     }
     const user = await getMongoUser(userId);
-    console.log("Mongo user:", user);
     // Check if the user exists
     if (!user) {
       return NextResponse.json(

@@ -8,15 +8,15 @@ const clientSchema = new mongoose.Schema(
     },
     clientAddress: {
       type: String,
-      required: true,
+      required: false,
     },
     clientEmail: {
       type: String,
-      required: true,
+      required: false,
     },
     clientPhone: {
       type: String,
-      required: true,
+      required: false,
     },
     clientTaxId: {
       type: String,

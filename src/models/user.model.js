@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "Free",
   },
+  invoiceCount: {
+    type: Number,
+    default: 0,
+  },
+  invoiceCountMonth: {
+    type: String, // Format: '2025-05'
+    default: () => new Date().toISOString().slice(0, 7),
+  },
   template: [
     {
       type: mongoose.Schema.Types.ObjectId,

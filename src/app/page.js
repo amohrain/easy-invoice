@@ -93,15 +93,17 @@ export default function Home() {
       <nav className="bg-gradient-to-r sm:px-12 from-primary/35 via-base-100 to-primary/10 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
-          <div className="text-2xl font-bold">Vibe Invoice</div>
-
+          <div className="flex gap-1">
+            <img className="size-6 self-center" src={"/Logo.png"} />
+            <div className="text-2xl font-bold">Vibe Invoice</div>
+          </div>
           {/* Navigation Links (hidden on mobile) */}
           <div className="hidden md:flex gap-6 text-base font-medium">
             <a href="#how-it-works" className="hover:text-primary">
               How it works
             </a>
             <a href="#interactive-demo" className="hover:text-primary">
-              Interactive Demo
+              Demo
             </a>
             <a href="#pricing" className="hover:text-primary">
               Pricing
@@ -168,24 +170,22 @@ export default function Home() {
 
       <div
         id="how-it-works"
-        className="min-h-screen w-full flex flex-col items-center justify-center gap-12 py-16 px-8"
+        className="min-h-screen w-full flex flex-col items-center justify-center gap-8 p-4 pt-12 sm:px-4 sm:py-12"
       >
         <h2 className="text-center text-4xl sm:text-6xl font-bold">
           How it works
         </h2>
-        <p className="italic">In three simple steps</p>
+        <p className="italic badge badge-accent">In three simple steps</p>
         <HowItWorks />
       </div>
       <div
         id="interactive-demo"
-        className="min-h-screen flex flex-col items-center justify-center gap-12 py-16 px-8"
+        className="min-h-screen flex flex-col items-center justify-center gap-8 px-4 sm:px-4 sm:py-12"
       >
         <h2 className="text-center text-4xl sm:text-6xl font-bold">
           A simple prompt is all you need.
         </h2>
-        <p className="italic rounded bg-amber-200 px-2">
-          Try it yourself below
-        </p>
+        <p className="italic badge badge-accent">Try it yourself below</p>
         <div className="w-full max-w-4xl p-4 flex flex-col justify-center border border-gray-100 shadow-base shadow-2xl rounded-2xl">
           <TypingPlaceholder isUsingAI={true} text={text} setText={setText} />
           <div className="flex flex-row">
@@ -204,7 +204,7 @@ export default function Home() {
       </div>
       <div
         id="pricing"
-        className="min-h-screen w-full flex flex-col items-center justify-center gap-12 py-16 px-8"
+        className="min-h-screen w-full flex flex-col items-center justify-center gap-12 p-4 sm:px-4 sm:py-12"
       >
         <h2 className="text-center text-4xl sm:text-6xl font-bold">
           One-time payment, no commitments

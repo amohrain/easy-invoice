@@ -6,6 +6,12 @@ import { useUserStore } from "../../store/useUser";
 
 function page() {
   const { user, getCurrentUser } = useUserStore();
+  const now = new Date();
+  const currentMonth = now.toISOString().slice(0, 7); // 'YYYY-MM'
+  const invoiceCount =
+    user?.invoiceCountMonth === currentMonth ? user?.invoiceCount : 0 || 0;
+
+  console.log("user", user);
 
   useEffect(() => {
     async function fetchData() {
@@ -27,7 +33,9 @@ function page() {
             <p className="text-center">
               Current plan: {user?.subscriptionPlan}
             </p>
-            <p className="text-center">Invoices created this month: {0}</p>
+            <p className="text-center">
+              Invoices created this month: {invoiceCount}
+            </p>
           </div>
         </div>
       </div>

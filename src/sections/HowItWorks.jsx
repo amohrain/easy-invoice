@@ -4,7 +4,7 @@ import React from "react";
 function HowItWorks() {
   return (
     <div className="flex md:flex-row flex-col justify-center w-full gap-4">
-      <div className="join join-vertical bg-base-100 min-w-md max-w-lg">
+      <div className="join join-vertical bg-base-100 max-w-lg">
         <div className="collapse collapse-arrow join-item border-base-300 border">
           <input type="radio" name="my-accordion-4" defaultChecked />
           <div className="collapse-title font-bold text-xl">
@@ -39,7 +39,7 @@ function HowItWorks() {
           </div>
         </div>
       </div>
-      <div className="md:block hidden min-w-md rounded p-4 bg-base-200">
+      <div className="rounded p-4 bg-base-200">
         <video
           className="rounded w-100"
           autoPlay

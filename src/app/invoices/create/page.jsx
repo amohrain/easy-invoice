@@ -11,23 +11,34 @@ import { dummyInvoice } from "@/lib/dummyInvoice";
 import { useInvoiceStore } from "@/store/useInvoice";
 import { useLoadingStore } from "@/store/useLoading";
 import { calculateInvoice } from "../../../lib/calculate";
+import { useUserStore } from "../../../store/useUser";
 
 function Dashboard() {
   const [step, setStep] = useState(1);
   // const { step, setStep } = useStepsStore();
   const [text, setText] = useState("");
   const [showControlsPopup, setShowControlsPopup] = useState(false);
-
   const { template, setTemplate, userTemplates, getUsersTemplates } =
     useTemplateStore();
   const { loading, setLoading } = useLoadingStore();
-
   const { invoice, setInvoice, getInvoiceId, clearSuggestions } =
     useInvoiceStore();
   const { company, setCompany, getCompanies } = useCompanyStore();
 
+  const { user, getCurrentUser } = useUserStore();
+
+  const now = new Date();
+  const currentMonth = now.toISOString().slice(0, 7); // 'YYYY-MM'
+  const invoiceCount =
+    true || user?.invoiceCountMonth === currentMonth
+      ? user?.invoiceCount
+      : 0 || 0;
+
+  const limitExceeded = user?.subscriptionPlan === "Free" && invoiceCount >= 15;
+
   useEffect(() => {
     async function fetchData() {
+      await getCurrentUser();
       await getUsersTemplates();
       await getCompanies();
       await getInvoiceId();
@@ -37,11 +48,20 @@ function Dashboard() {
   }, []);
 
   const handleGenerate = async () => {
+    console.log("Limit exceeded: ", limitExceeded);
+    if (limitExceeded) {
+      alert("Monthly invoice limit reached. Upgrade your plan to continue.");
+      return;
+    }
+
     try {
       setLoading(true);
       const invoice = await handleInvoiceGenerate(text);
       const updatedInvoice = calculateInvoice(invoice);
       // const invoice = dummyInvoice;
+
+      // Todo - invoice validation check to reduce errors
+
       setInvoice(invoice);
       setLoading(false);
       setStep(2);
@@ -63,10 +83,7 @@ function Dashboard() {
       <LeftBar className="" />
       <div className="flex flex-col w-full h-full bg-base-100 justify-center">
         <div className="w-full h-full self-center flex flex-row gap-8 overflow-y-auto">
-          {step == 2 && (
-            // <InvoicePreview setStep={setStep}/>
-            <InvoicePreview setStep={setStep} editable={true} />
-          )}
+          {step == 2 && <InvoicePreview setStep={setStep} editable={true} />}
           {step == 1 && (
             <div className="flex px-8 w-full items-center justify-center flex-col gap-4">
               <h1 className="text-center font-bold text-4xl space-x-10">

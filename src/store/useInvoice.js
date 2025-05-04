@@ -101,16 +101,6 @@ export const useInvoiceStore = create((set, get) => ({
     try {
       const currentInvoice = get().invoice;
 
-      // Test if the client already exists
-      const existingRes = await fetch(
-        `/api/client/query?name=${currentInvoice.clientName}&email=${currentInvoice.clientEmail}`
-      );
-
-      const existingData = await existingRes.json();
-      const existingClientId = existingData.data;
-
-      if (existingClientId) return existingClientId;
-
       const response = await fetch("/api/client", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

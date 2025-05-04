@@ -167,16 +167,17 @@ export function InvoicePreview({ setStep, editable, preview }) {
       setLoading(true);
 
       if (currentPath === "/invoices/create") {
-        console.log("saving invoice");
         // if client Id in invoice is absent, create a client in DB
 
         const baseInvoice = {
           ...invoice,
           template: template._id,
         };
+        console.log("saving invoice", baseInvoice);
 
         if (!invoice.clientId) {
           baseInvoice.clientId = await createClient();
+          console.log("New Client ID: ", baseInvoice.clientId);
         }
         const newInvoice = await postInvoice(baseInvoice);
 

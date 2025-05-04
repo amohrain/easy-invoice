@@ -20,7 +20,6 @@ export async function POST(request) {
       );
     }
     const user = await getMongoUser(userId);
-    console.log("Mongo user:", user);
 
     if (!user) {
       return NextResponse.json(
@@ -43,6 +42,18 @@ export async function POST(request) {
     // Create a new invoice
     const invoice = new Invoice({ ...invoiceData, user: user._id });
     await invoice.save();
+
+    const now = new Date();
+    const currentMonth = now.toISOString().slice(0, 7); // 'YYYY-MM'
+
+    if (user.invoiceCountMonth === currentMonth) {
+      user.invoiceCount += 1;
+    } else {
+      user.invoiceCount = 1; // reset count
+      user.invoiceCountMonth = currentMonth; // update to current month
+    }
+
+    await user.save();
 
     // Return the created invoice
     return NextResponse.json(
@@ -78,7 +89,6 @@ export async function GET(request) {
     );
   }
   const user = await getMongoUser(userId);
-  console.log("Mongo user:", user);
 
   try {
     // Connect to the database
@@ -118,7 +128,6 @@ export async function DELETE(request) {
     );
   }
   const user = await getMongoUser(userId);
-  console.log("Mongo user:", user);
 
   try {
     // Connect to the database

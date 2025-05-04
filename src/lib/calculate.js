@@ -13,6 +13,8 @@ function calculateAmounts(invoice) {
     invoice.deductions.forEach((deduction) => {
       if (deduction.percent) {
         deduction.amount = (deductedSubtotal * deduction.percent) / 100;
+      } else {
+        deduction.amount = parseFloat(deduction.amount);
       }
     });
   } else {
@@ -30,6 +32,8 @@ function calculateAmounts(invoice) {
     invoice.additions.forEach((addition) => {
       if (addition.percent) {
         addition.amount = (deductedSubtotal * addition.percent) / 100;
+      } else {
+        addition.amount = parseFloat(addition.amount);
       }
     });
   } else {

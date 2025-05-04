@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-import Client from "@/models/client.model";
+import Client from "../../../models/client.model";
 import { NextResponse } from "next/server";
 import { getMongoUser } from "@/lib/getMongoUser";
 import connectDB from "@/lib/mongodb";
@@ -37,13 +37,30 @@ export async function POST(request) {
       await request.json();
 
     console.log(
-      "Request data",
+      "Creating client with data",
       clientName,
       clientAddress,
       clientEmail,
       clientPhone,
       clientTaxId
     );
+
+    // Find if the client already exists
+
+    const existingClient = await Client.findOne({
+      clientName,
+      clientEmail,
+    });
+
+    if (existingClient) {
+      console.log("Found existing client");
+      return NextResponse.json({
+        success: true,
+        data: existingClient._id,
+      });
+    }
+
+    console.log("Creating new client");
 
     // Create a new client
     const newClient = await Client.create({
@@ -56,6 +73,8 @@ export async function POST(request) {
       clientTaxId,
       status: "active",
     });
+
+    console.log("New Client", newClient);
 
     return NextResponse.json({
       success: true,

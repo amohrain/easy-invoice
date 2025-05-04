@@ -6,7 +6,7 @@ export default function Plans(where) {
   const isIndia = country === "IN";
 
   return (
-    <div className="flex flex-row flex-wrap w-full gap-6">
+    <div className="flex flex-row justify-center flex-wrap w-full gap-6">
       <PricingPlan
         name="Free"
         amount={0}
