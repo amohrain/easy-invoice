@@ -1,6 +1,7 @@
 import { TrendingUp, CreditCard, Calendar, Users } from "lucide-react";
+import { formatCurrency } from "./formatCurrency";
 
-export const getInvoiceStats = (invoiceData, currency = "$") => {
+export const getInvoiceStats = (invoiceData, currency = "USD") => {
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
@@ -53,7 +54,11 @@ export const getInvoiceStats = (invoiceData, currency = "$") => {
     return {
       title,
       value:
-        title === "Clients" ? `${current}` : `${currency}${current.toFixed(2)}`,
+        // title === "Clients" ? `${current}` : `${currency}${current.toFixed(2)}`,
+        title === "Clients"
+          ? `${current}`
+          : `
+        ${formatCurrency(current, currency)}`,
       icon: icon,
       change: `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`,
       changeType,

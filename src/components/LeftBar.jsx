@@ -12,7 +12,11 @@ import {
 } from "react-icons/bi";
 import { PiInvoice } from "react-icons/pi";
 import { BsBuilding } from "react-icons/bs";
-import { PanelLeftCloseIcon, PanelsTopLeftIcon } from "lucide-react";
+import {
+  PanelLeftCloseIcon,
+  PanelLeftOpenIcon,
+  PanelsTopLeftIcon,
+} from "lucide-react";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { useCompanyStore } from "@/store/useCompany";
 import Menu from "./Menu";
@@ -48,15 +52,12 @@ function LeftBar() {
     <>
       <Menu />
       <div
-        className={`hidden sm:flex flex-col  h-full min-h-screen shadow-lg transition-all duration-300 bg-base-300 py-6 ${
+        className={`hidden sm:flex  flex-col justify-between h-full min-h-screen shadow-lg transition-all duration-300 bg-base-300 py-6 ${
           collapsed ? "w-16" : "w-xs"
         }`}
       >
-        {/* Toggle button */}
-        <div className="flex justify-end px-4"></div>
-
         {/* Top section */}
-        <div className="flex flex-col px-4">
+        <div className="flex flex-col  px-4">
           {/* Logo */}
 
           <div className="px-2 mb-4">
@@ -75,6 +76,16 @@ function LeftBar() {
               link="/dashboard"
               name={!collapsed && "Dashboard"}
               icon={<BiHome />}
+              collapse={
+                !collapsed && (
+                  <button
+                    className="p-1 m-[-4px] rounded-full hover:text-primary hover:bg-base-200 cursor-pointer"
+                    onClick={() => setCollapsed((prev) => !prev)}
+                  >
+                    <PanelLeftCloseIcon size={14} />
+                  </button>
+                )
+              }
             />
             <NavButton
               link="/invoices"
@@ -103,25 +114,20 @@ function LeftBar() {
             />
           </div>
         </div>
+        {/* Collapse button positioned exactly on the right edge */}
+        <div className="absolute top-1/2 self-end z-10">
+          <button
+            onClick={() => setCollapsed((prev) => !prev)}
+            className="mr-[-14px] p-2 rounded-full hover:text-primary hover:bg-base-100 cursor-pointer"
+          >
+            {collapsed && <PanelLeftOpenIcon size={14} />}
+          </button>
+        </div>
 
         {/* Bottom section */}
-        <div className="mt-auto px-4">
-          {collapsed && (
-            <button
-              onClick={() => setCollapsed((prev) => !prev)}
-              className="btn btn-sm btn-ghost"
-            >
-              <PanelLeftCloseIcon size={20} />
-            </button>
-          )}
+        <div className="px-4">
           {!collapsed && (
             <div className="flex flex-row-reverse items-center">
-              <button
-                onClick={() => setCollapsed((prev) => !prev)}
-                className="btn self-center btn-sm btn-ghost"
-              >
-                <PanelLeftCloseIcon className="" size={20} />
-              </button>
               <select
                 onChange={(e) => handleCompanyChange(e.target.value)}
                 value={company?._id}

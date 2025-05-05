@@ -15,6 +15,7 @@ import {
   Loader,
   Save,
   Undo2,
+  X,
 } from "lucide-react";
 import DownloadIcon from "./DownloadIcon";
 import { useRouter } from "next/navigation";
@@ -53,6 +54,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
     fetchSuggestion,
     acceptSuggestions,
     acceptOneSuggestion,
+    rejectSuggestion,
+    deleteSuggestion,
   } = useInvoiceStore();
   const { loading, setLoading } = useLoadingStore();
   const [showModal, setShowModal] = useState(false);
@@ -208,11 +211,11 @@ export function InvoicePreview({ setStep, editable, preview }) {
 
   const SuggestEdits = () => {
     const [suggestedData, setSuggestedData] = useState({
-      clientName: invoice?.clientName,
-      clientAddress: invoice?.clientAddress,
-      clientPhone: invoice?.clientPhone,
-      clientEmail: invoice?.clientEmail,
-      clientTaxId: invoice?.clientTaxId,
+      clientName: suggestion?.clientName || invoice?.clientName,
+      clientAddress: suggestion?.clientAddress || invoice?.clientAddress,
+      clientPhone: suggestion?.clientPhone || invoice?.clientPhone,
+      clientEmail: suggestion?.clientEmail || invoice?.clientEmail,
+      clientTaxId: suggestion?.clientTaxId || invoice?.clientTaxId,
     });
 
     const handleCreateSuggestion = async () => {
@@ -228,23 +231,19 @@ export function InvoicePreview({ setStep, editable, preview }) {
       );
     }
 
-    if (invoice.changesSuggested && !suggestion) {
-      return <Loader />;
-    }
-
     return (
       <dialog id="my_modal_1" className="modal modal-open glass">
         <div className="modal-box">
           <div className="">
-            <fieldset className="fieldset w-full bg-base-100 shadow p-4 rounded-lg">
+            <fieldset className="fieldset w-full bg-base-100 shadow p-4 rounded-lg gap-2">
               <legend className="text-lg font-medium">Suggest Changes</legend>
 
-              <div className="mb-4 w-full">
+              <div className="w-full">
                 <label className="fieldset-label block mb-2">Your Name</label>
                 <input
                   type="text"
                   className="input input-bordered w-full"
-                  placeholder={invoice.clientName}
+                  placeholder=""
                   value={suggestedData?.clientName || ""}
                   onChange={(e) =>
                     setSuggestedData((prev) => ({
@@ -254,7 +253,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                   }
                 />
               </div>
-              <div className="mb-4 w-full">
+              <div className="w-full">
                 <label className="fieldset-label block mb-2">
                   Your Address
                 </label>
@@ -271,7 +270,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                   }
                 />
               </div>
-              <div className="mb-4 w-full">
+              <div className="w-full">
                 <label className="fieldset-label block mb-2">Your Phone</label>
                 <input
                   type="text"
@@ -286,8 +285,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
                   }
                 />
               </div>
-              <div className="mb-4 w-full">
-                <label className="fieldset-label block mb-2">Your tax ID</label>
+              <div className="w-full">
+                <label className="fieldset-label block mb-2">Your Email</label>
                 <input
                   type="text"
                   className="input input-bordered w-full"
@@ -297,6 +296,21 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     setSuggestedData((prev) => ({
                       ...prev,
                       clientEmail: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="w-full">
+                <label className="fieldset-label block mb-2">Your tax ID</label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full"
+                  placeholder={invoice.clientTaxId}
+                  value={suggestedData?.clientTaxId || ""}
+                  onChange={(e) =>
+                    setSuggestedData((prev) => ({
+                      ...prev,
+                      clientTaxId: e.target.value,
                     }))
                   }
                 />
@@ -329,9 +343,9 @@ export function InvoicePreview({ setStep, editable, preview }) {
     await fetchSuggestion();
   };
 
-  const handleAcceptOneSuggestion = (key) => {
-    console.log("Suggesion key", key);
+  const handleAcceptOneSuggestion = async (key) => {
     handleChange(key, suggestion[key]);
+    await acceptOneSuggestion();
   };
 
   const hideShareModal = () => {
@@ -372,7 +386,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     {invoice.invoiceTitle} Preview
                   </h2>
                   <div className="flex flex-row justify-around items-center gap-4">
-                    {editable && (
+                    {editable && currentPath === "/invoices/create" && (
                       <Undo2
                         className="cursor-pointer hover:text-accent"
                         onClick={handleBack}
@@ -543,15 +557,22 @@ export function InvoicePreview({ setStep, editable, preview }) {
                       suggestion[key] !== invoice[key] && (
                         <span className={`text-info ${bold && "font-bold"}`}>
                           {suggestion[key]}
-                          {/* <button
-                            onClick={() => handleAcceptOneSuggestion(key)}
-                            className="ml-2 p-0.5 btn btn-success btn-circle btn-xs"
-                          >
-                            <Check />
-                          </button>
-                          <button className="ml-2 p-0.5 btn btn-error btn-circle btn-xs">
-                            <X />
-                          </button> */}
+                          {editable && (
+                            <>
+                              <button
+                                onClick={() => handleAcceptOneSuggestion(key)}
+                                className="ml-2 p-0.5 btn btn-success btn-circle btn-xs"
+                              >
+                                <Check />
+                              </button>
+                              <button
+                                onClick={() => rejectSuggestion(key)}
+                                className="ml-2 p-0.5 btn btn-error btn-circle btn-xs"
+                              >
+                                <X />
+                              </button>
+                            </>
+                          )}
                         </span>
                       )}
                   </div>

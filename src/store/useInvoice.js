@@ -189,9 +189,59 @@ export const useInvoiceStore = create((set, get) => ({
       toast.error("Error accepting sugestions");
     }
   },
-  deleteSuggestion: async (id) => {
+  acceptOneSuggestion: async () => {
+    const invoice = get().invoice;
+    const suggestion = get().suggestion;
+    console.log(
+      invoice.clientName === suggestion.clientName,
+      invoice.clientAddress === suggestion.clientAddress,
+      invoice.clientEmail === suggestion.clientEmail,
+      invoice.clientPhone === suggestion.clientPhone,
+      invoice.clientTaxId === suggestion.clientTaxId
+    );
+
+    if (
+      invoice.clientName === suggestion.clientName &&
+      invoice.clientAddress === suggestion.clientAddress &&
+      invoice.clientEmail === suggestion.clientEmail &&
+      invoice.clientPhone === suggestion.clientPhone &&
+      invoice.clientTaxId === suggestion.clientTaxId
+    ) {
+      console.log("Deleting suggestion");
+      set({ invoice: { ...invoice, changesSuggested: false } });
+      await get().deleteSuggestion();
+    }
+    await get().saveInvoice();
+  },
+  rejectSuggestion: async (key) => {
+    const invoice = get().invoice;
+    const suggestion = get().suggestion;
+    suggestion[key] = invoice[key];
+
+    set({ suggestion });
+    await fetch("/api/suggestion/" + suggestion._id, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(suggestion),
+    });
+
+    if (
+      invoice.clientName === suggestion.clientName &&
+      invoice.clientAddress === suggestion.clientAddress &&
+      invoice.clientEmail === suggestion.clientEmail &&
+      invoice.clientPhone === suggestion.clientPhone &&
+      invoice.clientTaxId === suggestion.clientTaxId
+    ) {
+      console.log("Deleting suggestion");
+      set({ invoice: { ...invoice, changesSuggested: false } });
+      await get().deleteSuggestion();
+      await get().saveInvoice();
+    }
+  },
+  deleteSuggestion: async () => {
+    const suggestion = get().suggestion;
     try {
-      const response = await fetch("/api/suggestion/" + id, {
+      const response = await fetch("/api/suggestion/" + suggestion._id, {
         method: "DELETE",
       });
       if (response.ok) {
@@ -201,37 +251,6 @@ export const useInvoiceStore = create((set, get) => ({
     } catch (error) {
       console.error("Error deleting suggestions, ", error);
       toast.error("Error deleting suggestion");
-    }
-  },
-
-  // Todo - to add a later stage - not too late
-  acceptOneSuggestion: async (key) => {
-    // let key received was clientName
-    try {
-      console.log("Accepting suggestion");
-      const invoice = { ...get().invoice };
-      const suggestion = get().suggestion;
-
-      const { [key]: value } = suggestion;
-
-      invoice[key] = value;
-
-      // Save invoice
-      const response = await fetch(`/api/invoice/${invoice._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(invoice),
-      });
-
-      if (!response.ok) {
-        console.error("Error saving invoice");
-      }
-
-      console.log("Suggestion accepted successfully");
-    } catch (error) {
-      console.error("Error accepting suggestion:", error);
     }
   },
   fetchSuggestion: async () => {

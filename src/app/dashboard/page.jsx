@@ -8,6 +8,7 @@ import Link from "next/link";
 import DailyRevenueChart from "@/components/DailyRevenueChart";
 import { Loading } from "@/components/Loading";
 import { useCompanyStore } from "@/store/useCompany";
+import { formatCurrency } from "../../lib/formatCurrency";
 
 // This is a simple invoicing dashboard page using React and Tailwind CSS.
 
@@ -17,7 +18,7 @@ export default function InvoicingDashboard() {
   const [stats, setStats] = useState([]);
   const { invoiceData } = useInvoiceStore();
   const { company } = useCompanyStore();
-  const currency = company?.currency;
+  const currency = company?.currency || "USD";
 
   useEffect(() => {
     if (!invoiceData) return;
@@ -130,8 +131,9 @@ export default function InvoicingDashboard() {
                         <span>{client.clientName}</span>
                       </div>
                       <span className="font-semibold">
-                        {currency}
-                        {client.totalBilled.toFixed(2)}
+                        {/* {currency}
+                        {client.totalBilled.toFixed(2)} */}
+                        {formatCurrency(client.totalBilled, currency)}
                       </span>
                     </li>
                   ))}

@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useCompanyStore } from "../store/useCompany";
+import { formatCurrency } from "../lib/formatCurrency";
 
 const DailyRevenueChart = () => {
   const [dailyData, setDailyData] = useState([]);
@@ -18,7 +19,7 @@ const DailyRevenueChart = () => {
   const year = currentDate.getFullYear();
 
   const { company } = useCompanyStore();
-  const currency = company.currency || "";
+  const currency = company.currency || "USD";
 
   useEffect(() => {
     const fetchDailyRevenue = async () => {
@@ -45,16 +46,6 @@ const DailyRevenueChart = () => {
     fetchDailyRevenue();
   }, []);
 
-  // Format numbers as currency
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
   // Custom tooltip component
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -67,7 +58,7 @@ const DailyRevenueChart = () => {
             })}
           </p>
           <p className="text-primary font-bold">
-            {formatCurrency(payload[0].value)}
+            {formatCurrency(payload[0].value, company.currency)}
           </p>
         </div>
       );
@@ -107,7 +98,7 @@ const DailyRevenueChart = () => {
                   className="text-xs text-base-content/70"
                 />
                 <YAxis
-                  tickFormatter={(value) => `${currency}${value}`}
+                  tickFormatter={(value) => formatCurrency(value, currency)}
                   className="text-xs text-base-content/70"
                 />
                 <Tooltip content={<CustomTooltip />} />
