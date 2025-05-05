@@ -177,7 +177,7 @@ export default function Home() {
           <div className="flex flex-col justify-between h-full gap-12 text-center">
             <div>
               <h1 className="text-4xl sm:text-6xl font-bold">
-                Create stunning invoices within seconds!
+                Create invoices with minimum effort!
               </h1>
               <p className="py-6">
                 Type a prompt to generate invoice, share with customers and get
