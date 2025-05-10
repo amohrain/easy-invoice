@@ -9,6 +9,7 @@ export default function PostAuthRedirect() {
   useEffect(() => {
     const checkUser = async () => {
       try {
+        const something = localStorage.getItem("something");
         const res = await fetch("/api/company");
         if (!res.ok) {
           router.replace("/onboarding");

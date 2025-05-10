@@ -24,7 +24,7 @@ export default function Onboarding() {
       const data = await response.json();
       const companies = data.data;
 
-      if (companies?.length > 0) router.push("/dashboard");
+      if (companies?.length > 0) router.push("/invoices/create");
     }
     checkIfOnboarded();
   }, []);
@@ -99,7 +99,7 @@ export default function Onboarding() {
       await handleSubmit();
       setStep((prev) => prev + 1);
       return;
-    } else if (step === 3) {
+    } else if (step >= 3) {
       router.push("/invoices/create");
     } else setStep((prev) => prev + 1);
   };
@@ -245,10 +245,14 @@ export default function Onboarding() {
                       })
                     }
                   >
-                    <option value="$">USD ($)</option>
-                    <option value="€">EUR (€)</option>
-                    <option value="£">GBP (£)</option>
-                    <option value="₹">INR (₹)</option>
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="INR">INR (₹)</option>
+                    <option value="JPY">JPY (¥)</option>
+                    <option value="CNY">CNY (¥)</option>
+                    <option value="AUD">AUD ($)</option>
+                    <option value="CAD">CAD ($)</option>
                   </select>
                 </div>
               </div>
@@ -265,7 +269,7 @@ export default function Onboarding() {
         </div>
       )}
       <button className="btn btn-accent mt-6 w-full" onClick={handleNext}>
-        {step === 3 ? "Finish" : "Next"}
+        {step >= 3 ? "Finish" : "Next"}
       </button>
     </div>
   );
