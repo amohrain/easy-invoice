@@ -159,6 +159,10 @@ const invoiceSchema = new mongoose.Schema(
       default: false,
       required: false,
     },
+    timeTaken: {
+      type: Number,
+      required: false,
+    },
   },
   { timestamps: true } // Handles createdAt and updatedAt automatically
 );

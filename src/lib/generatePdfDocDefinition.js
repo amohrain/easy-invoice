@@ -164,7 +164,7 @@ export function generatePdfDocDefinition(template, invoice) {
 
     if (section.section === "title") {
       content.push({
-        text: invoice.invoiceTitle || "Invoicey",
+        text: invoice.invoiceTitle || "Invoice",
         bold: section.style.bold || true,
         alignment: section.style.alignment,
         fontSize: section.style.size || 22,

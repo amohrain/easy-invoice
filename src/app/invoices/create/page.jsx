@@ -36,6 +36,19 @@ function Dashboard() {
 
   const limitExceeded = user?.subscriptionPlan === "Free" && invoiceCount >= 15;
 
+  const [startTime, setStartTime] = useState(0);
+
+  useEffect(() => {
+    // start counting time when the user starts typing for the first time
+    if (text.length > 0 && startTime === 0) {
+      const start = performance.now();
+      setStartTime(start);
+    }
+    if (text.length === 0) {
+      setStartTime(0);
+    }
+  }, [text]);
+
   useEffect(() => {
     async function fetchData() {
       await getCurrentUser();
@@ -57,10 +70,15 @@ function Dashboard() {
     try {
       setLoading(true);
       const invoice = await handleInvoiceGenerate(text);
+
+      // Logic to calculate time taken to generate invoice
+      const end = performance.now();
+      const durationInSeconds = ((end - startTime) / 1000).toFixed(2);
+      invoice.timeTaken = parseFloat(durationInSeconds);
+
       // const updatedInvoice = calculateInvoice(invoice);
       // const invoice = dummyInvoice;
       // Todo - invoice validation check to reduce errors
-
       setInvoice(invoice);
       setLoading(false);
       setStep(2);

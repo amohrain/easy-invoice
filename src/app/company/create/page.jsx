@@ -5,12 +5,12 @@ import { useCompanyStore } from "@/store/useCompany";
 import InvoiceNumberFormat from "@/components/InvoiceNumberFormat";
 import { Loading } from "../../../components/Loading";
 import { toast } from "sonner";
-import { useUser } from "@clerk/nextjs";
 import { useUserStore } from "../../../store/useUser";
 import { useRouter } from "next/navigation";
 
 function Company() {
   const { user, getCurrentUser } = useUserStore();
+
   const router = useRouter();
 
   useEffect(() => {

@@ -9,6 +9,7 @@ export default function PaymentButton({
   name,
   planAmount,
   where,
+  mostPopular,
   currency,
   setInvoiceLink,
 }) {
@@ -113,7 +114,9 @@ export default function PaymentButton({
         }
       }}
       disabled={(planAmount == 0 && page !== "home") || name === currentPlan}
-      className="btn btn-primary"
+      className={`btn w-full rounded-full ${
+        mostPopular ? "bg-white text-black" : "btn-primary "
+      }`}
     >
       {currentPlan === name ? "Current Plan" : `Continue with ${name}`}
     </button>

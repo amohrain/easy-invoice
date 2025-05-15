@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react";
 import LeftBar from "@/components/LeftBar";
 import { useCompanyStore } from "@/store/useCompany";
 import InvoiceNumberFormat from "@/components/InvoiceNumberFormat";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useUserStore } from "../../store/useUser";
+import { toast } from "sonner";
 
 function Company() {
   const {
@@ -20,6 +21,7 @@ function Company() {
   const [isPro, setIsPro] = useState(false);
   const { getCurrentUser } = useUserStore();
   const [preview, setPreview] = useState(company?.businessLogo || null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -67,6 +69,80 @@ function Company() {
     };
     fetchCompanies();
   }, [updateCompany]);
+
+  const handleGenerateAPIKey = async () => {
+    try {
+      const res = await fetch("/api/company/api-key", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ companyId: company._id }),
+      });
+      const data = await res.json();
+      console.log("API Key generated", data);
+      if (data.success) {
+        toast.success("API key generated successfully");
+        setCompany({ ...company, apiKey: data.apiKey });
+      }
+    } catch (error) {
+      console.error("Error generating API key:", error);
+      toast.error("Error generating API key");
+    }
+  };
+
+  const handleDeleteAPIKey = async () => {
+    try {
+      const res = await fetch("/api/company/api-key", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          companyId: company._id,
+          apiKey: company.apiKey,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("API key deleted successfully");
+        setCompany({ ...company, apiKey: null });
+        setShowDeleteModal(false);
+      }
+    } catch (error) {
+      console.error("Error deleting API key:", error);
+      toast.error("Error deleting API key");
+    }
+  };
+
+  const DeleteAPIKeyModal = () => {
+    return (
+      <dialog
+        id="my_modal_5"
+        className="modal modal-open modal-bottom sm:modal-middle"
+      >
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Delete API Key!</h3>
+          <p className="py-4">
+            Are you sure you want to delete the API key? This action cannot be
+            undone. If you delete the API key, you will need to generate a new
+            one to access the API. This will also invalidate any existing API
+            keys.
+          </p>
+          <div className="modal-action gap-2">
+            <form method="dialog">
+              <button onClick={handleDeleteAPIKey} className="btn btn-error">
+                Delete
+              </button>
+              <button onClick={() => setShowDeleteModal(false)} className="btn">
+                Close
+              </button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+    );
+  };
 
   return (
     <div className="flex h-screen ">
@@ -284,17 +360,37 @@ function Company() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-center">
+            <div className="flex items-center justify-between">
               <button
-                className="btn btn-primary mt-4 w-full md:w-fit"
+                className="btn self-center btn-primary w-full md:w-fit"
                 onClick={handleUpdateCompany}
               >
                 Update Company Information
               </button>
+              <div className="flexitems-center">
+                {company?.apiKey ? (
+                  <div className=" bg-base-200 p-4 rounded-2xl ">
+                    <span className="text-sm self-center mr-2">
+                      API Key: {company.apiKey}
+                    </span>
+                    <button className="self-center">
+                      <Trash2
+                        onClick={() => setShowDeleteModal(true)}
+                        className="size-4 hover:cursor-pointer hover:text-accent"
+                      />
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={handleGenerateAPIKey} className="btn">
+                    Generate API Key
+                  </button>
+                )}
+              </div>
             </div>
           </fieldset>
         </div>
       </div>
+      {showDeleteModal && <DeleteAPIKeyModal />}
     </div>
   );
 }

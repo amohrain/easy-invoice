@@ -2,3 +2,15 @@
 @plugin "daisyui" {
   themes: light --default, dark, forest, abyss;
 }
+@layer components {
+  .section-heading {
+    @apply max-w-xl mx-auto;
+  }
+  .section-title {
+    @apply text-center text-4xl md:text-6xl font-bold tracking-tighter bg-gradient-to-b from-base-content to-primary text-transparent bg-clip-text;
+  }
+
+  .section-description {
+    @apply text-center text-2xl leading-[30px] tracking-tight;
+  }
+}

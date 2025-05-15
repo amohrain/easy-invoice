@@ -65,6 +65,10 @@ const companySchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  apiKey: {
+    type: String,
+    required: false,
+  },
 });
 
 const Company =

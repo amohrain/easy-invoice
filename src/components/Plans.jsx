@@ -4,13 +4,13 @@ import PricingPlan from "./PricingPlan";
 export default function Plans(where) {
   const country = useUserCountry();
   const isIndia = country === "IN";
+  const currency = isIndia ? "INR" : "USD";
 
   return (
-    <div className="flex flex-row justify-center flex-wrap w-full gap-6">
+    <div className="flex flex-col lg:flex-row justify-center w-full gap-6">
       <PricingPlan
         name="Free"
         amount={0}
-        price="Forever"
         mostPopular={false}
         features={[
           "15 Invoices per month",
@@ -19,34 +19,26 @@ export default function Plans(where) {
           "Basic Templates",
         ]}
         where={where}
+        currency={currency}
       />
       <PricingPlan
         name="Starter"
         amount={isIndia ? 3999 : 49.99}
-        price={
-          isIndia
-            ? `₹${new Intl.NumberFormat("en-IN").format(3999)}`
-            : `$${new Intl.NumberFormat("en-US").format(49.99)}`
-        }
-        currency={isIndia ? "INR" : "USD"}
+        currency={currency}
         mostPopular={true}
         features={[
           "Unlimited invoices",
           "Unlimited clients",
           "Supports one business",
           "Access to exclusive templates",
+          "Ad free expreience",
         ]}
         where={where}
       />
       <PricingPlan
         name="Pro"
         amount={isIndia ? 6599 : 79.99}
-        price={
-          isIndia
-            ? `₹${new Intl.NumberFormat("en-IN").format(6599)}`
-            : `$${new Intl.NumberFormat("en-US").format(79.99)}`
-        }
-        currency={isIndia ? "INR" : "USD"}
+        currency={currency}
         mostPopular={false}
         features={[
           "Unlimited invoices",

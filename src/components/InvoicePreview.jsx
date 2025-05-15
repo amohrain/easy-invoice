@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { useClientStore } from "@/store/useClient";
 import { templates } from "../lib/templatesData";
 import { formatCurrency } from "../lib/formatCurrency";
+import Link from "next/link";
 
 export function InvoicePreview({ setStep, editable, preview }) {
   const getTextStyle = (section) => {
@@ -82,7 +83,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
     if (currentPath !== "/invoices/create") {
       console.log(currentPath);
       setSaved(false);
-      setInvoice(calculateInvoice(invoice));
+      // setInvoice(calculateInvoice(invoice));
       if (share) setShowModal(true);
       return;
     }
@@ -386,12 +387,20 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     {invoice.invoiceTitle} Preview
                   </h2>
                   <div className="flex flex-row justify-around items-center gap-4">
+                    {preview && (
+                      <Link href={"/sign-up"}>
+                        <button className="btn btn-ghost btn-accent rounded-full">
+                          Get Started for free
+                        </button>
+                      </Link>
+                    )}
                     {editable && currentPath === "/invoices/create" && (
                       <Undo2
                         className="cursor-pointer hover:text-accent"
                         onClick={handleBack}
                       />
                     )}
+
                     {editable && (
                       <Save
                         className={`cursor-pointer hover:text-accent ${
@@ -404,12 +413,14 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     )}
 
                     <DownloadIcon className="cursor-pointer hover:text-accent" />
-                    {currentPath !== "/invoices/create" && editable && (
-                      <Link2
-                        className="cursor-pointer hover:text-accent"
-                        onClick={handleLinkShare}
-                      />
-                    )}
+                    {currentPath !== "/invoices/create" &&
+                      editable &&
+                      !preview && (
+                        <Link2
+                          className="cursor-pointer hover:text-accent"
+                          onClick={handleLinkShare}
+                        />
+                      )}
                     {editable && invoice.changesSuggested && (
                       <button
                         onClick={handleAcceptSuggestions}
@@ -780,6 +791,21 @@ export function InvoicePreview({ setStep, editable, preview }) {
               )}
             </div>
           ))}
+        </div>
+        <div className="text-center">
+          “It took
+          {invoice?.timeTaken && invoice.timeTaken < 60
+            ? ` ${invoice.timeTaken} seconds`
+            : " a few minute"}{" "}
+          to create this invoice using Vibe Invoice."{" "}
+          {!editable && (
+            <a
+              href="https://www.vibeinvoice.com"
+              className="link hover:link-hover"
+            >
+              Create your own →
+            </a>
+          )}
         </div>
       </div>
       {showModal && <ShareLinkModal hide={hideShareModal} />}
