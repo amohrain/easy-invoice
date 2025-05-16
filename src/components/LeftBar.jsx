@@ -127,11 +127,11 @@ function LeftBar() {
         {/* Bottom section */}
         <div className="px-4">
           {!collapsed && (
-            <div className="flex flex-row-reverse items-center">
+            <div className="flex flex-row-reverse justify-center">
               <select
                 onChange={(e) => handleCompanyChange(e.target.value)}
                 value={company?._id}
-                className="select w-full self-center select-ghost"
+                className="select w-fit select-ghost"
               >
                 {companies?.map((c) => (
                   <option key={c._id} value={c._id}>

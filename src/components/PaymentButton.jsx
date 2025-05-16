@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../store/useUser";
-import { Loader2 } from "lucide-react";
 
 // PaymentButton Component
 export default function PaymentButton({
@@ -77,9 +75,8 @@ export default function PaymentButton({
             if (!verifyRes.ok) throw new Error("Payment verification failed");
 
             const data = await verifyRes.json();
-            const invoiceLink = `${process.env.NEXT_PUBLIC_BASE_URL}/view/${data.data}`;
+            const invoiceLink = `${data.data}`;
             setInvoiceLink(invoiceLink);
-            // window.location.reload(); // Refresh to update payment status
           } catch (error) {
             console.error("Error handling payment:", error);
             alert("Something went wrong. Please contact support.");

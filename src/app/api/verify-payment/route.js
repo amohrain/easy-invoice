@@ -4,6 +4,7 @@ import { getMongoUser } from "../../../lib/getMongoUser";
 import Company from "../../../models/company.model";
 import Invoice from "../../../models/invoice.model";
 import User from "../../../models/user.model";
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
   const { userId } = await auth();
@@ -24,7 +25,7 @@ export async function POST(req) {
     .digest("hex");
 
   if (generated_signature !== razorpay_signature) {
-    return Response.json(
+    return NextResponse.json(
       { success: false, message: "Invalid payment signature" },
       { status: 400 }
     );
@@ -40,43 +41,13 @@ export async function POST(req) {
     businessTaxId,
   } = company;
 
-  const admin = await User.findById(process.env.ADMIN_USER_ID);
-
-  // Get the last invoice number from the database
-  const lastInvoice = await Invoice.findOne({
-    company: admin.company,
-    invoiceId: { $exists: true },
-  }).sort({ invoiceId: -1 });
-
-  // Generate the next invoice number
-  const nextInvoiceId = lastInvoice ? lastInvoice.invoiceId + 1 : 1001;
-
-  // Logic to create invoice
-  const invoice = await Invoice.create({
-    user: admin._id,
-    company: admin.company,
-    template: admin.template,
-    invoiceTitle: "Invoice",
-    invoiceId: nextInvoiceId,
-    currency,
-    businessName: "Vibe Invoice",
-    businessEmail: "abhishek@vibeinvoice.com",
-    businessAddress: "A-249, Rama Market, Munirka, New Delhi",
-    businessPhone: "",
-    businessTaxId: "",
+  const invoiceData = {
     clientName: businessName,
     clientEmail: businessEmail,
     clientAddress: businessAddress,
     clientPhone: businessPhone,
     clientTaxId: businessTaxId,
-    issuedAt: new Date().toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }),
-    invoiceNumber: "INV-" + nextInvoiceId,
-    subtotal: amount / 100,
-    totalAmount: amount / 100,
+    currency,
     notes: "Thank you for your support!",
     status: "Paid",
     items: [
@@ -84,15 +55,33 @@ export async function POST(req) {
         description: `Vibe Invoice ${plan} Plan`,
         quantity: 1,
         rate: amount / 100,
-        total: amount / 100,
       },
     ],
-  });
+  };
+
+  const response = await fetch(
+    "http://www.vibeinvoice.com/api/invoice/generate-invoice",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": `${process.env.VIBE_INVOICE_API_KEY}`,
+      },
+      body: JSON.stringify(invoiceData),
+    }
+  );
+
+  const data = await response.json();
+  console.log(data);
+  const invoiceUrl = data.invoiceUrl;
 
   // Payment is valid, update Clerk metadata
   user.subscriptionPlan = plan;
-  user.invoice = invoice._id;
+  user.invoice = invoiceUrl;
   await user.save();
 
-  return Response.json({ success: true, data: invoice._id });
+  return NextResponse.json(
+    { success: true, data: invoiceUrl },
+    { status: 200 }
+  );
 }

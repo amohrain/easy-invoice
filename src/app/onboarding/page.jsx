@@ -10,11 +10,6 @@ export default function Onboarding() {
   const router = useRouter();
   const { user } = useUser();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: user?.firstName || "",
-    position: "",
-    industry: "",
-  });
 
   const { getCurrentUser } = useUserStore();
 
@@ -39,7 +34,7 @@ export default function Onboarding() {
     businessEmail: "",
     businessPhone: "",
     businessTaxId: "",
-    currency: "$",
+    currency: "USD",
   });
 
   async function uploadLogo() {
@@ -59,6 +54,7 @@ export default function Onboarding() {
   }
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       // Call an API route to update publicMetadata
       const resUser = await fetch("/api/users/create", {
@@ -237,7 +233,7 @@ export default function Onboarding() {
                   <label className="fieldset-label block mb-2">Currency</label>
                   <select
                     className="select select-bordered w-full"
-                    value={companyData?.currency || "$"}
+                    value={companyData?.currency || "USD"}
                     onChange={(e) =>
                       setCompanyData({
                         ...companyData,

@@ -10,6 +10,7 @@ import ProductShowcase from "../sections/ProductShowcase";
 import Demo from "../sections/Demo";
 import Pricing from "../sections/Pricing";
 import NavigationBar from "../sections/NavigationBar";
+import FAQ from "../sections/FAQ";
 
 export default function Home() {
   return (
@@ -21,12 +22,12 @@ export default function Home() {
         url="https://vibeinvoice.com"
       />
       <NavigationBar />
-
       <Hero />
       <ProductShowcase />
       <HowItWorks />
       <Demo />
       <Pricing />
+      <FAQ />
       <Footer />
     </>
   );

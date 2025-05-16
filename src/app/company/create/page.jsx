@@ -218,7 +218,7 @@ function Company() {
                   <label className="fieldset-label block mb-2">Currency</label>
                   <select
                     className="select select-bordered w-full"
-                    value={companyData?.currency || "$"}
+                    value={companyData?.currency || "USD"}
                     onChange={(e) =>
                       setCompanyData({
                         ...companyData,

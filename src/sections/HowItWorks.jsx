@@ -1,32 +1,54 @@
-import React from "react";
-// import sampleVideo from "../assets/HowItWorks.mp4";
+import React, { useState } from "react";
 
 function HowItWorks() {
+  const [imgSrc, setImgSrc] = useState("/step-prompt.png");
+  const handleChange = (event) => {
+    setImgSrc(event.target.value);
+  };
+
   return (
     <section
       id="how-it-works"
-      className="w-full flex flex-col items-center justify-center gap-8 p-4 pt-12 sm:px-4 sm:py-12"
+      className=" min-h-screen w-full flex flex-col items-center justify-center gap-8 p-4 pt-12 sm:px-4 sm:py-24"
     >
       <div className="section-heading">
         <h2 className="section-title">How it works</h2>
         <p className="section-description italic mt-5">In three simple steps</p>
       </div>
-      <div className="flex md:flex-row flex-col justify-center w-full gap-4">
-        <div className="menu join-vertical bg-base-100 max-w-lg">
-          <div className="collapse collapse-arrow join-item border-base-300 border">
-            <input type="radio" name="my-accordion-4" defaultChecked />
-            <div className="collapse-title font-bold text-xl">
+      <div className="flex md:flex-row flex-col items-center justify-center w-full gap-4">
+        <div className="join text-lg join-vertical rounded-2xl overflow-hidden shadow-lg max-w-lg">
+          <div className="rounded-t-2xl collapse collapse-arrow join-item border-base-300 border">
+            <input
+              type="radio"
+              className="peer"
+              name="my-accordion-4"
+              defaultChecked={true}
+              value="/step-prompt.png"
+              onChange={handleChange}
+            />
+            <div className="collapse-title font-semibold peer-checked:text-accent text-xl">
               Start with a prompt
             </div>
             <div className="collapse-content text-md">
-              <p>Type "@client" to instantly pull client details</p>
-              <p>Add items with natural language: "10 Logos @ $99"</p>
+              <p>
+                Type <span className="italic">@client</span> to instantly pull
+                client details
+              </p>
+              <p>Add items with natural language like-</p>
+              <p className="italic p-4">"10 Logos @ $99"</p>
               <p>Enter tax details and click generate</p>
             </div>
           </div>
           <div className="collapse collapse-arrow join-item border-base-300 border">
-            <input type="radio" name="my-accordion-4" defaultChecked={false} />
-            <div className="collapse-title font-semibold text-xl">
+            <input
+              type="radio"
+              className="peer"
+              name="my-accordion-4"
+              defaultChecked={false}
+              value="/step-preview.png"
+              onChange={handleChange}
+            />
+            <div className="rounded-b-2xl collapse-title font-semibold peer-checked:text-accent text-xl">
               Preview and share
             </div>
             <div className="collapse-content text-md">
@@ -36,8 +58,15 @@ function HowItWorks() {
             </div>
           </div>
           <div className="collapse collapse-arrow join-item border-base-300 border">
-            <input type="radio" name="my-accordion-4" defaultChecked={false} />
-            <div className="collapse-title font-semibold text-xl">
+            <input
+              type="radio"
+              className="peer"
+              name="my-accordion-4"
+              defaultChecked={false}
+              value="/step-collaborate.png"
+              onChange={handleChange}
+            />
+            <div className="collapse-title font-semibold peer-checked:text-accent text-xl">
               Collaborate
             </div>
             <div className="collapse-content text-md">
@@ -47,18 +76,12 @@ function HowItWorks() {
             </div>
           </div>
         </div>
-        <div className="rounded p-4 bg-base-200">
-          <video
-            className="rounded w-100"
-            autoPlay
-            controls
-            download="false"
-            loop
-            muted
-          >
-            <source src="/sample.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+        <div className="p-4 max-w-[478px]">
+          <img
+            className="border border-base-300 shadow-lg rounded-xl"
+            src={imgSrc}
+            alt={imgSrc}
+          />
         </div>
       </div>
     </section>

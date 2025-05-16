@@ -14,3 +14,6 @@
     @apply text-center text-2xl leading-[30px] tracking-tight;
   }
 }
+html {
+  scroll-behavior: smooth;
+}

@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import LeftBar from "@/components/LeftBar";
 import { useCompanyStore } from "@/store/useCompany";
 import InvoiceNumberFormat from "@/components/InvoiceNumberFormat";
-import { Plus, Trash2 } from "lucide-react";
+import { Copy, CopyCheck, ExternalLink, Plus, Trash2 } from "lucide-react";
 import { useUserStore } from "../../store/useUser";
 import { toast } from "sonner";
+import Link from "next/link";
 
 function Company() {
   const {
@@ -22,6 +23,7 @@ function Company() {
   const { getCurrentUser } = useUserStore();
   const [preview, setPreview] = useState(company?.businessLogo || null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -114,6 +116,18 @@ function Company() {
       toast.error("Error deleting API key");
     }
   };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(company.apiKey);
+    setCopied(true);
+    toast.success("API key copied to clipboard");
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setCopied(false);
+    }, 10000);
+  }, [copied == true]);
 
   const DeleteAPIKeyModal = () => {
     return (
@@ -369,16 +383,27 @@ function Company() {
               </button>
               <div className="flexitems-center">
                 {company?.apiKey ? (
-                  <div className=" bg-base-200 p-4 rounded-2xl ">
+                  <div className="flex bg-base-200 p-4 rounded-2xl gap-2">
                     <span className="text-sm self-center mr-2">
                       API Key: {company.apiKey}
                     </span>
-                    <button className="self-center">
-                      <Trash2
-                        onClick={() => setShowDeleteModal(true)}
-                        className="size-4 hover:cursor-pointer hover:text-accent"
-                      />
+                    <button onClick={handleCopy}>
+                      {copied ? (
+                        <CopyCheck className="size-4 self-center hover:cursor-pointer text-accent" />
+                      ) : (
+                        <Copy className="size-4 self-center hover:cursor-pointer hover:text-accent" />
+                      )}
                     </button>
+                    <Trash2
+                      onClick={() => setShowDeleteModal(true)}
+                      className="size-4 self-center hover:cursor-pointer  hover:text-error"
+                    />
+                    <Link target="_blank" href="/docs">
+                      <button className="btn rounded-full">
+                        Api Docs
+                        <ExternalLink className="size-4" />
+                      </button>
+                    </Link>
                   </div>
                 ) : (
                   <button onClick={handleGenerateAPIKey} className="btn">

@@ -12,7 +12,7 @@ import { FaXTwitter } from "react-icons/fa6";
 
 function Footer() {
   return (
-    <footer className="footer sm:footer-horizontal bg-primary/10 text-base-content p-10">
+    <footer className="footer sm:footer-horizontal bg-base-300 text-base-content p-10">
       <aside className="flex flex-col items-center ">
         <img
           className="w-12 rounded-4xl"
@@ -41,7 +41,7 @@ function Footer() {
         </nav>
       </aside>
       <nav>
-        <h6 className="footer-title">All Products</h6>
+        <h6 className="footer-title">My Products</h6>
         <Link href="/" className="link link-hover">
           Vibe Invoice
         </Link>
@@ -49,11 +49,14 @@ function Footer() {
           Bulkmark
         </Link>
         <Link href="https://www.proker.io" className="link link-hover">
-          Proker.io
+          Proker.io (Discontinued)
         </Link>
       </nav>
       <nav>
-        <h6 className="footer-title">Company</h6>
+        <h6 className="footer-title">Navigation</h6>
+        <Link href="/docs" className="link link-hover">
+          API Documentation
+        </Link>
         <Link href="/about-us" className="link link-hover">
           About
         </Link>

@@ -93,6 +93,7 @@ function PricingPlan({ name, mostPopular, features, amount, where, currency }) {
           </ul>
         </div>
       </div>
+      {invoiceLink && <ShareLinkModal />}
     </div>
   );
 
