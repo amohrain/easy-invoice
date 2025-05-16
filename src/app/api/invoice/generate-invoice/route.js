@@ -137,9 +137,9 @@ export async function POST(request) {
   const generatedInvoice = await Invoice.create(invoice);
   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/view/${generatedInvoice._id}`;
 
-  return Response.json({
+  return NextResponse.json({
     success: true,
     message: "Invoice created successfully!",
-    data: url,
+    invoiceUrl: url,
   });
 }
