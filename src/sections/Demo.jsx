@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import TypingPlaceholder from "@/components/TypingPlaceholder";
 import { dummyInvoice } from "../lib/dummyInvoice";
@@ -11,6 +12,7 @@ import { clients } from "../constants/clients";
 import { handleInvoiceGenerate } from "../lib/openai";
 import { calculateInvoice } from "../lib/calculate";
 import { Loading } from "../components/Loading";
+import { samplePrompts } from "../constants/samplePrompts";
 
 function Demo() {
   const { setTemplate } = useTemplateStore();
@@ -22,7 +24,11 @@ function Demo() {
 
   useEffect(() => {
     setTemplate(templates[0]);
-    setSampleClients();
+    const client = setSampleClients();
+    setText(`@${client.clientName}
+${client.clientEmail}
+
+${samplePrompts[Math.floor(Math.random() * samplePrompts.length)]}`);
   }, []);
 
   const handleGenerate = async () => {
@@ -43,8 +49,8 @@ function Demo() {
         }),
       };
 
-      // const invoice = await handleInvoiceGenerate(text);
-      const invoice = dummyInvoice;
+      const invoice = await handleInvoiceGenerate(text);
+      // const invoice = dummyInvoice;
       const updatedInvoice = calculateInvoice(invoice);
       const clientInfo = clients.find((client) => client._id === clientId);
 
@@ -82,16 +88,25 @@ function Demo() {
         <h2 className="section-title">Playground and interactive demo</h2>
         <p className="section-description mt-5">Try it yourself below</p>
       </div>
-      <div className="w-full max-w-4xl p-4 flex flex-col justify-center border border-gray-100 shadow-base shadow-2xl rounded-2xl">
+      <div className="w-full max-w-4xl p-2 sm:p-4 flex flex-col justify-center border border-gray-100 shadow-base shadow-2xl rounded-2xl">
         <TypingPlaceholder isUsingAI={true} text={text} setText={setText} />
         <div className="flex flex-row">
           <div className="flex flex-row w-full gap-2"></div>
+          {/* <img
+            src="/vibes.png"
+            disabled={!clientId}
+            onClick={() => {
+              handleGenerate();
+            }}
+            alt="Generate"
+            className="bg-primary p-1 size-12 rounded-full cursor-pointer shadow-2xl shadow-amber-400"
+          /> */}
           <button
             disabled={!clientId}
             onClick={() => {
               handleGenerate();
             }}
-            className="btn btn-accent rounded-3xl"
+            className="btn btn-primary rounded-3xl"
           >
             Generate
           </button>

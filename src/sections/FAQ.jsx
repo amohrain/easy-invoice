@@ -1,9 +1,15 @@
+import { ExternalLink } from "lucide-react";
 import React from "react";
 const faq = [
   {
+    question: "What is Vibe Invoicing?",
+    answer:
+      "Vibe Invoicing is a new way of creating invoices. You can create invoices by typing a prompt and our AI will generate the invoice for you.",
+  },
+  {
     question: "What is Vibe Invoice?",
     answer:
-      "Vibe Invoice is an AI invoicing tool that helps in creating invoices within seconds",
+      "Vibe Invoice is an AI invoicing tool that helps in creating invoices within seconds.",
   },
   {
     question: "How does it work?",
@@ -68,7 +74,7 @@ function FAQ() {
   return (
     <section
       id="faq"
-      className="bg-gradient-to-b from-primary/20 to-base-300 w-full"
+      className="bg-gradient-to-b from-base-200 to-base-300 w-full"
     >
       <div className="container flex flex-col md:flex-row items-start justify-between gap-12 py-16 px-8">
         <div className="section-heading flex flex-col items-center">

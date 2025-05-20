@@ -106,7 +106,7 @@ function Dashboard() {
               <h1 className="text-center font-bold text-4xl space-x-10">
                 {step == 1 ? "Enter your prompt" : "Your invoice is ready!"}
               </h1>
-              <div className="p-4 flex flex-col border w-full max-w-3xl border-gray-100 shadow-base shadow-2xl rounded-2xl">
+              <div className="p-4 flex flex-col border w-full max-w-3xl border-base-content/10 shadow-primary/50 shadow-2xl rounded-2xl">
                 <TypingPlaceholder text={text} setText={setText} />
                 <div className="flex flex-row">
                   <div className="flex flex-row w-full gap-2">
@@ -116,7 +116,7 @@ function Dashboard() {
                     onClick={() => {
                       handleGenerate();
                     }}
-                    className="btn btn-accent rounded-3xl"
+                    className="btn btn-primary rounded-3xl"
                   >
                     Generate
                   </button>

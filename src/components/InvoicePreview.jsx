@@ -388,11 +388,20 @@ export function InvoicePreview({ setStep, editable, preview }) {
                   </h2>
                   <div className="flex flex-row justify-around items-center gap-4">
                     {preview && (
-                      <Link href={"/sign-up"}>
-                        <button className="btn btn-ghost btn-accent rounded-full">
-                          Get Started for free
+                      <>
+                        <button
+                          onClick={() => router.refresh()}
+                          className="btn btn-ghost btn-primary rounded-full"
+                        >
+                          Retry
                         </button>
-                      </Link>
+
+                        <Link href={"/sign-up"}>
+                          <button className="btn btn-ghost btn-primary rounded-full">
+                            Get Started
+                          </button>
+                        </Link>
+                      </>
                     )}
                     {editable && currentPath === "/invoices/create" && (
                       <Undo2
@@ -401,7 +410,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                       />
                     )}
 
-                    {editable && (
+                    {editable && currentPath !== "/playground" && (
                       <Save
                         className={`cursor-pointer hover:text-accent ${
                           saved && "text-gray-400"
@@ -649,7 +658,11 @@ export function InvoicePreview({ setStep, editable, preview }) {
                               }
                               className="cursor-text"
                             >
-                              {item[col.key] ?? "-"}
+                              {col.key === "total"
+                                ? typeof item[col.key] === "number"
+                                  ? item[col.key].toFixed(2)
+                                  : "-"
+                                : item[col.key] ?? "-"}
                             </span>
                           </td>
                         ))}

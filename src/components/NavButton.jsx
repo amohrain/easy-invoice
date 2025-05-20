@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function NavButton({ link, name, icon, collapse }) {
+export default function NavButton({ link, name, icon }) {
   const currentPath = usePathname();
   const isCurrentPath = currentPath.includes(link);
   return (
@@ -17,7 +17,6 @@ export default function NavButton({ link, name, icon, collapse }) {
           </div>
           <div>{name}</div>
         </div>
-        <div>{collapse}</div>
       </div>
     </Link>
   );

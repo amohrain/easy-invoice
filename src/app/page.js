@@ -1,16 +1,14 @@
 "use client";
-import { useEffect, useState } from "react";
-import Link from "next/link";
 import Footer from "@/sections/Footer";
 import SEO from "@/components/SEO";
 
 import HowItWorks from "@/sections/HowItWorks";
 import Hero from "../sections/Hero";
 import ProductShowcase from "../sections/ProductShowcase";
-import Demo from "../sections/Demo";
 import Pricing from "../sections/Pricing";
 import NavigationBar from "../sections/NavigationBar";
 import FAQ from "../sections/FAQ";
+import Video from "../sections/Video";
 
 export default function Home() {
   return (
@@ -25,7 +23,7 @@ export default function Home() {
       <Hero />
       <ProductShowcase />
       <HowItWorks />
-      <Demo />
+      <Video />
       <Pricing />
       <FAQ />
       <Footer />

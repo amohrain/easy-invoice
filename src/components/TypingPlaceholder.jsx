@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useClientStore } from "@/store/useClient";
+import { usePathname } from "next/navigation";
 
 const TypingPlaceholder = ({ text, setText }) => {
   const aiText = [
@@ -13,15 +14,17 @@ const TypingPlaceholder = ({ text, setText }) => {
     "@Harish Patel\n\nFull Website Redesign @ 1000\n\ndiscount @ 8%\nGST-18%",
   ];
 
+  const currentPath = usePathname();
+
   const [placeholder, setPlaceholder] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [mentionStart, setMentionStart] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [mentionPosition, setMentionPosition] = useState({ top: 0, left: 0 });
-
   const { setClientId, getClients, clients } = useClientStore();
 
+  const timeToStart = currentPath === "/playground" ? 500 : 2000; // 2 seconds
   const textareaRef = useRef();
   const mirrorRef = useRef();
 
@@ -46,9 +49,11 @@ const TypingPlaceholder = ({ text, setText }) => {
   }, []);
 
   const startTyping = () => {
+    if (text !== "") return;
     setClientId("");
     let i = 0;
-    const textToType = aiText[Math.floor(Math.random() * aiText.length)];
+    const textToType =
+      "//Sample prompt\n\n" + aiText[Math.floor(Math.random() * aiText.length)];
     setPlaceholder("");
 
     const interval = setInterval(() => {
@@ -62,8 +67,11 @@ const TypingPlaceholder = ({ text, setText }) => {
   };
 
   useEffect(() => {
+    if (isVisible && text !== "") setPlaceholder("");
     if (isVisible && text === "") {
-      startTyping();
+      setTimeout(() => {
+        startTyping();
+      }, timeToStart);
     }
   }, [isVisible, text]);
 
@@ -150,7 +158,7 @@ const TypingPlaceholder = ({ text, setText }) => {
   };
 
   return (
-    <div className="relative w-full max-w-xl">
+    <div className="relative w-full">
       <div
         className="absolute invisible whitespace-pre-wrap break-words p-4 border border-base-300 rounded-lg text-base"
         ref={mirrorRef}

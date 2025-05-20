@@ -34,13 +34,13 @@ export default function ApiDocs() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Endpoint</h2>
 
-          <pre className="mockup-code rounded">
+          <pre className="p-4 mockup-code rounded">
             <SyntaxHighlighter
               className="rounded"
               language="javascript"
               style={nightOwl}
             >
-              POST https://vibeinvoice.com/api/invoice/generate-invoice
+              POST https://www.vibeinvoice.com/api/invoice/generate-invoice
             </SyntaxHighlighter>
           </pre>
         </section>
@@ -54,13 +54,14 @@ export default function ApiDocs() {
             Company tab
           </p>
 
-          <pre className="mockup-code rounded">
+          <pre className="p-4 mockup-code rounded">
             <SyntaxHighlighter
               className="rounded"
               language="json"
               style={nightOwl}
             >
-              "x-api-key": "replace-with-your-api-key"
+              "Content-Type": "application/json", "x-api-key":
+              "replace-with-your-api-key"
             </SyntaxHighlighter>
           </pre>
         </section>
@@ -145,7 +146,7 @@ export default function ApiDocs() {
             <code>quantity</code>, and <code>rate</code> (unit price). The total
             is calculated as <code>quantity × rate</code>.
           </p>
-          <pre className="mockup-code">
+          <pre className="p-4 mockup-code">
             <SyntaxHighlighter language="json" style={nightOwl}>
               {`"items": [
   { "description": "Bulk Sugar Order", "quantity": 100, "rate": 42 },
@@ -163,7 +164,7 @@ export default function ApiDocs() {
             or packaging. You can specify either a<code>percent</code>{" "}
             (percentage of subtotal) or a fixed <code>amount</code>.
           </p>
-          <pre className="mockup-code">
+          <pre className="p-4 mockup-code">
             <SyntaxHighlighter language="json" style={nightOwl}>
               {`"additions": [
   { "description": "GST @5%", "percent": 5 },
@@ -181,7 +182,7 @@ export default function ApiDocs() {
             invoice. You can specify either a<code>percent</code> (percentage of
             subtotal) or a fixed <code>amount</code>.
           </p>
-          <pre className="mockup-code">
+          <pre className="p-4 mockup-code">
             <SyntaxHighlighter language="json" style={nightOwl}>
               {`"deductions": [
   { "description": "Usual Discount", "percent": 3 }

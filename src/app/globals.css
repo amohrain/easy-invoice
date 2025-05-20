@@ -7,7 +7,7 @@
     @apply max-w-xl mx-auto;
   }
   .section-title {
-    @apply text-center text-4xl md:text-6xl font-bold tracking-tighter bg-gradient-to-b from-base-content to-primary text-transparent bg-clip-text;
+    @apply text-center py-2 text-4xl md:text-6xl font-bold tracking-tighter bg-gradient-to-b from-base-content to-primary text-transparent bg-clip-text;
   }
 
   .section-description {

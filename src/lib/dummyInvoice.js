@@ -3,7 +3,7 @@ export const dummyInvoice = {
   businessAddress: "XYZ Street, USA",
   businessEmail: "info@samplecompany.com",
   businessPhone: "9876543210",
-  businessLogo: "./chanel-1.jpg",
+  businessLogo: "/vibe-invoice-logo.png",
   clientId: "",
   clientName: "Abhishek Kumar",
   clientEmail: "info@xyz.com",

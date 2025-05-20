@@ -57,6 +57,9 @@ function Footer() {
         <Link href="/docs" className="link link-hover">
           API Documentation
         </Link>
+        <Link href="/playground" className="link link-hover">
+          Playground
+        </Link>
         <Link href="/about-us" className="link link-hover">
           About
         </Link>

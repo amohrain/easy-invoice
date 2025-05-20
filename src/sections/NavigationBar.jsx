@@ -52,7 +52,7 @@ function NavigationBar() {
           <a href="#how-it-works" className="hover:text-primary">
             How it works
           </a>
-          <a href="#interactive-demo" className="hover:text-primary">
+          <a href="/playground" className="hover:text-primary">
             Demo
           </a>
           <a href="#pricing" className="hover:text-primary">

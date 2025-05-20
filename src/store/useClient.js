@@ -8,7 +8,12 @@ export const useClientStore = create((set) => ({
   },
   clients: null,
   setSampleClients: () => {
-    set({ clients: clients });
+    const client = clients[Math.floor(Math.random() * clients.length)];
+    set({
+      clients: clients,
+      clientId: client._id,
+    });
+    return client;
   },
 
   getClients: async () => {

@@ -297,7 +297,10 @@ export function generatePdfDocDefinition(template, invoice) {
 
       invoice.items?.forEach((item) => {
         const row = section.items.map((col) => ({
-          text: item[col.key] ?? "-",
+          text:
+            col.key === "total"
+              ? item[col.key].toFixed(2)
+              : item[col.key] ?? "-",
           margin: Array(4).fill(section.tableStyle?.cellPadding ?? 2),
           fontSize: col.size || 12,
           alignment: col.alignment || "left",

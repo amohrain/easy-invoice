@@ -3,7 +3,7 @@ function ProductShowcase() {
   return (
     <section className="min-h-screen w-full flex flex-col items-center justify-center gap-8 p-4 pt-12 sm:px-4 sm:py-12 relative">
       <div className="section-heading mt-20">
-        <h2 className="section-title">A more effective way to invoicing</h2>
+        <h2 className="section-title">An effective way to invoicing</h2>
         <p className="section-description mt-5">
           Effortlessly manage your invoices in one place, fully functional,
           cutting edge and what not in just minutes

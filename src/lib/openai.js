@@ -21,10 +21,6 @@ export const handleInvoiceGenerate = async (prompt) => {
 
 ### Output Structure:
 {
-  "businessName": "",
-  "businessAddress": "",
-  "businessEmail": "",
-  "businessPhone": "",
   "clientName": "",
   "clientEmail": "",
   "clientPhone": "",

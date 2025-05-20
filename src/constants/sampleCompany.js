@@ -5,7 +5,7 @@ export const sampleCompany = {
   businessAddress: "Vibe Street, USA",
   businessEmail: "info@vibeinvoice.com",
   businessPhone: "9876543210",
-  businessLogo: "./chanel-1.jpg",
+  businessLogo: "./vibe-invoice-logo.png",
   __v: 0,
   businessTaxId: "AAI1830UI2",
   businessWebsite: "easyinvoice.com",

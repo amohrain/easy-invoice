@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import React, { useState } from "react";
 
 function HowItWorks() {
@@ -9,7 +10,7 @@ function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className=" min-h-screen w-full flex flex-col items-center justify-center gap-8 p-4 pt-12 sm:px-4 sm:py-24"
+      className="w-full flex flex-col items-center justify-center gap-8 p-4 pt-12 sm:px-4 sm:py-24"
     >
       <div className="section-heading">
         <h2 className="section-title">How it works</h2>
@@ -26,7 +27,7 @@ function HowItWorks() {
               value="/step-prompt.png"
               onChange={handleChange}
             />
-            <div className="collapse-title font-semibold peer-checked:text-accent text-xl">
+            <div className="collapse-title font-semibold peer-checked:text-primary text-xl">
               Start with a prompt
             </div>
             <div className="collapse-content text-md">
@@ -48,7 +49,7 @@ function HowItWorks() {
               value="/step-preview.png"
               onChange={handleChange}
             />
-            <div className="rounded-b-2xl collapse-title font-semibold peer-checked:text-accent text-xl">
+            <div className="rounded-b-2xl collapse-title font-semibold peer-checked:text-primary text-xl">
               Preview and share
             </div>
             <div className="collapse-content text-md">
@@ -66,7 +67,7 @@ function HowItWorks() {
               value="/step-collaborate.png"
               onChange={handleChange}
             />
-            <div className="collapse-title font-semibold peer-checked:text-accent text-xl">
+            <div className="collapse-title font-semibold peer-checked:text-primary text-xl">
               Collaborate
             </div>
             <div className="collapse-content text-md">

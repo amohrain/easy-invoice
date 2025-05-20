@@ -60,10 +60,11 @@ function LeftBar() {
         <div className="flex flex-col  px-4">
           {/* Logo */}
 
-          <div className="px-2 mb-4">
+          <div className="self-center px-auto mb-4">
             <a href="/dashboard" className="text-2xl font-bold">
               <div className="flex items-center gap-2">
-                <span>{collapsed ? "VI" : "Vibe Invoice"}</span>
+                <img className="size-6 self-center" src={"/Logo.png"} />
+                {!collapsed && <span>Vibe Invoice</span>}
               </div>
             </a>
           </div>
@@ -72,21 +73,21 @@ function LeftBar() {
 
           {/* Navigation */}
           <div className="flex flex-col gap-1">
-            <NavButton
-              link="/dashboard"
-              name={!collapsed && "Dashboard"}
-              icon={<BiHome />}
-              collapse={
-                !collapsed && (
-                  <button
-                    className="p-1 m-[-4px] rounded-full hover:text-primary hover:bg-base-200 cursor-pointer"
-                    onClick={() => setCollapsed((prev) => !prev)}
-                  >
-                    <PanelLeftCloseIcon size={14} />
-                  </button>
-                )
-              }
-            />
+            <div className="flex justify-between">
+              <NavButton
+                link="/dashboard"
+                name={!collapsed && "Dashboard"}
+                icon={<BiHome />}
+              />
+              {!collapsed && (
+                <button
+                  className="btn btn-circle btn-ghost btn-sm self-center p-1 m-[-4px] rounded-full hover:text-primary hover:bg-base-200 cursor-pointer"
+                  onClick={() => setCollapsed((prev) => !prev)}
+                >
+                  <PanelLeftCloseIcon size={14} />
+                </button>
+              )}
+            </div>
             <NavButton
               link="/invoices"
               name={!collapsed && "Invoices"}
