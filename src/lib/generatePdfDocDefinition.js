@@ -252,33 +252,41 @@ export function generatePdfDocDefinition(template, invoice) {
     }
 
     if (section.fields) {
-      section.fields.forEach(
-        ({ key, placeholder, amount, value, bold, size }) => {
-          if (!invoice[key]) return;
-          const inlineContent = [];
-          // If "value" is true, show placeholder first (in bold)
-          if (value) {
-            inlineContent.push({
-              text: placeholder || key,
-              bold: true,
-              alignment: section.style.alignment || "left",
-              fontSize: size || 12,
-            });
-          }
+      section.fields.forEach(({ key, placeholder, QR, value, bold, size }) => {
+        if (!invoice[key]) return;
+        const inlineContent = [];
+        // If "value" is true, show placeholder first (in bold)
 
-          // Then the actual field value
+        if (QR) {
+          sectionContent.push({
+            qr: invoice[key],
+            fit: 72,
+            margin: [0, 5, 0, 0],
+          });
+          return;
+        }
+
+        if (value) {
           inlineContent.push({
-            text: invoice[key] || "",
-            bold: bold || false,
+            text: placeholder || key,
+            bold: true,
+            alignment: section.style.alignment || "left",
             fontSize: size || 12,
           });
-
-          sectionContent.push({
-            text: inlineContent, // inline array
-            margin: [0, 2, 0, 2],
-          });
         }
-      );
+
+        // Then the actual field value
+        inlineContent.push({
+          text: invoice[key] || "",
+          bold: bold || false,
+          fontSize: size || 12,
+        });
+
+        sectionContent.push({
+          text: inlineContent, // inline array
+          margin: [0, 2, 0, 2],
+        });
+      });
     }
 
     if (section.section === "items") {

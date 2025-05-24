@@ -9,7 +9,7 @@ export async function POST(request) {
   try {
     // confirm the key in header
     const apiKey = request.headers.get("x-api-key");
-    if (apiKey !== "762556b8-4c2f-4a0e-8d3b-1f5a7c6e9d3f") {
+    if (apiKey !== process.env.VIBE_INVOICE_TEMPLATE_API_KEY) {
       return NextResponse.json(
         {
           success: false,

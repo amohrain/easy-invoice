@@ -276,6 +276,30 @@ export const templates = [
           alignment: "left",
         },
       },
+      {
+        section: "QR",
+        style: {
+          alignment: "left",
+          size: 12,
+        },
+        fields: [
+          {
+            key: "qrText",
+            placeholder: "QR Code Description: ",
+            value: false,
+            bold: true,
+            size: 12,
+          },
+          {
+            key: "QR",
+            placeholder: "QR Code: ",
+            QR: true,
+            value: false,
+            bold: true,
+            size: 12,
+          },
+        ],
+      },
     ],
   },
 ];

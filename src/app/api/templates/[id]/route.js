@@ -36,3 +36,58 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+// Function to update a template
+
+export async function PUT(request, { params }) {
+  const id = params.id;
+  const body = await request.json();
+  const apiKey = request.headers.get("x-api-key");
+
+  try {
+    // confirm the key in header
+    if (apiKey !== process.env.VIBE_INVOICE_TEMPLATE_API_KEY) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    await connectDB();
+
+    // Find the template by ID and update it
+    const updatedTemplate = await Template.findByIdAndUpdate(id, body, {
+      new: true,
+      runValidators: true,
+    });
+
+    // If template is not found, return a 404 error
+    if (!updatedTemplate) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Template not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    // Return the updated template data
+    return NextResponse.json({
+      success: true,
+      data: updatedTemplate,
+    });
+  } catch (error) {
+    console.error("Error updating template:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}

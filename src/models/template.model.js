@@ -71,6 +71,7 @@ const templateSchema = new Schema({
         {
           key: { type: String },
           placeholder: { type: String },
+          QR: { type: Boolean, required: false },
           value: { type: Boolean },
           bold: { type: Boolean },
           size: { type: Number },

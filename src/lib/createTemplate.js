@@ -1,6 +1,6 @@
 const template = {
   isPublic: true,
-  name: "Good Vibes",
+  name: "Vibe",
   style: {
     defaultStyle: {
       size: 12,
@@ -273,8 +273,44 @@ const template = {
         alignment: "left",
       },
     },
+    {
+      section: "QR",
+      style: {
+        alignment: "left",
+        size: 12,
+      },
+      fields: [
+        {
+          key: "qrText",
+          placeholder: "QR Code Description: ",
+          value: false,
+          bold: true,
+          size: 12,
+        },
+        {
+          key: "QR",
+          placeholder: "QR Code: ",
+          QR: true,
+          value: false,
+          bold: true,
+          size: 12,
+        },
+      ],
+    },
   ],
 };
+
+const putResponse = await fetch("/api/templates/6814d613fff3995243febeb6", {
+  method: "PUT",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "762556b8-4c2f-4a0e-8d3b-1f5a7c6e9d3f",
+  },
+  body: JSON.stringify(template),
+});
+
+const putData = await putResponse.json();
+console.log(putData);
 
 const response = await fetch("/api/templates", {
   method: "POST",

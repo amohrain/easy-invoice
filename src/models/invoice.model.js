@@ -152,7 +152,15 @@ const invoiceSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "pending",
+      default: "Pending",
+    },
+    qrText: {
+      type: String,
+      required: false,
+    },
+    QR: {
+      type: String,
+      required: false,
     },
     changesSuggested: {
       type: Boolean,

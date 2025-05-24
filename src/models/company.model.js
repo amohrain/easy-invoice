@@ -42,16 +42,16 @@ const companySchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  invoicePrefix: {
-    type: String,
-    required: false,
-    default: "INV",
-  },
-  invoiceSuffix: {
-    type: String,
-    required: false,
-    default: new Date().getFullYear(),
-  },
+  // invoicePrefix: {
+  //   type: String,
+  //   required: false,
+  //   default: "INV",
+  // },
+  // invoiceSuffix: {
+  //   type: String,
+  //   required: false,
+  //   default: new Date().getFullYear(),
+  // },
   paymentInstructions: {
     type: String,
     required: false,
@@ -60,6 +60,23 @@ const companySchema = new mongoose.Schema({
     type: String,
     required: true,
     default: "Thank you for the business!",
+  },
+  qrText: {
+    type: String,
+    required: false,
+  },
+  QR: {
+    type: String,
+    required: false,
+  },
+  upiId: {
+    type: String,
+    required: false,
+  },
+  autoAddUPI: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
   paymentTerms: {
     type: String,

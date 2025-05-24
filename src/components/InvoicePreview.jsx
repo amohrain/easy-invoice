@@ -17,12 +17,14 @@ import {
   Undo2,
   X,
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import DownloadIcon from "./DownloadIcon";
 import { useRouter } from "next/navigation";
 import { useClientStore } from "@/store/useClient";
 import { templates } from "../lib/templatesData";
 import { formatCurrency } from "../lib/formatCurrency";
 import Link from "next/link";
+import { generateUPILink } from "../lib/generateUPILink";
 
 export function InvoicePreview({ setStep, editable, preview }) {
   const getTextStyle = (section) => {
@@ -38,9 +40,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
     return style;
   };
 
-  const { template, getUsersTemplates, getTemplateById } = useTemplateStore();
-
-  // const template = templates[0];
+  // const { template, getUsersTemplates, getTemplateById } = useTemplateStore();
+  const template = templates[0];
 
   const {
     invoice,
@@ -98,8 +99,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
           businessLogo,
           notes,
           paymentInstructions,
-          invoicePrefix,
-          invoiceSuffix,
+          QR,
+          qrText,
         } = company;
 
         updatedInvoice = {
@@ -112,7 +113,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
           invoiceId,
           company: company._id,
           currency: company.currency || "USD",
-          invoiceNumber: `${invoicePrefix}/${invoiceId}/${invoiceSuffix}`,
+          invoiceNumber: `INV-${invoiceId}`,
           issuedAt: new Date().toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
@@ -120,6 +121,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
           }),
           notes,
           paymentInstructions,
+          qrText,
         };
 
         // Fetch client details based on clientId provided
@@ -128,8 +130,15 @@ export function InvoicePreview({ setStep, editable, preview }) {
           updatedInvoice = { ...updatedInvoice, ...clientInfo };
         }
         console.log("updatedInvoice: ", updatedInvoice);
+        const calculatedInvoice = calculateInvoice(updatedInvoice);
 
-        setInvoice(calculateInvoice(updatedInvoice));
+        if (company.autoAddUPI)
+          calculatedInvoice.QR = generateUPILink(
+            company.upiId,
+            calculatedInvoice.totalAmount
+          );
+
+        setInvoice(calculatedInvoice);
       }
     }
     createInvoice();
@@ -161,7 +170,16 @@ export function InvoicePreview({ setStep, editable, preview }) {
     };
 
     const updatedInvoice = { ...invoice, items: items };
-    setInvoice(calculateInvoice(updatedInvoice));
+
+    const calculatedInvoice = calculateInvoice(updatedInvoice);
+
+    if (company.autoAddUPI)
+      calculatedInvoice.QR = generateUPILink(
+        company.upiId,
+        calculatedInvoice.totalAmount
+      );
+
+    setInvoice(calculatedInvoice);
   };
 
   const handleSave = async () => {
@@ -204,6 +222,74 @@ export function InvoicePreview({ setStep, editable, preview }) {
     } else {
       window.history.back();
     }
+  };
+
+  const [showQRModal, setShowQRModal] = useState(false);
+  const InvoiceQRModal = () => {
+    const [link, setLink] = useState(invoice.QR || "");
+
+    const handleGenerateUPILink = () => {
+      if (!company?.upiId) {
+        alert("Please set your UPI ID in company settings.");
+        return;
+      }
+      const upiLink = generateUPILink(company.upiId, invoice.totalAmount);
+      setLink(upiLink);
+      handleChange("QR", upiLink);
+      setShowQRModal(false);
+    };
+
+    return (
+      <div className="modal modal-open modal-end">
+        <div className="modal-box">
+          <div className="flex justify-between">
+            <h2 className="font-bold text-2xl">Add QR Code</h2>
+            <button
+              onClick={() => {
+                handleChange("QR", link);
+                setShowQRModal(false);
+              }}
+              className="btn btn-ghost btn-circle"
+            >
+              <X />
+            </button>
+          </div>
+          <p>
+            Please enter the payment link below to generate a QR code for your
+            invoice.
+          </p>
+          <div className="flex py-4">
+            <input
+              type="text"
+              className="input input-bordered w-full"
+              placeholder="Payment Link"
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+            />
+            <button
+              onClick={() => {
+                handleChange("QR", link);
+                setShowQRModal(false);
+              }}
+              className="btn btn-primary"
+            >
+              Add QR
+            </button>
+          </div>
+          {company?.upiId && (
+            <div className="flex flex-col gap-2 text-center">
+              <p className="font-bold">OR</p>
+              <button
+                onClick={handleGenerateUPILink}
+                className="btn btn-primary"
+              >
+                Generate UPI Link
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   };
 
   const handleLinkShare = () => {
@@ -540,61 +626,90 @@ export function InvoicePreview({ setStep, editable, preview }) {
                 </div>
               )}
               {section.fields?.map(
-                ({ key, placeholder, amount, value, bold, size }) => (
+                ({ key, placeholder, QR, value, bold, size }) => (
                   <div
                     key={key}
                     className={invoice[key] ? "" : "text-gray-400"}
                   >
-                    <strong
-                      onClick={(e) => e.target.nextSibling?.focus()} // Shift focus to input when label is clicked
-                      className="cursor-pointer"
-                    >
-                      {!invoice[key] && !editable
-                        ? ""
-                        : !invoice[key] || value
-                        ? placeholder || key
-                        : ""}
-                    </strong>
-                    <span
-                      contentEditable={editable}
-                      suppressContentEditableWarning
-                      onBlur={(e) =>
-                        editable && handleChange(key, e.target.innerText.trim())
-                      }
-                      className={`cursor-text outline-none whitespace-pre-wrap ${
-                        bold ? "font-bold" : ""
-                      } ${
-                        suggestion?.[key] !== undefined &&
-                        suggestion?.[key] !== invoice[key]
-                          ? "text-red-500 line-through"
-                          : ""
-                      }`}
-                    >
-                      {invoice[key] ?? ""}
-                    </span>
+                    {QR ? (
+                      <div className="flex gap-2">
+                        {invoice[key] && (
+                          <QRCodeSVG
+                            className="my-2 cursor-pointer"
+                            onClick={() => router.push(invoice[key], "_blank")}
+                            value={invoice[key] ?? "HELLO"}
+                            size={128} // Size in pixels
+                            // bgColor="#ffffff" // Background color
+                            fgColor="#000000" // Foreground color
+                            level="H" // Error correction level ('L', 'M', 'Q', 'H')
+                            marginSize={2} // Adds white margin
+                          />
+                        )}
 
-                    {suggestion?.[key] !== undefined &&
-                      suggestion[key] !== invoice[key] && (
-                        <span className={`text-info ${bold && "font-bold"}`}>
-                          {suggestion[key]}
-                          {editable && (
-                            <>
-                              <button
-                                onClick={() => handleAcceptOneSuggestion(key)}
-                                className="ml-2 p-0.5 btn btn-success btn-circle btn-xs"
-                              >
-                                <Check />
-                              </button>
-                              <button
-                                onClick={() => rejectSuggestion(key)}
-                                className="ml-2 p-0.5 btn btn-error btn-circle btn-xs"
-                              >
-                                <X />
-                              </button>
-                            </>
-                          )}
+                        <Edit
+                          onClick={() => setShowQRModal(true)}
+                          className="size-3 mt-2 hover:text-accent cursor-pointer"
+                        />
+                      </div>
+                    ) : (
+                      <div>
+                        <strong
+                          onClick={(e) => e.target.nextSibling?.focus()} // Shift focus to input when label is clicked
+                          className="cursor-pointer"
+                        >
+                          {!invoice[key] && !editable
+                            ? ""
+                            : !invoice[key] || value
+                            ? placeholder || key
+                            : ""}
+                        </strong>
+                        <span
+                          contentEditable={editable}
+                          suppressContentEditableWarning
+                          onBlur={(e) =>
+                            editable &&
+                            handleChange(key, e.target.innerText.trim())
+                          }
+                          className={`cursor-text outline-none whitespace-pre-wrap ${
+                            bold ? "font-bold" : ""
+                          } ${
+                            suggestion?.[key] !== undefined &&
+                            suggestion?.[key] !== invoice[key]
+                              ? "text-red-500 line-through"
+                              : ""
+                          }`}
+                        >
+                          {invoice[key] ?? ""}
                         </span>
-                      )}
+
+                        {suggestion?.[key] !== undefined &&
+                          suggestion[key] !== invoice[key] && (
+                            <span
+                              className={`text-info ${bold && "font-bold"}`}
+                            >
+                              {suggestion[key]}
+                              {editable && (
+                                <>
+                                  <button
+                                    onClick={() =>
+                                      handleAcceptOneSuggestion(key)
+                                    }
+                                    className="ml-2 p-0.5 btn btn-success btn-circle btn-xs"
+                                  >
+                                    <Check />
+                                  </button>
+                                  <button
+                                    onClick={() => rejectSuggestion(key)}
+                                    className="ml-2 p-0.5 btn btn-error btn-circle btn-xs"
+                                  >
+                                    <X />
+                                  </button>
+                                </>
+                              )}
+                            </span>
+                          )}
+                      </div>
+                    )}
                   </div>
                 )
               )}
@@ -822,6 +937,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
         </div>
       </div>
       {showModal && <ShareLinkModal hide={hideShareModal} />}
+      {showQRModal && <InvoiceQRModal />}
       {showSuggestionModal && (
         <SuggestEdits
         // setShowModal={setShowModal}

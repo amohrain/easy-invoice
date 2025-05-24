@@ -129,6 +129,19 @@ function Company() {
     }, 10000);
   }, [copied == true]);
 
+  useEffect(() => {
+    if (companyData?.currency !== "INR") {
+      console.log(
+        "Currency changed to non-INR, resetting UPI ID and autoAddUPI"
+      );
+      setCompanyData({
+        ...companyData,
+        upiId: "",
+        autoAddUPI: false,
+      });
+    }
+  }, [companyData?.currency]);
+
   const DeleteAPIKeyModal = () => {
     return (
       <dialog
@@ -299,13 +312,6 @@ function Company() {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="fieldset-label block mb-2">
-                    Invoice Number Format
-                  </label>
-                  <InvoiceNumberFormat />
-                </div>
-
-                <div className="mb-4">
                   <label className="fieldset-label block mb-2">Currency</label>
                   <select
                     className="select select-bordered w-full"
@@ -325,6 +331,22 @@ function Company() {
                     <option value="AUD">AUD ($)</option>
                     <option value="CAD">CAD ($)</option>
                   </select>
+                </div>
+                <div className="mb-4">
+                  <label className="fieldset-label block mb-2">
+                    QR Code Description
+                  </label>
+                  <input
+                    type="text"
+                    className="input input-bordered w-full"
+                    placeholder="Please scan the QR code to pay"
+                    value={companyData?.qrText || ""}
+                    onChange={(e) =>
+                      setCompanyData({
+                        qrText: e.target.value,
+                      })
+                    }
+                  />
                 </div>
               </div>
 
@@ -358,20 +380,40 @@ function Company() {
                     }
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="fieldset-label block mb-2">Website</label>
-                  <input
-                    type="url"
-                    className="input input-bordered w-full"
-                    placeholder="https://easyinvoice.com"
-                    value={companyData?.businessWebsite || ""}
-                    onChange={(e) =>
-                      setCompanyData({
-                        businessWebsite: e.target.value,
-                      })
-                    }
-                  />
-                </div>
+                {companyData?.currency === "INR" && (
+                  <div className="mb-4">
+                    <div className="flex justify-between">
+                      <label className="fieldset-label block mb-2">
+                        UPI ID (India Only)
+                      </label>
+                      <div className="label">
+                        Automatically add QR
+                        <input
+                          type="checkbox"
+                          defaultChecked={companyData?.autoAddUPI || false}
+                          value={companyData?.autoAddUPI}
+                          onChange={(e) =>
+                            setCompanyData({
+                              autoAddUPI: e.target.checked,
+                            })
+                          }
+                          className="checkbox checkbox-xs"
+                        />
+                      </div>
+                    </div>
+                    <input
+                      type="url"
+                      className="input input-bordered w-full"
+                      placeholder="abc@upi"
+                      value={companyData?.upiId || ""}
+                      onChange={(e) =>
+                        setCompanyData({
+                          upiId: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <div className="flex items-center justify-between">

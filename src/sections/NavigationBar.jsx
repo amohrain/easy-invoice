@@ -41,14 +41,24 @@ function NavigationBar() {
   return (
     <nav className="bg-gradient-to-r sm:px-12 from-primary/35 via-base-100 to-primary/10 px-6 py-4">
       {isMenuOpen && <MobileMenu />}
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="max-w-7xl px-4 mx-auto flex items-center justify-between">
         {/* Logo */}
-        <div className="flex gap-1">
+        <div className="flex justify-center gap-1">
+          {/* Mobile Menu Icon (optional) */}
+          <div className="md:hidden">
+            <button
+              className="btn btn-ghost btn-circle"
+              onClick={() => setIsMenuOpen(true)}
+            >
+              <Menu />
+            </button>
+          </div>
+
           <img className="size-6 self-center" src={"/Logo.png"} />
           <div className="text-2xl font-bold">Vibe Invoice</div>
         </div>
         {/* Navigation Links (hidden on mobile) */}
-        <div className="hidden md:flex gap-6 text-base font-medium">
+        <div className="hidden lg:flex gap-6 text-base font-medium">
           <a href="#how-it-works" className="hover:text-primary">
             How it works
           </a>
@@ -73,13 +83,6 @@ function NavigationBar() {
               Get Started
             </button>
           </Link>
-        </div>
-
-        {/* Mobile Menu Icon (optional) */}
-        <div className="md:hidden">
-          <button onClick={() => setIsMenuOpen(true)}>
-            <Menu />
-          </button>
         </div>
       </div>
     </nav>

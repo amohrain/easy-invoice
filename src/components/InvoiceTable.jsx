@@ -3,23 +3,33 @@ import { useInvoiceStore } from "@/store/useInvoice";
 import { Check, CheckSquare, Plus, Square, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import InvoiceFilter from "./InvoiceFilter";
-import InvoiceSort from "./InvoiceSort";
 import { useCompanyStore } from "@/store/useCompany";
+import InvoiceFilterDrawer from "./InvoiceFilter";
+import { toast } from "sonner";
+import InvoiceSortDropdown from "./InvoiceSort";
+import ExportCSVButton from "./ExportCSVButton";
 
 function InvoiceTable() {
   const { invoiceData, getInvoices } = useInvoiceStore();
   const { company } = useCompanyStore();
   const [items, setItems] = useState([]);
+
+  const [filteredInvoices, setFilteredInvoices] = useState([]);
   const [filters, setFilters] = useState({
     status: "",
     dateFrom: "",
     dateTo: "",
     keyword: "",
+    clientName: "",
+    invoiceNumber: "",
+    minAmount: "",
+    maxAmount: "",
+    changesSuggested: false,
   });
 
-  const router = useRouter();
+  const [sortOption, setSortOption] = useState("");
 
+  const router = useRouter();
   const ITEMS_PER_PAGE = 10;
 
   // for table pagination
@@ -34,7 +44,7 @@ function InvoiceTable() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [invoiceData]);
+  }, [filteredInvoices]);
 
   if (!invoiceData) {
     return <div className="p-4 text-center">Loading invoices...</div>;
@@ -60,7 +70,7 @@ function InvoiceTable() {
         });
 
         if (response.ok) {
-          alert("Invoices deleted successfully.");
+          toast.success("Invoices deleted successfully.");
           setItems([]);
           getInvoices();
         } else {
@@ -92,7 +102,7 @@ function InvoiceTable() {
         });
 
         if (response.ok) {
-          alert("Invoices marked as paid successfully.");
+          toast.success("Invoices marked as paid successfully.");
           setItems([]);
           getInvoices();
         } else {
@@ -109,8 +119,8 @@ function InvoiceTable() {
     // Apply sorting logic here
   };
 
-  const totalPages = Math.ceil(invoiceData.length / ITEMS_PER_PAGE);
-  const paginatedData = invoiceData.slice(
+  const totalPages = Math.ceil(filteredInvoices.length / ITEMS_PER_PAGE);
+  const paginatedData = filteredInvoices.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -120,8 +130,21 @@ function InvoiceTable() {
       {/* Toolbar */}
       <div className="flex justify-between items-center mb-2">
         <div className="flex gap-2">
-          <InvoiceFilter filters={filters} setFilters={setFilters} />
-          <div className="dropdown">
+          <InvoiceFilterDrawer
+            filters={filters}
+            setFilters={setFilters}
+            invoiceData={invoiceData}
+            setFilteredInvoices={setFilteredInvoices}
+          />
+
+          <InvoiceSortDropdown
+            sortOption={sortOption}
+            setSortOption={setSortOption}
+            invoiceData={filteredInvoices}
+            setFilteredInvoices={setFilteredInvoices}
+          />
+
+          {/* <div className="dropdown">
             <label tabIndex={0} className="btn btn-ghost">
               Sort By
             </label>
@@ -148,7 +171,7 @@ function InvoiceTable() {
                 <a onClick={() => handleSort("status_desc")}>Status Z-A</a>
               </li>
             </ul>
-          </div>
+          </div> */}
           <button className="btn btn-ghost" onClick={handleDelete}>
             Delete
           </button>
@@ -169,8 +192,9 @@ function InvoiceTable() {
           </div>
         </div>
         <div className="flex gap-2">
+          <ExportCSVButton invoices={filteredInvoices} items={items} />
           <Link href="/invoices/create">
-            <button className="btn btn-primary">
+            <button className="btn btn-primary rounded-full">
               <Plus /> Add
             </button>
           </Link>
@@ -249,8 +273,8 @@ function InvoiceTable() {
             <td colSpan="7">
               <div className="flex justify-between items-center p-2">
                 <span className="text-center w-full">
-                  {invoiceData.length == 0
-                    ? "No invoices found. Click add to create one"
+                  {filteredInvoices.length == 0
+                    ? "No invoices found."
                     : `Page ${currentPage} of ${totalPages}`}
                 </span>
                 <div className="flex gap-2">

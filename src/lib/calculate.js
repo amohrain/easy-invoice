@@ -76,7 +76,6 @@ export function calculateInvoice(invoice) {
     ...invoice,
     subtotal: subtotal,
     totalAmount: totalAmount,
-    // amountDue: invoice.currencySymbol + totalAmount.toFixed(2),
     amountDue: formatCurrency(totalAmount, invoice.currency),
   };
 }

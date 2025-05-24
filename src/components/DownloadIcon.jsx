@@ -3,11 +3,14 @@ import { Download } from "lucide-react";
 import { generatePdfDocDefinition } from "@/lib/generatePdfDocDefinition";
 import { useInvoiceStore } from "@/store/useInvoice";
 import { useTemplateStore } from "@/store/useTemplate";
+import { templates } from "../lib/templatesData.js";
 import { getPdfMake } from "../lib/pdfmake.js";
 import { toast } from "sonner";
 
 export default function DownloadIcon({}) {
   const { template } = useTemplateStore();
+  // const template = templates[0];
+
   const { invoice, suggestion } = useInvoiceStore();
 
   const handleDownload = async (invoice, suggestion) => {

@@ -34,7 +34,7 @@ const SEO = ({ title, description, image, url }) => {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
-            name: "Bulkmark",
+            name: "Vibe Invoice",
             url: "https://vibeinvoice.com",
             image: image,
             description: description,
