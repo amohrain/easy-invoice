@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react";
 
 export default function useUserCountry() {
-  const [country, setCountry] = useState(null);
+  const [country, setCountry] = useState("US");
 
   useEffect(() => {
     fetch("https://ipapi.co/json/")
       .then((res) => res.json())
-      .then((data) => setCountry(data.country))
+      .then((data) => {
+        setCountry(data.country);
+      })
       .catch(() => setCountry("US")); // fallback
   }, []);
 

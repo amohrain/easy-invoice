@@ -5,8 +5,8 @@ function ProductShowcase() {
       <div className="section-heading mt-20">
         <h2 className="section-title">An effective way to invoicing</h2>
         <p className="section-description mt-5">
-          Effortlessly manage your invoices in one place, fully functional,
-          cutting edge and what not in just minutes
+          Effortlessly manage your invoices in one place, see which ones are
+          pending, and who are the top clients.
         </p>
       </div>
 

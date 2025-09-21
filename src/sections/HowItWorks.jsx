@@ -14,7 +14,7 @@ function HowItWorks() {
     >
       <div className="section-heading">
         <h2 className="section-title">How it works</h2>
-        <p className="section-description italic mt-5">In three simple steps</p>
+        <p className="section-description italic mt-5">in three simple steps</p>
       </div>
       <div className="flex md:flex-row flex-col items-center justify-center w-full gap-4">
         <div className="join text-lg join-vertical rounded-2xl overflow-hidden shadow-lg max-w-lg">
@@ -32,8 +32,9 @@ function HowItWorks() {
             </div>
             <div className="collapse-content text-md">
               <p>
-                Type <span className="italic">@client</span> to instantly pull
-                client details
+                Type{" "}
+                <span className="text-info cursor-pointer italic">@client</span>{" "}
+                to instantly pull client details
               </p>
               <p>Add items with natural language like-</p>
               <p className="italic p-4">"10 Logos @ $99"</p>

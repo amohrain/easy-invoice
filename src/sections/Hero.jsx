@@ -31,8 +31,8 @@ function Hero() {
               Professional invoices with minimum effort!
             </h1>
             <p className="section-description  mt-5">
-              Prompts to generate invoice, share with customers and get paid
-              faster
+              Generate invoice, share with customers and get paid faster with
+              82% fewer clicks
             </p>
           </div>
           <Link href={"/sign-up"}>

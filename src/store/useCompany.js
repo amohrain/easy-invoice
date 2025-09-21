@@ -6,13 +6,31 @@ export const useCompanyStore = create((set, get) => ({
   company: {},
   companies: [],
   setCompany: (company) => set({ company }),
-
   companyData: {},
   setCompanyData: (data) =>
     set((state) => ({
       companyData: { ...state.companyData, ...data },
     })),
-
+  logo: null,
+  setLogo: (logo) => set({ logo }),
+  loading: false,
+  setLoading: (loading) => set({ loading }),
+  getAndSetCompaniesData: async () => {
+    try {
+      const response = await fetch("/api/company/");
+      const data = await response.json();
+      const companies = data.data;
+      set({
+        // companies: companies,
+        // company: data.company,
+        companyData: data.company,
+      });
+      return data.data;
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      return [];
+    }
+  },
   getCompanies: async () => {
     try {
       const response = await fetch("/api/company/");
@@ -21,7 +39,7 @@ export const useCompanyStore = create((set, get) => ({
       set({
         companies: companies,
         company: data.company,
-        companyData: data.company,
+        // companyData: data.company,
       });
       return data.data;
     } catch (error) {
@@ -33,6 +51,7 @@ export const useCompanyStore = create((set, get) => ({
     console.log("Updating company data:", data);
     const companyId = data._id;
     try {
+      get().setLoading(true);
       const response = await fetch(`/api/company?id=${companyId}`, {
         method: "PUT",
         headers: {
@@ -44,6 +63,8 @@ export const useCompanyStore = create((set, get) => ({
     } catch (error) {
       console.error("Error updating company:", error);
       toast.error("Failed to update company");
+    } finally {
+      get().setLoading(false);
     }
   },
   changeCompany: async (companyId) => {

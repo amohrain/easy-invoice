@@ -13,6 +13,10 @@ export const useTemplateStore = create((set, get) => ({
   getTemplateById: async (templateId) => {
     try {
       set({ loading: true });
+      if (!templateId) {
+        console.error("Template ID is required to fetch a template.");
+        return;
+      }
       const response = await fetch("/api/templates/" + templateId);
 
       if (!response.ok) {

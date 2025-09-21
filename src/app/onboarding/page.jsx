@@ -5,6 +5,8 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Loading } from "../../components/Loading";
 import { useUserStore } from "../../store/useUser";
+import { useCompanyStore } from "../../store/useCompany";
+import CompanyForm from "../../components/CompanyForm";
 
 export default function Onboarding() {
   const router = useRouter();
@@ -24,18 +26,8 @@ export default function Onboarding() {
     checkIfOnboarded();
   }, []);
 
-  const [logo, setLogo] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  const [companyData, setCompanyData] = useState({
-    businessLogo: "",
-    businessName: "",
-    businessAddress: "",
-    businessEmail: "",
-    businessPhone: "",
-    businessTaxId: "",
-    currency: "USD",
-  });
+  const { logo, setLogo, loading, setLoading, companyData, setCompanyData } =
+    useCompanyStore();
 
   async function uploadLogo() {
     if (!logo) return "";
@@ -53,7 +45,7 @@ export default function Onboarding() {
     return data.url;
   }
 
-  const handleSubmit = async () => {
+  const handleCreateCompany = async () => {
     setLoading(true);
     try {
       // Call an API route to update publicMetadata
@@ -92,7 +84,7 @@ export default function Onboarding() {
 
   const handleNext = async () => {
     if (step === 2) {
-      await handleSubmit();
+      await handleCreateCompany();
       setStep((prev) => prev + 1);
       return;
     } else if (step >= 3) {
@@ -105,7 +97,7 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-24 p-6 bg-base border rounded-lg shadow-md">
+    <div className="max-w-4xl w-fit mx-auto mt-24 p-6 bg-base border rounded-lg shadow-md">
       {step === 1 && (
         <div>
           <h2 className="text-2xl font-bold">Welcome, {user?.firstName}!</h2>
@@ -117,143 +109,7 @@ export default function Onboarding() {
           <h2 className="text-xl text-center font-bold">
             Your Company Details
           </h2>
-          <fieldset className="fieldset bg-base-100 shadow p-2 rounded-lg">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Left Column */}
-              <div>
-                <div className="mb-4">
-                  <label className="fieldset-label block mb-2">
-                    Company Logo
-                  </label>
-                  <div className="flex justify-center mb-2">
-                    {logo && (
-                      <img
-                        src={URL.createObjectURL(logo)}
-                        alt="Company Logo"
-                        className="h-10 w-auto object-contain rounded"
-                      />
-                    )}
-                  </div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="file-input file-input-border w-full"
-                    onChange={(e) => setLogo(e.target.files[0])}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="fieldset-label block mb-2">
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    className="input input-bordered w-full"
-                    placeholder="Easy Invoice"
-                    value={companyData?.businessName || ""}
-                    onChange={(e) =>
-                      setCompanyData({
-                        ...companyData,
-                        businessName: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="fieldset-label block mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    className="input input-bordered w-full"
-                    placeholder="(555) 123-4567"
-                    value={companyData?.businessPhone || ""}
-                    onChange={(e) =>
-                      setCompanyData({
-                        ...companyData,
-                        businessPhone: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="fieldset-label block mb-2">Email</label>
-                  <input
-                    type="email"
-                    className="input input-bordered w-full"
-                    placeholder="contact@easyinvoice.com"
-                    value={companyData?.businessEmail || ""}
-                    onChange={(e) =>
-                      setCompanyData({
-                        ...companyData,
-                        businessEmail: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              {/* Middle Column */}
-              <div>
-                <div className="mb-4">
-                  <label className="fieldset-label block mb-2">Address</label>
-                  <textarea
-                    className="textarea textarea-bordered w-full h-22 resize-none"
-                    placeholder="123 Business St, Suite 101, City, State, 12345"
-                    value={companyData?.businessAddress || ""}
-                    onChange={(e) =>
-                      setCompanyData({
-                        ...companyData,
-                        businessAddress: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="fieldset-label block mb-2">
-                    Tax ID / VAT Number
-                  </label>
-                  <input
-                    type="text"
-                    className="input input-bordered w-full"
-                    placeholder="123-45-6789"
-                    value={companyData?.businessTaxId || ""}
-                    onChange={(e) =>
-                      setCompanyData({
-                        ...companyData,
-                        businessTaxId: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="fieldset-label block mb-2">Currency</label>
-                  <select
-                    className="select select-bordered w-full"
-                    value={companyData?.currency || "USD"}
-                    onChange={(e) =>
-                      setCompanyData({
-                        ...companyData,
-                        currency: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="USD">USD ($)</option>
-                    <option value="EUR">EUR (€)</option>
-                    <option value="GBP">GBP (£)</option>
-                    <option value="INR">INR (₹)</option>
-                    <option value="JPY">JPY (¥)</option>
-                    <option value="CNY">CNY (¥)</option>
-                    <option value="AUD">AUD ($)</option>
-                    <option value="CAD">CAD ($)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </fieldset>
+          <CompanyForm setStep={setStep} />
         </div>
       )}
       {step === 3 && (

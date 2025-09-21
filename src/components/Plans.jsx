@@ -2,7 +2,7 @@ import useUserCountry from "../hooks/useUserCountry";
 import PricingPlan from "./PricingPlan";
 
 export default function Plans(where) {
-  const country = useUserCountry();
+  const country = useUserCountry() || "US";
   const isIndia = country === "IN";
   const currency = isIndia ? "INR" : "USD";
 

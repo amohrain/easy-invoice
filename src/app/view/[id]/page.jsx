@@ -20,7 +20,7 @@ function InvoiceViewPage() {
     fetchData();
   }, []);
 
-  console.log("Template, ", template);
+  // console.log("Template, ", template);
 
   if (!invoice || !template) {
     return (

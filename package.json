@@ -17,7 +17,7 @@
     "html2pdf.js": "^0.10.3",
     "lucide-react": "^0.501.0",
     "mongoose": "^8.12.1",
-    "next": "15.2.3",
+    "next": "^15.3.2",
     "openai": "^4.89.0",
     "papaparse": "^5.5.3",
     "pdfmake": "^0.2.18",

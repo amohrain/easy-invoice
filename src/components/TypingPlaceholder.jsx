@@ -135,7 +135,7 @@ const TypingPlaceholder = ({ text, setText }) => {
   const insertMention = (client) => {
     const before = text.slice(0, mentionStart);
     const after = text.slice(textareaRef.current.selectionStart);
-    const mentionTag = `@${client.clientName}\n${client.clientEmail}\n\n`;
+    const mentionTag = `@${client.clientName}\n`;
     const newText = `${before}${mentionTag} ${after}`;
     setClientId(client._id);
     setText(newText);
