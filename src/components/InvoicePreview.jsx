@@ -40,8 +40,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
     return style;
   };
 
-  // const { template, getUsersTemplates, getTemplateById } = useTemplateStore();
-  const template = templates[0];
+  const { template, getUsersTemplates, getTemplateById } = useTemplateStore();
+  // const template = templates[0];
 
   const {
     invoice,
