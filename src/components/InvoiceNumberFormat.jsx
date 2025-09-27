@@ -9,12 +9,10 @@ export default function InvoiceNumberFormat() {
   // Initialize invoice format from company data
   useEffect(() => {
     if (company && company.invoicePrefix && company.invoiceSuffix) {
-      console.log("If Case");
       setInvoiceFormat(
         `${company.invoicePrefix}/1001/${company.invoiceSuffix}`
       );
     }
-    console.log("invoiceFormat: ", invoiceFormat);
   }, [company]);
 
   const handleChange = (value) => {

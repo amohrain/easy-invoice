@@ -80,6 +80,7 @@ export async function POST(request) {
   }
 
   const {
+    businessLogo,
     businessName,
     businessEmail,
     businessAddress,
@@ -106,6 +107,7 @@ export async function POST(request) {
     invoiceTitle: "Invoice",
     invoiceId: nextInvoiceId,
     currency: currency || company.currency || "USD",
+    businessLogo,
     businessName,
     businessEmail,
     businessAddress,
@@ -142,5 +144,6 @@ export async function POST(request) {
     success: true,
     message: "Invoice created successfully!",
     invoiceUrl: url,
+    invoiceId: generatedInvoice._id,
   });
 }

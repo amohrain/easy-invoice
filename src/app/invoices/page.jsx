@@ -12,7 +12,7 @@ function Invoices() {
           <h1 className="text-2xl font-bold">Invoices</h1>
           <p className="mt-2">Manage your invoices here.</p>
         </div>
-        <div className="flex w-full rounded-xl bg-base-100 shadow p-4 gap-4">
+        <div className="flex w-full rounded-xl bg-base-100 shadow p-4 gap-4 overflow-y-auto">
           <InvoiceTable />
         </div>
       </div>

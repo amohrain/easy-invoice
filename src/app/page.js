@@ -21,9 +21,9 @@ export default function Home() {
       />
       <NavigationBar />
       <Hero />
-      <ProductShowcase />
-      <HowItWorks />
       <Video />
+      <HowItWorks />
+      <ProductShowcase />
       <Pricing />
       <FAQ />
       <Footer />

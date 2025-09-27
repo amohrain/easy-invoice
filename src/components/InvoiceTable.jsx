@@ -12,6 +12,7 @@ import ExportCSVButton from "./ExportCSVButton";
 function InvoiceTable() {
   const { invoiceData, getInvoices } = useInvoiceStore();
   const { company } = useCompanyStore();
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [items, setItems] = useState([]);
 
   const [filteredInvoices, setFilteredInvoices] = useState([]);
@@ -30,7 +31,6 @@ function InvoiceTable() {
   const [sortOption, setSortOption] = useState("");
 
   const router = useRouter();
-  const ITEMS_PER_PAGE = 10;
 
   // for table pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -114,16 +114,23 @@ function InvoiceTable() {
     }
   };
 
+  // Todo - figure this out
   const handleSort = (sortOption) => {
-    console.log("Sorting by:", sortOption);
+    // console.log("Sorting by:", sortOption);
     // Apply sorting logic here
   };
 
-  const totalPages = Math.ceil(filteredInvoices.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredInvoices.length / itemsPerPage);
   const paginatedData = filteredInvoices.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
+
+  // Function to generate page numbers
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <div className="w-full overflow-x-auto">
@@ -193,11 +200,6 @@ function InvoiceTable() {
         </div>
         <div className="flex gap-2">
           <ExportCSVButton invoices={filteredInvoices} items={items} />
-          <Link href="/invoices/create">
-            <button className="btn btn-primary rounded-full">
-              <Plus /> Add
-            </button>
-          </Link>
         </div>
       </div>
 
@@ -229,11 +231,11 @@ function InvoiceTable() {
             <th>Status</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="overflow-y-auto">
           {paginatedData.map((invoice, index) => (
             <tr
               key={index}
-              className={`hover:bg-base-200 ${
+              className={`hover:bg-base-200 h-24 ${
                 items.includes(index) && "bg-base-100"
               } cursor-pointer`}
               onClick={(e) => {
@@ -271,32 +273,118 @@ function InvoiceTable() {
         <tfoot>
           <tr>
             <td colSpan="7">
-              <div className="flex justify-between items-center p-2">
-                <span className="text-center w-full">
-                  {filteredInvoices.length == 0
-                    ? "No invoices found."
-                    : `Page ${currentPage} of ${totalPages}`}
+              <div className="flex justify-between gap-4 items-center p-2">
+                <span className=" w-full">
+                  {filteredInvoices.length == 0 ? (
+                    "No invoices found."
+                  ) : (
+                    <span>
+                      Showing {paginatedData.length} of {invoiceData.length}{" "}
+                      invoices.
+                    </span>
+                  )}
                 </span>
-                <div className="flex gap-2">
+                <span className="">
+                  Items per page:{" "}
+                  <select
+                    value={itemsPerPage}
+                    onChange={(e) => {
+                      setItemsPerPage(e.target.value);
+                    }}
+                  >
+                    <option value="1">1</option>
+                    <option value="3">3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                  </select>
+                </span>
+                <div className="join">
+                  {/* Prev button */}
                   <button
-                    className="btn btn-xs"
+                    className="btn btn-sm"
                     disabled={currentPage === 1}
                     onClick={() => {
                       setCurrentPage((prev) => prev - 1);
                       setItems([]);
                     }}
                   >
-                    Previous
+                    «
                   </button>
+
+                  {/* First page */}
+                  {currentPage > 3 && (
+                    <>
+                      <button
+                        className={`join-item btn btn-sm ${
+                          currentPage === 1 ? "btn-primary" : ""
+                        }`}
+                        onClick={() => {
+                          setCurrentPage(1);
+                          setItems([]);
+                        }}
+                      >
+                        1
+                      </button>
+                      {currentPage > 4 && (
+                        <span className="join-item btn btn-sm">...</span>
+                      )}
+                    </>
+                  )}
+
+                  {/* Middle pages */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter(
+                      (number) =>
+                        number >= currentPage - 2 && number <= currentPage + 2
+                    )
+                    .map((number) => (
+                      <button
+                        key={number}
+                        className={`join-item btn btn-sm ${
+                          currentPage === number ? "btn-primary" : ""
+                        }`}
+                        onClick={() => {
+                          setCurrentPage(number);
+                          setItems([]);
+                        }}
+                      >
+                        {number}
+                      </button>
+                    ))}
+
+                  {/* Last page */}
+                  {currentPage < totalPages - 2 && (
+                    <>
+                      {currentPage < totalPages - 3 && (
+                        <span className="join-item btn btn-sm">...</span>
+                      )}
+                      <button
+                        className={`join-item btn btn-sm ${
+                          currentPage === totalPages ? "btn-primary" : ""
+                        }`}
+                        onClick={() => {
+                          setCurrentPage(totalPages);
+                          setItems([]);
+                        }}
+                      >
+                        {totalPages}
+                      </button>
+                    </>
+                  )}
+
+                  {/* Next button */}
                   <button
-                    className="btn btn-xs"
+                    className="join-item btn btn-sm"
                     disabled={currentPage === totalPages}
                     onClick={() => {
                       setCurrentPage((prev) => prev + 1);
                       setItems([]);
                     }}
                   >
-                    Next
+                    »
                   </button>
                 </div>
               </div>

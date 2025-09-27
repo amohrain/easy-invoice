@@ -48,15 +48,21 @@ function Footer() {
         <Link href="https://www.bulkmark.in" className="link link-hover">
           Bulkmark
         </Link>
-        <Link href="https://www.proker.io" className="link link-hover">
-          Proker.io (Discontinued)
+        <Link
+          href="https://www.morningcooldown.com"
+          className="link link-hover"
+        >
+          Morning Cooldown
         </Link>
+        {/* <Link href="https://www.proker.io" className="link link-hover">
+          Proker.io (Discontinued)
+        </Link> */}
       </nav>
       <nav>
         <h6 className="footer-title">Navigation</h6>
-        <Link href="/docs" className="link link-hover">
+        {/* <Link href="/docs" className="link link-hover">
           API Documentation
-        </Link>
+        </Link> */}
         <Link href="/playground" className="link link-hover">
           Playground
         </Link>

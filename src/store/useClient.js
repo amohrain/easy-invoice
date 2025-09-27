@@ -20,7 +20,6 @@ export const useClientStore = create((set) => ({
     try {
       const response = await fetch("/api/client");
       const data = await response.json();
-      console.log("Clients fetched: ", data.data);
       set({ clients: data.data });
       return data.data;
     } catch (error) {

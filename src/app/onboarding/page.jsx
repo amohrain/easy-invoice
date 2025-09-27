@@ -41,7 +41,6 @@ export default function Onboarding() {
     });
 
     const data = await res.json();
-    console.log("Uploaded Image URL:", data.url);
     return data.url;
   }
 
@@ -66,7 +65,6 @@ export default function Onboarding() {
         const logoUrl = await uploadLogo();
         data.businessLogo = logoUrl;
       }
-      console.log("company data", data);
       const resCompany = await fetch("/api/company", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,6 +86,7 @@ export default function Onboarding() {
       setStep((prev) => prev + 1);
       return;
     } else if (step >= 3) {
+      localStorage.setItem("onboarded", "true");
       router.push("/invoices/create");
     } else setStep((prev) => prev + 1);
   };

@@ -1,36 +1,52 @@
+import { Sparkles } from "lucide-react";
+import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useClientStore } from "@/store/useClient";
-import { usePathname } from "next/navigation";
+import { InvoicePreview } from "./InvoicePreview";
+import { handleInvoiceGenerate } from "../lib/openai";
+import { useInvoiceStore } from "../store/useInvoice";
+import { calculateInvoice } from "../lib/calculate";
+import { sampleCompany } from "../constants/sampleCompany";
+import { clients } from "../constants/clients";
+import { templates } from "../lib/templatesData";
+import { useTemplateStore } from "../store/useTemplate";
+import { dummyInvoice } from "../lib/dummyInvoice";
+import InvoiceSkeleton from "./InvoiceSkeleton";
 
-const TypingPlaceholder = ({ text, setText, home = false }) => {
-  const aiText = [
+export const DynamicTextarea = () => {
+  const placeholders = [
     "@Alice Johnson\n5 Website Designs @ 400\n2 Logos @ 100\ndiscount @ 5%\nGST-18%",
-    // "@Bob Smith\n\n3 Mobile App Screens @ 500\n1 Logo @ 150\n\nVAT-12%",
-    // "@Catherine Lee\n\n10 Social Media Posts @ 50\nBrand Guidelines @ 300\n\ndiscount @ 10%\nService Tax-15%",
-    // "@Daniel Chen\n\nConsultation (2 hrs) @ 100\nUI Audit @ 200\n\nGST-18%",
-    // "@Eva Williams\n\n3 Flyers @ 75\n1 Brochure @ 120\n\ndiscount @ 7%\nVAT-10%",
-    // "@Farhan Mehta\n\n1 Landing Page @ 800\nLogo Revamp @ 150\n\nService Tax-14%",
-    // "@Gina Torres\n\nSEO Audit @ 250\nKeyword Plan @ 150\n\nNo Tax",
-    // "@Harish Patel\n\nFull Website Redesign @ 1000\n\ndiscount @ 8%\nGST-18%",
+    "@Bob Smith\n3 Mobile App Screens @ 500\n1 Logo @ 150\nVAT-12%",
+    "@Catherine Lee\n10 Social Media Posts @ 50\nBrand Guidelines @ 300\ndiscount @ 10%\nService Tax-15%",
+    "@Daniel Chen\nConsultation (2 hrs) @ 100\nUI Audit @ 200\nGST-18%",
+    "@Eva Williams\n3 Flyers @ 75\n1 Brochure @ 120\ndiscount @ 7%\nVAT-10%",
+    "@Farhan Mehta\n1 Landing Page @ 800\nLogo Revamp @ 150\nService Tax-14%",
+    "@Gina Torres\nSEO Audit @ 250\nKeyword Plan @ 150\nNo Tax",
+    "@Harish Patel\nFull Website Redesign @ 1000\ndiscount @ 8%\nGST-18%",
   ];
-
-  const currentPath = usePathname();
-
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [text, setText] = useState("");
   const [placeholder, setPlaceholder] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [mentionStart, setMentionStart] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [mentionPosition, setMentionPosition] = useState({ top: 0, left: 0 });
-  const { setClientId, getClients, clients } = useClientStore();
+  const { setClientId, getClients, clients, clientId, setSampleClients } =
+    useClientStore();
+  const { invoice, setInvoice } = useInvoiceStore();
+  const { setTemplate } = useTemplateStore();
 
-  const timeToStart = currentPath === "/playground" ? 500 : 2000; // 2 seconds
+  const timeToStart = 1000; // 1 second
   const textareaRef = useRef();
   const mirrorRef = useRef();
 
   useEffect(() => {
     async function fetchClients() {
-      await getClients();
+      //   await getClients();
+      setSampleClients();
+      setTemplate(templates[0]);
     }
     fetchClients();
   }, []);
@@ -48,12 +64,17 @@ const TypingPlaceholder = ({ text, setText, home = false }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (step == 1) document.body.style.overflow = "";
+    else document.body.style.overflow = "hidden";
+  }, [step]);
+
   const startTyping = () => {
     if (text !== "") return;
     setClientId("");
     let i = 0;
     const textToType =
-      !home && aiText[Math.floor(Math.random() * aiText.length)];
+      placeholders[Math.floor(Math.random() * placeholders.length)];
     setPlaceholder("");
 
     const interval = setInterval(() => {
@@ -90,7 +111,10 @@ const TypingPlaceholder = ({ text, setText, home = false }) => {
     mirror.appendChild(span);
 
     const { offsetTop, offsetLeft } = span;
-    setMentionPosition({ top: offsetTop + 24, left: offsetLeft });
+    setMentionPosition({
+      top: offsetTop + 24,
+      //  left: offsetLeft
+    });
     mirror.removeChild(span);
   };
 
@@ -157,8 +181,77 @@ const TypingPlaceholder = ({ text, setText, home = false }) => {
       .slice(0, 2);
   };
 
+  const handleGenerate = async () => {
+    if (clientId === "") {
+      alert("Please mention a client typing '@' followed by their name.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setStep(2);
+
+      const invoiceInfo = {
+        issuedAt: new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        template: "vibe",
+        invoiceNumber: "INV-001",
+        notes: "Thank you for your business!",
+        paymentInstructions: "Please make the payment by the due date.",
+        dueDate: new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+      };
+
+      const invoice = await handleInvoiceGenerate(text);
+      //   const invoice = dummyInvoice;
+      const updatedInvoice = calculateInvoice(invoice);
+      const clientInfo = clients.find((client) => client._id === clientId);
+
+      setInvoice({
+        ...updatedInvoice,
+        ...clientInfo,
+        ...sampleCompany,
+        ...invoiceInfo,
+      });
+      setLoading(false);
+      document.body.style.overflow = "hidden";
+    } catch (error) {
+      console.log("Error generating invoice: ", error);
+    }
+  };
+
+  const PreviewModal = () => {
+    return (
+      <div className="fixed inset-0 bg-base-100 flex flex-col items-center justify-center z-50 overflow-y-auto">
+        {loading ? (
+          <InvoiceSkeleton />
+        ) : (
+          <InvoicePreview
+            setStep={() => setStep(1)}
+            preview={true}
+            editable={true}
+          />
+        )}
+      </div>
+    );
+  };
+
+  if (step === 2) {
+    return <PreviewModal />;
+  }
+
   return (
-    <div className="relative w-full">
+    <div
+      className="flex w-full max-w-2xl mx-auto p-4 rounded-2xl h-48 shadow-2xl shadow-primary/40 
+        bg-base-100/10 backdrop-blur-sm border border-primary/20 
+        animate-pulse-soft"
+    >
       <div
         className="absolute invisible whitespace-pre-wrap break-words p-4 border border-base-300 rounded-lg text-base"
         ref={mirrorRef}
@@ -175,18 +268,26 @@ const TypingPlaceholder = ({ text, setText, home = false }) => {
         value={text}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        className="textarea text-[18px] textarea-ghost w-full focus:outline-none resize-none overflow-y-auto min-h-[200px] max-h-[300px]"
         placeholder={placeholder}
-        rows={1}
-        onInput={(e) => {
-          e.target.style.height = "40px";
-          e.target.style.height = `${Math.min(e.target.scrollHeight, 300)}px`;
-        }}
+        // rows={1}
+        // onInput={(e) => {
+        //   e.target.style.height = "40px";
+        //   e.target.style.height = `${Math.min(e.target.scrollHeight, 300)}px`;
+        // }}
+        className="w-full outline-0 h-36 resize-none"
       />
+      <button
+        onClick={() => {
+          handleGenerate();
+        }}
+        className="self-end btn btn-md bg-gradient-to-tr from-secondary via-secondary/85 to-primary rounded-full shadow-lg hover:scale-105 transition text-white border-none"
+      >
+        <Sparkles size={18} /> Generate
+      </button>
 
       {suggestions.length > 0 && (
         <ul
-          className="absolute z-50 border border-base-300 rounded-lg shadow-lg max-h-44 overflow-y-auto w-72"
+          className="absolute z-50  border-base-300 rounded-lg shadow-lg max-h-44 overflow-y-auto w-72"
           style={{
             top: mentionPosition.top,
             left: mentionPosition.left,
@@ -218,5 +319,3 @@ const TypingPlaceholder = ({ text, setText, home = false }) => {
     </div>
   );
 };
-
-export default TypingPlaceholder;

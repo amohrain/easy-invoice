@@ -7,11 +7,12 @@ import { InvoicePreview } from "@/components/InvoicePreview";
 import LeftBar from "@/components/LeftBar";
 import { useCompanyStore } from "@/store/useCompany";
 import { useTemplateStore } from "@/store/useTemplate";
-import { dummyInvoice } from "@/lib/dummyInvoice";
+// import { dummyInvoice } from "@/lib/dummyInvoice";
 import { useInvoiceStore } from "@/store/useInvoice";
 import { useLoadingStore } from "@/store/useLoading";
-import { calculateInvoice } from "../../../lib/calculate";
+// import { calculateInvoice } from "../../../lib/calculate";
 import { useUserStore } from "../../../store/useUser";
+import InvoiceSkeleton from "../../../components/InvoiceSkeleton";
 
 function Dashboard() {
   const [step, setStep] = useState(1);
@@ -21,9 +22,8 @@ function Dashboard() {
   const { template, setTemplate, userTemplates, getUsersTemplates } =
     useTemplateStore();
   const { loading, setLoading } = useLoadingStore();
-  const { invoice, setInvoice, getInvoiceId, clearSuggestions } =
-    useInvoiceStore();
-  const { company, setCompany, getCompanies } = useCompanyStore();
+  const { setInvoice, getInvoiceId, clearSuggestions } = useInvoiceStore();
+  const { getCompanies } = useCompanyStore();
 
   const { user, getCurrentUser } = useUserStore();
 
@@ -34,7 +34,7 @@ function Dashboard() {
       ? user?.invoiceCount
       : 0 || 0;
 
-  const limitExceeded = user?.subscriptionPlan === "Free" && invoiceCount >= 15;
+  const limitExceeded = user?.subscriptionPlan === "Free" && invoiceCount >= 1;
 
   const [startTime, setStartTime] = useState(0);
 
@@ -69,6 +69,7 @@ function Dashboard() {
 
     try {
       setLoading(true);
+      setStep(2);
       const invoice = await handleInvoiceGenerate(text);
 
       // Logic to calculate time taken to generate invoice
@@ -81,26 +82,32 @@ function Dashboard() {
       // Todo - invoice validation check to reduce errors
       setInvoice(invoice);
       setLoading(false);
-      setStep(2);
     } catch (error) {
       console.log("Error generating invoice: ", error);
     }
   };
 
+  // Todo - remove
   useEffect(() => {
-    console.log("step: ", step);
+    // console.log("step: ", step);
   }, [step]);
 
-  if (loading) {
-    return <Loading />;
-  }
+  // if (loading) {
+  //   return <Loading />;
+  // }
 
   return (
     <div className="flex w-full flex-row h-screen">
       <LeftBar className="" />
       <div className="flex flex-col w-full h-full bg-base-100 justify-center">
         <div className="w-full h-full self-center flex flex-row gap-8 overflow-y-auto">
-          {step == 2 && <InvoicePreview setStep={setStep} editable={true} />}
+          {step === 2 &&
+            (loading ? (
+              <InvoiceSkeleton />
+            ) : (
+              <InvoicePreview setStep={setStep} editable />
+            ))}
+
           {step == 1 && (
             <div className="flex px-8 w-full items-center justify-center flex-col gap-4">
               <h1 className="text-center font-bold text-4xl space-x-10">

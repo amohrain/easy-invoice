@@ -11,8 +11,6 @@ function page() {
   const invoiceCount =
     user?.invoiceCountMonth === currentMonth ? user?.invoiceCount : 0 || 0;
 
-  console.log("user", user);
-
   useEffect(() => {
     async function fetchData() {
       await getCurrentUser();

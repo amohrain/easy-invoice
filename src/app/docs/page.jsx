@@ -7,6 +7,18 @@ import Footer from "../../sections/Footer";
 
 export default function ApiDocs() {
   return (
+    <div>
+      <div className="h-screen flex flex-col justify-center items-center text-center w-full gap-4">
+        <h2 className="text-3xl">This feature will be added soon</h2>
+        <button className="btn btn-primary btn-ghost rounded-full">
+          Go Back
+        </button>
+      </div>
+      <Footer />
+    </div>
+  );
+
+  return (
     <>
       {/* <NavigationBar /> */}
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-10">

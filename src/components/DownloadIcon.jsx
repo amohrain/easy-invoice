@@ -14,15 +14,12 @@ export default function DownloadIcon({}) {
   const { invoice, suggestion } = useInvoiceStore();
 
   const handleDownload = async (invoice, suggestion) => {
-    console.log("Suggestion, ", suggestion);
     const pdfMake = await getPdfMake();
     let updatedInvoice = { ...invoice };
 
     if (suggestion) {
       updatedInvoice = { ...invoice, ...suggestion };
     }
-
-    console.log("updated invoice: ", updatedInvoice);
 
     // Convert logo image to base64 if needed
     const logoUrl = updatedInvoice.businessLogo;
@@ -51,7 +48,6 @@ export default function DownloadIcon({}) {
       }
     }
     const docDefinition = generatePdfDocDefinition(template, updatedInvoice);
-    console.log("Doc Definition:", docDefinition);
     pdfMake.createPdf(docDefinition).open();
     // pdfMake.createPdf(docDefinition).download("invoice.pdf");
   };

@@ -4,6 +4,7 @@ import PricingPlan from "./PricingPlan";
 export default function Plans(where) {
   const country = useUserCountry() || "US";
   const isIndia = country === "IN";
+  // const isIndia = false; // Forcing USD for all users
   const currency = isIndia ? "INR" : "USD";
 
   const plans = [
@@ -12,10 +13,10 @@ export default function Plans(where) {
       amount: 0,
       mostPopular: false,
       features: [
-        "15 Invoices per month",
+        "10 Invoices per month",
         "Maximum 10 clients",
-        "Supports one business",
-        "100 API calls per month",
+        "Limited invoice storage",
+        // "100 API calls per month",
       ],
     },
     {
@@ -26,8 +27,9 @@ export default function Plans(where) {
         "Unlimited invoices",
         "Unlimited clients",
         "Supports one business",
-        "Access to exclusive templates",
-        "Unlimited API calls*",
+        "Unlimited invoice storage",
+        // "Access to exclusive templates",
+        // "Unlimited API calls*",
       ],
     },
     {
@@ -38,7 +40,7 @@ export default function Plans(where) {
         "Unlimited invoices",
         "Unlimited clients",
         "Unlimited businesses",
-        "Create Own Templates",
+        // "Create Own Templates",
       ],
     },
   ];

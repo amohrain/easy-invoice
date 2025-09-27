@@ -137,7 +137,7 @@ export function generatePdfDocDefinition(template, invoice) {
   const currency = invoice.currency || "USD";
   const content = [];
 
-  console.log(template);
+  // console.log(template);
 
   if (template.style.borders) {
     const margin = template.style.borders.margins;

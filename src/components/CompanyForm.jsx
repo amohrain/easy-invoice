@@ -36,14 +36,13 @@ function CompanyForm() {
     });
 
     const data = await res.json();
-    console.log("Uploaded Image URL:", data.url);
+    // console.log("Uploaded Image URL:", data.url);
     return data.url;
   }
 
   useEffect(() => {
     if (currentPath !== "/company") return;
 
-    console.log("Fetching company data for current path:", currentPath);
     const fetchCompanies = async () => {
       await getAndSetCompaniesData();
     };
@@ -52,9 +51,7 @@ function CompanyForm() {
 
   useEffect(() => {
     if (companyData?.currency !== "INR") {
-      console.log(
-        "Currency changed to non-INR, resetting UPI ID and autoAddUPI"
-      );
+      // "Currency changed to non-INR, resetting UPI ID and autoAddUPI"
       setCompanyData({
         ...companyData,
         upiId: "",
@@ -73,7 +70,6 @@ function CompanyForm() {
         body: JSON.stringify({ companyId: company._id }),
       });
       const data = await res.json();
-      console.log("API Key generated", data);
       if (data.success) {
         toast.success("API key generated successfully");
         setCompany({ ...company, apiKey: data.apiKey });
@@ -157,7 +153,6 @@ function CompanyForm() {
         const logoUrl = await uploadLogo();
         data.businessLogo = logoUrl;
       }
-      console.log("company data", data);
       const response = await fetch("/api/company", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -183,7 +178,6 @@ function CompanyForm() {
       const logoUrl = await uploadLogo();
       updatedData.businessLogo = logoUrl;
     }
-    console.log("Updating company with, ", updatedData);
     await updateCompany(updatedData);
   };
 

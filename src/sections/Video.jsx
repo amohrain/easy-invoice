@@ -27,26 +27,31 @@ function Video() {
           See vibe invoice in action
         </p>
       </div>
-      <div className="relative w-full max-w-4xl aspect-video rounded-xl shadow-xl shadow-primary/20">
-        <video
-          download="false"
-          muted
-          id="myVideo"
-          className="w-full h-full object-cover rounded-xl"
-          poster="/product-screenshot.png"
-        >
-          <source src="/demo-video.mp4" type="video/mp4" />
-          Your browser does not support HTML5 video.
-        </video>
-        <button
-          id="playButton"
-          onClick={togglePlay}
-          className="absolute inset-0 m-auto size-32 bg-black/60 rounded-full flex items-center justify-center cursor-pointer z-10"
-        >
-          <div className="">
-            <Play className="text-white size-12 fill-white" />
+      <div className="mb-8 relative w-full max-w-4xl aspect-video rounded-xl shadow-xl shadow-primary/20">
+        <div className="mockup-browser bg-base-200 border border-base-300 w-fit">
+          <div className="mockup-browser-toolbar"></div>
+          <div className="flex justify-center px-4 pb-2">
+            <video
+              download="false"
+              muted
+              id="myVideo"
+              className="w-full h-full object-cover rounded-xl"
+              poster="/product-screenshot.png"
+            >
+              <source src="/demo-video.mp4" type="video/mp4" />
+              Your browser does not support HTML5 video.
+            </video>
+            <button
+              id="playButton"
+              onClick={togglePlay}
+              className="absolute inset-0 m-auto size-32 bg-black/60 rounded-full flex items-center justify-center cursor-pointer z-10"
+            >
+              <div className="">
+                <Play className="text-white size-12 fill-white" />
+              </div>
+            </button>
           </div>
-        </button>
+        </div>
       </div>
       <Link href="/playground">
         <button className="btn italic btn-ghost rounded-full btn-lg hover:bg-black hover:text-white hover:shadow-[0px_0px_20px_5px] shadow-primary/50 transition-all duration-300">

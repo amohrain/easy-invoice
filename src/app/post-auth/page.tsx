@@ -9,11 +9,16 @@ export default function PostAuthRedirect() {
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const something = localStorage.getItem("something");
+        const onboarded = localStorage.getItem("onboarded");
+        if (onboarded) {
+          router.replace("/invoices/create");
+          return;
+        }
         const res = await fetch("/api/company");
         if (!res.ok) {
           router.replace("/onboarding");
         } else {
+          localStorage.setItem("onboarded", "true");
           router.replace("/invoices/create");
         }
         // Optionally check user data for roles, etc.
@@ -26,5 +31,9 @@ export default function PostAuthRedirect() {
     checkUser();
   }, []);
 
-  return <p>Redirecting...</p>;
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <p className="text-3xl">We are getting your dashboard ready.</p>
+    </div>
+  );
 }

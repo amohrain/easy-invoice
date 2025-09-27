@@ -58,7 +58,6 @@ function Company() {
         const logoUrl = await uploadLogo();
         data.businessLogo = logoUrl;
       }
-      console.log("company data", data);
       const response = await fetch("/api/company", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

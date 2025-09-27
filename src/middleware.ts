@@ -25,6 +25,7 @@ const isPublicAPIRoute = createRouteMatcher([
   "/api/suggestion/:id",
   "/api/templates/:id",
   "/api/invoice/:id",
+  "/api/openAI",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

@@ -8,7 +8,7 @@ function ThemeController() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("theme") || "dark";
+      const savedTheme = localStorage.getItem("theme") || "light";
       document.documentElement.setAttribute("data-theme", savedTheme);
       setTheme(savedTheme);
     }

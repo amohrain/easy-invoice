@@ -31,6 +31,10 @@ export const useInvoiceStore = create((set, get) => ({
         },
         body: JSON.stringify({ ...invoice, template: templateId }),
       });
+      if (!response.ok) {
+        toast.error("Error saving invoice");
+        return;
+      }
       const data = await response.json();
       toast.success("Invoice saved");
     } catch (error) {
@@ -130,7 +134,7 @@ export const useInvoiceStore = create((set, get) => ({
       });
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+
         toast.success("Suggestion created successfully");
       }
     } catch (error) {
@@ -183,7 +187,6 @@ export const useInvoiceStore = create((set, get) => ({
         console.error("Error saving invoice");
       }
       toast.success("Suggestions accepted successfully");
-      console.log("Suggestions accepted successfully");
     } catch (error) {
       console.error("Error accepting suggestions:", error);
       toast.error("Error accepting sugestions");
@@ -192,13 +195,14 @@ export const useInvoiceStore = create((set, get) => ({
   acceptOneSuggestion: async () => {
     const invoice = get().invoice;
     const suggestion = get().suggestion;
-    console.log(
-      invoice.clientName === suggestion.clientName,
-      invoice.clientAddress === suggestion.clientAddress,
-      invoice.clientEmail === suggestion.clientEmail,
-      invoice.clientPhone === suggestion.clientPhone,
-      invoice.clientTaxId === suggestion.clientTaxId
-    );
+
+    // console.log(
+    //   invoice.clientName === suggestion.clientName,
+    //   invoice.clientAddress === suggestion.clientAddress,
+    //   invoice.clientEmail === suggestion.clientEmail,
+    //   invoice.clientPhone === suggestion.clientPhone,
+    //   invoice.clientTaxId === suggestion.clientTaxId
+    // );
 
     if (
       invoice.clientName === suggestion.clientName &&
@@ -207,7 +211,6 @@ export const useInvoiceStore = create((set, get) => ({
       invoice.clientPhone === suggestion.clientPhone &&
       invoice.clientTaxId === suggestion.clientTaxId
     ) {
-      console.log("Deleting suggestion");
       set({ invoice: { ...invoice, changesSuggested: false } });
       await get().deleteSuggestion();
     }
@@ -232,7 +235,6 @@ export const useInvoiceStore = create((set, get) => ({
       invoice.clientPhone === suggestion.clientPhone &&
       invoice.clientTaxId === suggestion.clientTaxId
     ) {
-      console.log("Deleting suggestion");
       set({ invoice: { ...invoice, changesSuggested: false } });
       await get().deleteSuggestion();
       await get().saveInvoice();
@@ -245,7 +247,6 @@ export const useInvoiceStore = create((set, get) => ({
         method: "DELETE",
       });
       if (response.ok) {
-        console.log("Suggestion deleted succesfully");
         toast.success("Suggestion deleted successfully");
       }
     } catch (error) {

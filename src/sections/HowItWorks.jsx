@@ -37,7 +37,7 @@ function HowItWorks() {
                 to instantly pull client details
               </p>
               <p>Add items with natural language like-</p>
-              <p className="italic p-4">"10 Logos @ $99"</p>
+              <p className="italic p-4">"5 Logos @ $99"</p>
               <p>Enter tax details and click generate</p>
             </div>
           </div>

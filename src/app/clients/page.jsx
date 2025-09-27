@@ -15,6 +15,7 @@ import { Loading } from "@/components/Loading";
 import LeftBar from "@/components/LeftBar";
 import { useInvoiceStore } from "@/store/useInvoice";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export default function ClientsPage() {
   const [clients, setClients] = useState([]);
@@ -95,7 +96,6 @@ export default function ClientsPage() {
     e.preventDefault();
     setLoading(true);
 
-    console.log("form:", formData);
     const {
       clientName,
       clientAddress,
@@ -142,10 +142,8 @@ export default function ClientsPage() {
       });
 
       if (response.ok) {
-        console.log("Deleted");
-        toast.success("Client deleted");
+        toast.success("Client deleted successfully");
       } else {
-        console.log("Error deleting client");
         toast.error("Error deleting client");
       }
 
@@ -219,13 +217,6 @@ export default function ClientsPage() {
       <div className="container mx-auto p-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 mt-6">
           <h1 className="text-2xl font-bold">Clients</h1>
-          <button
-            className="btn btn-primary mt-4 md:mt-0"
-            onClick={openAddModal}
-          >
-            <Plus size={18} />
-            Add New Client
-          </button>
         </div>
 
         <div className="bg-base-100 rounded-lg shadow p-6">
@@ -277,9 +268,10 @@ export default function ClientsPage() {
                   </li>
                 </ul>
               </div>
-              <button className="btn">
-                <Download size={18} />
-                Export
+
+              <button onClick={openAddModal} className="btn btn-primary">
+                <Plus size={18} />
+                Add
               </button>
             </div>
           </div>
@@ -485,7 +477,6 @@ export default function ClientsPage() {
                     className="input input-bordered"
                     value={formData.clientTaxId}
                     onChange={handleFormChange}
-                    required
                   />
                 </div>
 

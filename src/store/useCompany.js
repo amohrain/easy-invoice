@@ -48,7 +48,6 @@ export const useCompanyStore = create((set, get) => ({
     }
   },
   updateCompany: async (data) => {
-    console.log("Updating company data:", data);
     const companyId = data._id;
     try {
       get().setLoading(true);

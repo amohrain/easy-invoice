@@ -5,6 +5,7 @@ import { useInvoiceStore } from "@/store/useInvoice";
 import { useParams } from "next/navigation";
 import LeftBar from "@/components/LeftBar";
 import { useTemplateStore } from "@/store/useTemplate";
+import InvoiceSkeleton from "../../../components/InvoiceSkeleton";
 
 function InvoicePage() {
   const { id } = useParams();
@@ -21,20 +22,24 @@ function InvoicePage() {
     fetchData();
   }, []);
 
-  if (!invoice || !template) {
-    return (
-      <div className="flex w-full h-screen items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
+  // if (!invoice || !template) {
+  //   return (
+  //     <div className="flex w-full h-screen items-center justify-center">
+  //       <span className="loading loading-spinner loading-lg"></span>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex w-full h-screen">
       <LeftBar />
       <div className="flex w-full justify-center">
         <div className="w-full h-full self-center flex flex-row gap-8 overflow-y-auto">
-          <InvoicePreview editable={true} />
+          {!invoice || !template ? (
+            <InvoiceSkeleton />
+          ) : (
+            <InvoicePreview editable={true} />
+          )}
         </div>
       </div>
     </div>

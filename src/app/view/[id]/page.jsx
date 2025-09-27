@@ -13,7 +13,6 @@ function InvoiceViewPage() {
   useEffect(() => {
     async function fetchData() {
       const inv = await getInvoiceById(id);
-      console.log(inv);
       const templates = await getTemplateById(inv.template);
       if (inv.changesSuggested) await fetchSuggestion();
     }

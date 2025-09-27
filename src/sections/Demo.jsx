@@ -13,6 +13,7 @@ import { handleInvoiceGenerate } from "../lib/openai";
 import { calculateInvoice } from "../lib/calculate";
 import { Loading } from "../components/Loading";
 import { samplePrompts } from "../constants/samplePrompts";
+import InvoiceSkeleton from "../components/InvoiceSkeleton";
 
 function Demo() {
   const { setTemplate } = useTemplateStore();
@@ -34,6 +35,7 @@ ${samplePrompts[Math.floor(Math.random() * samplePrompts.length)]}`);
   const handleGenerate = async () => {
     try {
       setLoading(true);
+      setStep(2);
 
       const invoiceInfo = {
         issuedAt: new Date().toLocaleDateString("en-US", {
@@ -41,7 +43,10 @@ ${samplePrompts[Math.floor(Math.random() * samplePrompts.length)]}`);
           month: "long",
           day: "numeric",
         }),
+        template: "vibe",
         invoiceNumber: "INV-001",
+        notes: "Thank you for your business!",
+        paymentInstructions: "Please make the payment by the due date.",
         dueDate: new Date().toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
@@ -55,13 +60,12 @@ ${samplePrompts[Math.floor(Math.random() * samplePrompts.length)]}`);
       const clientInfo = clients.find((client) => client._id === clientId);
 
       setInvoice({
-        ...updatedInvoice,
         ...clientInfo,
         ...sampleCompany,
         ...invoiceInfo,
+        ...updatedInvoice,
       });
       setLoading(false);
-      setStep(2);
     } catch (error) {
       console.log("Error generating invoice: ", error);
     }
@@ -70,14 +74,14 @@ ${samplePrompts[Math.floor(Math.random() * samplePrompts.length)]}`);
   const PreviewModal = () => {
     return (
       <div className="fixed inset-0 bg-base-100 flex flex-col items-center justify-center z-50 overflow-y-auto">
-        <InvoicePreview setStep={setStep} preview={true} editable={true} />
+        {loading ? (
+          <InvoiceSkeleton />
+        ) : (
+          <InvoicePreview setStep={setStep} preview={true} editable={true} />
+        )}
       </div>
     );
   };
-
-  if (loading) {
-    return <Loading />;
-  }
 
   return (
     <div

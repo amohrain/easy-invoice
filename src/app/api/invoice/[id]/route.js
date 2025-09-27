@@ -25,6 +25,7 @@ export async function GET(req, { params }) {
         { status: 404 }
       );
     }
+
     // return invoice
     return NextResponse.json({
       success: true,
@@ -91,10 +92,12 @@ export async function PUT(req, { params }) {
 
     // check if user is owner of the invoice
     if (invoice.user.toString() !== user._id.toString()) {
+      throw new Error("You do not have permission to update this invoice");
       return NextResponse.json(
         {
           success: false,
           error: "Unauthorized",
+          message: "You do not have permission to update this invoice",
         },
         { status: 401 }
       );
@@ -116,6 +119,7 @@ export async function PUT(req, { params }) {
     return NextResponse.json({
       success: true,
       data: updatedInvoice,
+      message: "Invoice updated successfully",
     });
   } catch (error) {
     console.error("Error updating invoice:", error);

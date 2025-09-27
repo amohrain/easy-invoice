@@ -78,8 +78,8 @@ export default function AboutUs() {
         <p className="text-lg mb-4">
           We'd love to hear from you! Whether you have feedback, feature
           requests, or need support, reach out to us at{" "}
-          <a href="mailto:info@bulkmark.in" className="text-primary">
-            info@bulkmark.in
+          <a href="mailto:abhishek@vibeinvoice.com" className="text-primary">
+            abhishek@vibeinvoice.com
           </a>
           .
         </p>

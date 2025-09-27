@@ -92,7 +92,7 @@ export const useTemplateStore = create((set, get) => ({
       }
       const data = await response.json();
       const templates = data.data || [];
-      console.log("Added template: ", templates);
+      // console.log("Added template: ", templates);
       set({ userTemplates: templates });
       toast.success("Templated addes successfully");
     } catch (error) {

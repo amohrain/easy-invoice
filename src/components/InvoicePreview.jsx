@@ -11,6 +11,7 @@ import {
   Copy,
   CopyCheck,
   Edit,
+  EditIcon,
   Link2,
   Loader,
   Save,
@@ -25,6 +26,7 @@ import { templates } from "../lib/templatesData";
 import { formatCurrency } from "../lib/formatCurrency";
 import Link from "next/link";
 import { generateUPILink } from "../lib/generateUPILink";
+import { EditItemsModal } from "../components/EditItemsModal";
 
 export function InvoicePreview({ setStep, editable, preview }) {
   const getTextStyle = (section) => {
@@ -61,6 +63,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
   } = useInvoiceStore();
   const { loading, setLoading } = useLoadingStore();
   const [showModal, setShowModal] = useState(false);
+  const [showEditItemsModal, setShowEditItemsModal] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
   const { company } = useCompanyStore();
@@ -82,7 +85,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
   useEffect(() => {
     // Return if not creating new invoice
     if (currentPath !== "/invoices/create") {
-      console.log(currentPath);
       setSaved(false);
       // setInvoice(calculateInvoice(invoice));
       if (share) setShowModal(true);
@@ -129,7 +131,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
           const clientInfo = await fetchClientId(clientId);
           updatedInvoice = { ...updatedInvoice, ...clientInfo };
         }
-        console.log("updatedInvoice: ", updatedInvoice);
         const calculatedInvoice = calculateInvoice(updatedInvoice);
 
         if (company.autoAddUPI)
@@ -153,8 +154,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
     } else {
       updatedInvoice[field] = value;
     }
-
-    console.log("invoice updated: ", updatedInvoice);
 
     // Calculate new values
     setInvoice(calculateInvoice(updatedInvoice));
@@ -194,11 +193,9 @@ export function InvoicePreview({ setStep, editable, preview }) {
           ...invoice,
           template: template._id,
         };
-        console.log("saving invoice", baseInvoice);
 
         if (!invoice.clientId) {
           baseInvoice.clientId = await createClient();
-          console.log("New Client ID: ", baseInvoice.clientId);
         }
         const newInvoice = await postInvoice(baseInvoice);
 
@@ -439,7 +436,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
     setShowModal(false);
     const params = new URLSearchParams(searchParams.toString());
     params.delete("share"); // or params.delete(key) to remove
-    console.log(params);
     router.push(`?${params.toString()}`);
   };
 
@@ -470,25 +466,9 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     className={`text-xl sm:text-2xl font-semibold mb-4
                     ${getTextStyle(section.style)}`}
                   >
-                    {invoice.invoiceTitle} Preview
+                    {invoice?.invoiceTitle} Preview
                   </h2>
                   <div className="flex flex-row justify-around items-center gap-4">
-                    {preview && (
-                      <>
-                        <button
-                          onClick={() => router.refresh()}
-                          className="btn btn-ghost btn-primary rounded-full"
-                        >
-                          Retry
-                        </button>
-
-                        <Link href={"/sign-up"}>
-                          <button className="btn btn-ghost btn-primary rounded-full">
-                            Get Started
-                          </button>
-                        </Link>
-                      </>
-                    )}
                     {editable && currentPath === "/invoices/create" && (
                       <Undo2
                         className="cursor-pointer hover:text-accent"
@@ -534,6 +514,22 @@ export function InvoicePreview({ setStep, editable, preview }) {
                         <Edit />
                         Suggest
                       </button>
+                    )}
+                    {preview && (
+                      <>
+                        <button
+                          onClick={setStep}
+                          className="btn btn-outline btn-primary rounded-full"
+                        >
+                          Back
+                        </button>
+
+                        <Link href={"/sign-up"}>
+                          <button className="btn btn-primary rounded-full">
+                            Get Started
+                          </button>
+                        </Link>
+                      </>
                     )}
                   </div>
                 </div>
@@ -716,75 +712,89 @@ export function InvoicePreview({ setStep, editable, preview }) {
 
               {/* // Todo borders */}
               {section.section === "items" && (
-                <table className="w-full mt-2 border-collapse">
-                  <thead>
-                    <tr
-                      className={`${
-                        section.tableStyle.headerFillColor
-                          ? `bg-[${section.tableStyle.headerFillColor}]`
-                          : ""
-                      }`}
-                    >
-                      {section.items?.map((col) => (
-                        <th
-                          key={col.key}
-                          className={`text-${col.alignment || "left"} ${
-                            col.bold ? "font-bold" : ""
-                          } p-2`}
-                          style={{
-                            fontSize: col.size,
-                            border: section.tableStyle.border
-                              ? "1px solid #ddd"
-                              : "none",
-                          }}
-                        >
-                          {col.placeholder ||
-                            col.key.charAt(0).toUpperCase() + col.key.slice(1)}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {invoice.items?.map((item, index) => (
-                      <tr key={index}>
-                        {section.items.map((col) => (
-                          <td
+                <div>
+                  {editable && (
+                    <div className="w-full flex flex-row justify-end mt-[-24px]">
+                      <span
+                        onClick={() => setShowEditItemsModal(true)}
+                        className="flex flex-row gap-2 items-center rounded-full hover:text-accent cursor-pointer"
+                      >
+                        <EditIcon size={18} />
+                        Edit items
+                      </span>
+                    </div>
+                  )}
+                  <table className="w-full mt-2 border-collapse">
+                    <thead>
+                      <tr
+                        className={`${
+                          section.tableStyle.headerFillColor
+                            ? `bg-[${section.tableStyle.headerFillColor}]`
+                            : ""
+                        }`}
+                      >
+                        {section.items?.map((col) => (
+                          <th
                             key={col.key}
-                            className={`text-${col.alignment || "left"} font-${
-                              col.bold ? "bold" : "normal"
+                            className={`text-${col.alignment || "left"} ${
+                              col.bold ? "font-bold" : ""
                             } p-2`}
                             style={{
-                              fontSize: col.size,
+                              // fontSize: col.size,
                               border: section.tableStyle.border
                                 ? "1px solid #ddd"
                                 : "none",
                             }}
                           >
-                            <span
-                              contentEditable={editable}
-                              suppressContentEditableWarning
-                              onBlur={(e) =>
-                                editable &&
-                                handleItemChange(
-                                  index,
-                                  col.key,
-                                  e.target.innerText.trim()
-                                )
-                              }
-                              className="cursor-text"
-                            >
-                              {col.key === "total"
-                                ? typeof item[col.key] === "number"
-                                  ? item[col.key].toFixed(2)
-                                  : "-"
-                                : item[col.key] ?? "-"}
-                            </span>
-                          </td>
+                            {col.placeholder ||
+                              col.key.charAt(0).toUpperCase() +
+                                col.key.slice(1)}
+                          </th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {invoice.items?.map((item, index) => (
+                        <tr key={index} className="group">
+                          {section.items.map((col) => (
+                            <td
+                              key={col.key}
+                              className={`text-${
+                                col.alignment || "left"
+                              } font-${col.bold ? "bold" : "normal"} p-2`}
+                              style={{
+                                fontSize: col.size,
+                                border: section.tableStyle.border
+                                  ? "1px solid #ddd"
+                                  : "none",
+                              }}
+                            >
+                              <span
+                                contentEditable={editable}
+                                suppressContentEditableWarning
+                                onBlur={(e) =>
+                                  editable &&
+                                  handleItemChange(
+                                    index,
+                                    col.key,
+                                    e.target.innerText.trim()
+                                  )
+                                }
+                                className="cursor-text"
+                              >
+                                {col.key === "total"
+                                  ? typeof item[col.key] === "number"
+                                    ? item[col.key].toFixed(2)
+                                    : "-"
+                                  : item[col.key] ?? "-"}
+                              </span>
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
 
               {section.section === "totals" && (
@@ -926,16 +936,20 @@ export function InvoicePreview({ setStep, editable, preview }) {
             ? ` ${invoice.timeTaken} seconds`
             : " a few minute"}{" "}
           to create this invoice using Vibe Invoice."{" "}
-          {!editable && (
-            <a
-              href="https://www.vibeinvoice.com"
-              className="link hover:link-hover"
-            >
-              Create your own →
-            </a>
-          )}
+          {!editable ||
+            (preview && (
+              <a
+                href="https://www.vibeinvoice.com"
+                className="link hover:link-hover"
+              >
+                Create your own →
+              </a>
+            ))}
         </div>
       </div>
+      {showEditItemsModal && (
+        <EditItemsModal closeModal={() => setShowEditItemsModal(false)} />
+      )}
       {showModal && <ShareLinkModal hide={hideShareModal} />}
       {showQRModal && <InvoiceQRModal />}
       {showSuggestionModal && (

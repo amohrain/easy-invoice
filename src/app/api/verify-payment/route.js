@@ -60,7 +60,7 @@ export async function POST(req) {
   };
 
   const response = await fetch(
-    "http://www.vibeinvoice.com/api/invoice/generate-invoice",
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/invoice/generate-invoice`,
     {
       method: "POST",
       headers: {
@@ -71,13 +71,16 @@ export async function POST(req) {
     }
   );
 
+  console.log(response);
+
   const data = await response.json();
   console.log(data);
   const invoiceUrl = data.invoiceUrl;
+  const invoiceId = data.invoiceId;
 
   // Payment is valid, update Clerk metadata
   user.subscriptionPlan = plan;
-  user.invoice = invoiceUrl;
+  user.invoice = invoiceId;
   await user.save();
 
   return NextResponse.json(
