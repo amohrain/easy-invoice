@@ -7,15 +7,15 @@ export default function NavButton({ link, name, icon }) {
   return (
     <Link href={link}>
       <div
-        className={`flex justify-between gap-2 rounded-lg px-2 py-1.5 hover:bg-base-100 ${
-          isCurrentPath && "bg-base-200"
+        className={`flex w-full h-11 items-center justify-between gap-2 rounded-xl px-4 py-1.5 hover:bg-base-100/50 ${
+          isCurrentPath && "bg-primary/10"
         } transition-all duration-200`}
       >
         <div className="flex gap-2">
           <div className={`self-center ${isCurrentPath && "text-primary"}`}>
             {icon}
           </div>
-          <div>{name}</div>
+          <div className="text-lg">{name}</div>
         </div>
       </div>
     </Link>

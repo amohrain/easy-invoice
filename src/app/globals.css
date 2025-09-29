@@ -2,6 +2,7 @@
 @plugin "daisyui" {
   themes: light --default, dark, forest, abyss;
 }
+
 @layer components {
   .section-heading {
     @apply max-w-xl mx-auto;
@@ -12,6 +13,28 @@
 
   .section-description {
     @apply text-center text-2xl leading-[30px] tracking-tight;
+  }
+
+  .generate-button {
+    @apply btn bg-gradient-to-tr from-secondary via-secondary/85 to-primary rounded-full shadow-lg transition text-white border-none;
+  }
+
+  .vibe-gradient {
+    @apply bg-gradient-to-r from-primary/35 via-secondary/10 to-primary/20;
+    /* @apply bg-base-200 */
+    /* @apply bg-primary/35; */
+  }
+
+  .vibe-opacity {
+    @apply bg-base-100/60;
+  }
+
+  .gradient-text {
+    @apply tracking-tighter bg-gradient-to-b from-base-content to-primary text-transparent bg-clip-text;
+  }
+
+  .vibe-dashboard {
+    @apply p-4 flex flex-row gap-4 h-screen bg-gradient-to-r from-primary/35 via-secondary/10 to-primary/20;
   }
 }
 html {

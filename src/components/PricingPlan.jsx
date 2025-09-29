@@ -38,8 +38,8 @@ function PricingPlan({ name, mostPopular, features, amount, where, currency }) {
     <div className="flex flex-col gap-6 items-center mt-10 lg:flex-row lg:items-end lg:justify-center">
       <div
         key={name}
-        className={`p-10 rounded-3xl shadow-sm shadow-base-300 max-w-xs sm:w-xs ${
-          mostPopular ? "bg-neutral text-neutral-content" : "bg-base-100/50"
+        className={`p-10 rounded-3xl shadow-2xl max-w-xs sm:w-xs ${
+          mostPopular ? "bg-neutral/90 text-neutral-content" : "vibe-opacity"
         }`}
       >
         <div className="flex justify-between">

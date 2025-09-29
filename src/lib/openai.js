@@ -1,5 +1,4 @@
 export const handleInvoiceGenerate = async (prompt) => {
-  console.log("prmopt: ", prompt);
   const response = await fetch("/api/openAI", {
     method: "POST",
     headers: {

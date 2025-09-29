@@ -212,21 +212,21 @@ export default function ClientsPage() {
   if (loading) return <Loading />;
 
   return (
-    <div className="flex flex-row h-screen bg-base-200">
+    <div className="vibe-dashboard">
       <LeftBar />
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 mt-6">
-          <h1 className="text-2xl font-bold">Clients</h1>
+          <h1 className="gradient-text text-3xl font-bold">Clients</h1>
         </div>
 
-        <div className="bg-base-100 rounded-lg shadow p-6">
+        <div className="vibe-opacity rounded-lg shadow p-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <div className="flex flex-col sm:flex-row gap-3 w-full">
               <div className="relative flex-grow">
                 <input
                   type="text"
                   placeholder="Search clients..."
-                  className="input input-bordered w-full pl-10"
+                  className="input input-bordered bg-base-100 w-full pl-10"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />

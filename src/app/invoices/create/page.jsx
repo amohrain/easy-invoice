@@ -13,28 +13,25 @@ import { useLoadingStore } from "@/store/useLoading";
 // import { calculateInvoice } from "../../../lib/calculate";
 import { useUserStore } from "../../../store/useUser";
 import InvoiceSkeleton from "../../../components/InvoiceSkeleton";
+import { Sparkles } from "lucide-react";
 
 function Dashboard() {
   const [step, setStep] = useState(1);
   // const { step, setStep } = useStepsStore();
   const [text, setText] = useState("");
-  const [showControlsPopup, setShowControlsPopup] = useState(false);
   const { template, setTemplate, userTemplates, getUsersTemplates } =
     useTemplateStore();
   const { loading, setLoading } = useLoadingStore();
   const { setInvoice, getInvoiceId, clearSuggestions } = useInvoiceStore();
   const { getCompanies } = useCompanyStore();
-
   const { user, getCurrentUser } = useUserStore();
 
   const now = new Date();
   const currentMonth = now.toISOString().slice(0, 7); // 'YYYY-MM'
   const invoiceCount =
-    true || user?.invoiceCountMonth === currentMonth
-      ? user?.invoiceCount
-      : 0 || 0;
+    user?.invoiceCountMonth === currentMonth ? user?.invoiceCount : 0 || 0;
 
-  const limitExceeded = user?.subscriptionPlan === "Free" && invoiceCount >= 1;
+  const limitExceeded = user?.subscriptionPlan === "Free" && invoiceCount > 10;
 
   const [startTime, setStartTime] = useState(0);
 
@@ -61,7 +58,6 @@ function Dashboard() {
   }, []);
 
   const handleGenerate = async () => {
-    console.log("Limit exceeded: ", limitExceeded);
     if (limitExceeded) {
       alert("Monthly invoice limit reached. Upgrade your plan to continue.");
       return;
@@ -97,10 +93,14 @@ function Dashboard() {
   // }
 
   return (
-    <div className="flex w-full flex-row h-screen">
+    <div className="vibe-dashboard">
       <LeftBar className="" />
-      <div className="flex flex-col w-full h-full bg-base-100 justify-center">
-        <div className="w-full h-full self-center flex flex-row gap-8 overflow-y-auto">
+      <div
+        className={`flex vibe-opacity  overflow-y-auto rounded-xl flex-col w-full h-full shadow-2xl justify-center ${
+          step == 2 && "max-w-5xl"
+        }`}
+      >
+        <div className="w-full h-full self-center flex flex-row gap-8">
           {step === 2 &&
             (loading ? (
               <InvoiceSkeleton />
@@ -110,10 +110,15 @@ function Dashboard() {
 
           {step == 1 && (
             <div className="flex px-8 w-full items-center justify-center flex-col gap-4">
-              <h1 className="text-center font-bold text-4xl space-x-10">
-                {step == 1 ? "Enter your prompt" : "Your invoice is ready!"}
+              <h1 className="gradient-text text-4xl space-x-10 font-bold">
+                Enter your prompt
               </h1>
-              <div className="p-4 flex flex-col border w-full max-w-3xl border-base-content/10 shadow-primary/50 shadow-2xl rounded-2xl">
+              <div
+                style={{
+                  boxShadow: "0 0 100px 1px rgb(65, 42, 213, 0.2)", // x y blur spread color
+                }}
+                className="p-6 flex flex-col border w-full max-w-3xl border-primary/20 shadow-secondary rounded-2xl"
+              >
                 <TypingPlaceholder text={text} setText={setText} />
                 <div className="flex flex-row">
                   <div className="flex flex-row w-full gap-2">
@@ -123,8 +128,9 @@ function Dashboard() {
                     onClick={() => {
                       handleGenerate();
                     }}
-                    className="btn btn-primary rounded-3xl"
+                    className="generate-button hover:scale-105"
                   >
+                    <Sparkles size={18} />
                     Generate
                   </button>
                 </div>

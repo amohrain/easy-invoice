@@ -39,7 +39,7 @@ function NavigationBar() {
   };
 
   return (
-    <nav className="bg-gradient-to-r sm:px-12 from-primary/35 via-base-100 to-primary/10 px-6 py-4">
+    <nav className="bg-gradient-to-r sm:px-12 vibe-gradient px-6 py-4">
       {isMenuOpen && <MobileMenu />}
       <div className="max-w-7xl px-4 mx-auto flex items-center justify-between">
         {/* Logo */}
@@ -55,20 +55,22 @@ function NavigationBar() {
           </div>
 
           <img className="size-6 self-center" src={"/Logo.png"} />
-          <div className="text-2xl font-bold">Vibe Invoice</div>
+          <a href="/">
+            <div className="gradient-text text-3xl font-bold">Vibe Invoice</div>
+          </a>
         </div>
         {/* Navigation Links (hidden on mobile) */}
-        <div className="hidden lg:flex gap-6 text-base font-medium">
-          <a href="#how-it-works" className="hover:text-primary">
+        <div className="hidden lg:flex gap-6 gradient-text font-medium">
+          <a href="/#how-it-works" className="hover:text-primary/50">
             How it works
           </a>
-          <a href="/playground" className="hover:text-primary">
+          <a href="/playground" className="hover:text-primary/50">
             Demo
           </a>
-          <a href="#pricing" className="hover:text-primary">
+          <a href="/#pricing" className="hover:text-primary/50">
             Pricing
           </a>
-          <a href="#faq" className="hover:text-primary">
+          <a href="/#faq" className="hover:text-primary/50">
             FAQs
           </a>
         </div>
@@ -76,10 +78,12 @@ function NavigationBar() {
         {/* Call to Action */}
         <div className="hidden md:flex gap-2">
           <Link href={"/sign-in"}>
-            <button className="btn btn-outline rounded-full">Login</button>
+            <button className="btn btn-outline btn-primary rounded-full">
+              Login
+            </button>
           </Link>
           <Link href={"/sign-up"}>
-            <button className="btn btn-primary rounded-full">
+            <button className="generate-button rounded-full">
               Get Started
             </button>
           </Link>

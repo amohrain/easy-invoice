@@ -235,7 +235,7 @@ function InvoiceTable() {
           {paginatedData.map((invoice, index) => (
             <tr
               key={index}
-              className={`hover:bg-base-200 h-24 ${
+              className={`hover:bg-base-200/50 rounded-2xl h-24 ${
                 items.includes(index) && "bg-base-100"
               } cursor-pointer`}
               onClick={(e) => {

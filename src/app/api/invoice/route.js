@@ -46,14 +46,14 @@ export async function POST(request) {
     const now = new Date();
     const currentMonth = now.toISOString().slice(0, 7); // 'YYYY-MM'
 
-    if (user.invoiceCountMonth === currentMonth) {
-      user.invoiceCount += 1;
-    } else {
-      user.invoiceCount = 1; // reset count
-      user.invoiceCountMonth = currentMonth; // update to current month
-    }
+    // if (user.invoiceCountMonth === currentMonth) {
+    //   user.invoiceCount += 1;
+    // } else {
+    //   user.invoiceCount = 1; // reset count
+    //   user.invoiceCountMonth = currentMonth; // update to current month
+    // }
 
-    await user.save();
+    // await user.save();
 
     // Return the created invoice
     return NextResponse.json(

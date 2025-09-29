@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useCompanyStore } from "../store/useCompany";
 import { usePathname, useRouter } from "next/navigation";
-import { Copy, CopyCheck, ExternalLink, Trash2 } from "lucide-react";
+import { Copy, CopyCheck, ExternalLink, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { Loading } from "./Loading";
+import { useUserStore } from "../store/useUser";
 
 function CompanyForm() {
   const currentPath = usePathname();
@@ -23,6 +24,19 @@ function CompanyForm() {
   } = useCompanyStore();
   const [copied, setCopied] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [isPro, setIsPro] = useState(false);
+  const { getCurrentUser } = useUserStore();
+
+  useEffect(() => {
+    async function fetchData() {
+      const user = await getCurrentUser();
+      if (user.subscriptionPlan === "Pro") {
+        setIsPro(true);
+      }
+    }
+    fetchData();
+  }, []);
 
   async function uploadLogo() {
     if (!logo) return "";
@@ -189,13 +203,13 @@ function CompanyForm() {
     }
   };
 
-  if (loading) {
-    return <Loading />;
-  }
+  // if (loading) {
+  //   return <Loading />;
+  // }
 
   return (
-    <div className="">
-      <fieldset className="fieldset bg-base-100 shadow p-4 rounded-lg">
+    <>
+      <fieldset className="fieldset p-4 rounded-lg">
         {/* <legend className="text-lg font-medium">Company Information</legend> */}
 
         {/* Two-column layout for form fields */}
@@ -223,7 +237,7 @@ function CompanyForm() {
               <input
                 type="file"
                 accept="image/*"
-                className="file-input file-input-border w-full"
+                className="file-input file-input-border bg-base-100/50 w-full"
                 onChange={(e) => setLogo(e.target.files[0])}
               />
             </div>
@@ -231,7 +245,7 @@ function CompanyForm() {
               <label className="fieldset-label block mb-2">Company Name</label>
               <input
                 type="text"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full bg-base-100/50"
                 placeholder="Easy Invoice"
                 value={companyData?.businessName || ""}
                 onChange={(e) =>
@@ -246,7 +260,7 @@ function CompanyForm() {
               <label className="fieldset-label block mb-2">Phone Number</label>
               <input
                 type="tel"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full bg-base-100/50"
                 placeholder="(555) 123-4567"
                 value={companyData?.businessPhone || ""}
                 onChange={(e) =>
@@ -261,8 +275,8 @@ function CompanyForm() {
               <label className="fieldset-label block mb-2">Email</label>
               <input
                 type="email"
-                className="input input-bordered w-full"
-                placeholder="contact@easyinvoice.com"
+                className="input input-bordered w-full bg-base-100/50"
+                placeholder="contact@vibeinvoice.com"
                 value={companyData?.businessEmail || ""}
                 onChange={(e) =>
                   setCompanyData({
@@ -278,7 +292,7 @@ function CompanyForm() {
             <div className="mb-4">
               <label className="fieldset-label block mb-2">Address</label>
               <textarea
-                className="textarea textarea-bordered w-full h-22 resize-none"
+                className="textarea textarea-bordered w-full h-22 resize-none bg-base-100/50"
                 placeholder="123 Business St, Suite 101, City, State, 12345"
                 value={companyData?.businessAddress || ""}
                 onChange={(e) =>
@@ -295,7 +309,7 @@ function CompanyForm() {
               </label>
               <input
                 type="text"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full bg-base-100/50"
                 placeholder="123-45-6789"
                 value={companyData?.businessTaxId || ""}
                 onChange={(e) =>
@@ -308,7 +322,7 @@ function CompanyForm() {
             <div className="mb-4">
               <label className="fieldset-label block mb-2">Currency</label>
               <select
-                className="select select-bordered w-full"
+                className="select select-bordered w-full bg-base-100/50"
                 value={companyData?.currency || "USD"}
                 onChange={(e) =>
                   setCompanyData({
@@ -332,7 +346,7 @@ function CompanyForm() {
               </label>
               <input
                 type="text"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full bg-base-100/50"
                 placeholder="Please scan the QR code to pay"
                 value={companyData?.qrText || ""}
                 onChange={(e) =>
@@ -351,7 +365,7 @@ function CompanyForm() {
                 Payment Instructions
               </label>
               <textarea
-                className="textarea textarea-bordered w-full h-22 resize-none"
+                className="textarea textarea-bordered w-full h-22 resize-none bg-base-100/50"
                 placeholder="Please pay before the due date"
                 value={companyData?.paymentInstructions || ""}
                 onChange={(e) =>
@@ -364,7 +378,7 @@ function CompanyForm() {
             <div className="mb-4">
               <label className="fieldset-label block mb-2">Notes</label>
               <textarea
-                className="textarea textarea-bordered w-full h-30 resize-none"
+                className="textarea textarea-bordered w-full h-30 resize-none bg-base-100/50"
                 placeholder="Thank you for the business!"
                 value={companyData?.notes || ""}
                 onChange={(e) =>
@@ -397,7 +411,7 @@ function CompanyForm() {
                 </div>
                 <input
                   type="url"
-                  className="input input-bordered w-full"
+                  className="input input-bordered w-full bg-base-100/50"
                   placeholder="abc@upi"
                   value={companyData?.upiId || ""}
                   onChange={(e) =>
@@ -411,21 +425,36 @@ function CompanyForm() {
           </div>
         </div>
         <div className="flex items-center justify-between">
-          {currentPath.includes("/company") && (
-            <button
-              className="btn self-center btn-primary w-full md:w-fit"
-              onClick={handleSubmit}
-            >
-              {currentPath === "/company"
-                ? "Update Company Information"
-                : "Create Company"}
-            </button>
-          )}
+          <div className="flex gap-2">
+            <Link href="/company/create">
+              {!isPro && (
+                <button className="btn rounded-full">
+                  <Plus />
+                  Create new
+                </button>
+              )}
+            </Link>
+            {currentPath.includes("/company") && (
+              <button
+                // className="btn self-center btn-primary rounded-full"
+                className="generate-button"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading && (
+                  <span className="loading loading-spinner loading-sm"></span>
+                )}
+                {currentPath === "/company"
+                  ? "Update Company Information"
+                  : "Create Company"}
+              </button>
+            )}
+          </div>
 
           {currentPath === "/company" && (
-            <div className="flexitems-center">
+            <div className="flex items-center">
               {company?.apiKey ? (
-                <div className="flex bg-base-200 p-4 rounded-2xl gap-2">
+                <div className="flex bg-base-100/50 p-4 rounded-2xl gap-2">
                   <span className="text-sm self-center mr-2">
                     API Key: {company.apiKey}
                   </span>
@@ -457,7 +486,7 @@ function CompanyForm() {
         </div>
       </fieldset>
       {showDeleteModal && <DeleteAPIKeyModal />}
-    </div>
+    </>
   );
 }
 

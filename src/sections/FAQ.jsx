@@ -74,14 +74,14 @@ function FAQ() {
   return (
     <section
       id="faq"
-      className="bg-gradient-to-b from-base-200 to-base-300 w-full"
+      className="bg-gradient-to-b from-base-200/0 to-base-300 w-full"
     >
       <div className="container flex flex-col md:flex-row items-start justify-between gap-12 py-16 px-8">
         <div className="section-heading flex flex-col items-center">
           <div className="badge badge-primary">FAQ</div>
           <h2 className="section-title">Frequently Asked Questions</h2>
         </div>
-        <div className="join text-lg join-vertical  border-base-300 rounded-2xl overflow-hidden shadow-lg">
+        <div className="join vibe-opacity text-lg join-vertical rounded-2xl overflow-hidden shadow-lg">
           {faq.map(({ question, answer }, index) => (
             <div
               key={index}

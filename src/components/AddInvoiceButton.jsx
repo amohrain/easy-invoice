@@ -22,7 +22,7 @@ function AddInvoiceButton() {
   return (
     <div className="fixed right-5 bottom-5">
       <Link href={"/invoices/create"}>
-        <button className="btn btn-circle btn-primary">
+        <button className="generate-button btn-circle">
           <Plus />
         </button>
       </Link>

@@ -3,7 +3,7 @@ export default function Page() {
   return (
     <>
       <div className="h-[calc(100vh-280px)] py-12 px-24 mx-auto">
-        <h1 className="text-xl text-center font-bold mb-4">Contact me</h1>
+        <h1 className="text-xl text-center font-bold mb-4">Contact</h1>
 
         <p className="text-lg mb-4">
           <span className="font-semibold">Email: </span>{" "}

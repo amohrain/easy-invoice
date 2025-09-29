@@ -19,11 +19,11 @@ function page() {
   }, []);
 
   return (
-    <div className="flex w-full flex-row h-screen">
+    <div className="vibe-dashboard">
       <LeftBar className="" />
-      <div className="flex flex-col w-full h-screen bg-base-100 overflow-y-auto p-12">
+      <div className="flex flex-col w-full rounded-xl overflow-y-auto pt-12">
         <div className="flex flex-col items-center justify-center gap-4">
-          <h1 className="text-3xl text-center font-semibold">
+          <h1 className="gradient-text text-4xl text-center font-semibold">
             One-time payment, no commitments
           </h1>
           <Plans where="billing" />

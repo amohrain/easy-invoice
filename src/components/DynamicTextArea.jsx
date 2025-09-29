@@ -87,13 +87,42 @@ export const DynamicTextarea = () => {
     }, 40);
   };
 
+  // useEffect(() => {
+  //   if (isVisible && text !== "") setPlaceholder("");
+  //   if (isVisible && text === "") {
+  //     setTimeout(() => {
+  //       startTyping();
+  //     }, timeToStart);
+  //   }
+  // }, [isVisible, text]);
+
   useEffect(() => {
-    if (isVisible && text !== "") setPlaceholder("");
-    if (isVisible && text === "") {
+    if (!isVisible) return;
+
+    const rotatePlaceholder = () => {
+      const nextText =
+        placeholders[Math.floor(Math.random() * placeholders.length)];
+      setPlaceholder(""); // clear placeholder first
       setTimeout(() => {
-        startTyping();
-      }, timeToStart);
-    }
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i < nextText.length) {
+            setPlaceholder(nextText.substring(0, i + 1));
+            i++;
+          } else {
+            clearInterval(interval);
+          }
+        }, 40);
+      }, 2000); // 2-second pause before typing starts
+    };
+
+    rotatePlaceholder(); // start immediately
+
+    const placeholderInterval = setInterval(() => {
+      if (text === "") rotatePlaceholder();
+    }, 7000);
+
+    return () => clearInterval(placeholderInterval);
   }, [isVisible, text]);
 
   // Mention handling
@@ -228,16 +257,18 @@ export const DynamicTextarea = () => {
 
   const PreviewModal = () => {
     return (
-      <div className="fixed inset-0 bg-base-100 flex flex-col items-center justify-center z-50 overflow-y-auto">
-        {loading ? (
-          <InvoiceSkeleton />
-        ) : (
-          <InvoicePreview
-            setStep={() => setStep(1)}
-            preview={true}
-            editable={true}
-          />
-        )}
+      <div className="fixed my-4 vibe-gradient inset-0 bg-base-100 flex flex-col items-center justify-center z-50">
+        <div className="w-full max-w-5xl rounded-xl h-full overflow-y-auto">
+          {loading ? (
+            <InvoiceSkeleton />
+          ) : (
+            <InvoicePreview
+              setStep={() => setStep(1)}
+              preview={true}
+              editable={true}
+            />
+          )}
+        </div>
       </div>
     );
   };
@@ -248,7 +279,7 @@ export const DynamicTextarea = () => {
 
   return (
     <div
-      className="flex w-full max-w-2xl mx-auto p-4 rounded-2xl h-48 shadow-2xl shadow-primary/40 
+      className="flex w-full max-w-2xl mx-auto py-4 px-6 rounded-2xl h-48 shadow-2xl shadow-secondary/20 
         bg-base-100/10 backdrop-blur-sm border border-primary/20 
         animate-pulse-soft"
     >

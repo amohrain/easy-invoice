@@ -77,18 +77,15 @@ function Company() {
   }
 
   return (
-    <div className="flex h-screen ">
+    <div className="vibe-dashboard">
       <LeftBar />
-      <div className="flex w-full flex-col p-4 gap-6 bg-base-200 overflow-y-auto">
+      <div className="flex w-full flex-col overflow-y-auto">
         {/* Main content for the Company page */}
-        <div className="">
-          <h1 className="text-2xl font-bold">Create New Company</h1>
-          <p className="mt-2"></p>
-        </div>
+        <h1 className="gradient-text text-3xl font-bold py-6">
+          Create New Company
+        </h1>
 
-        <div className="px-4">
-          <CompanyForm />
-        </div>
+        <CompanyForm />
       </div>
     </div>
   );

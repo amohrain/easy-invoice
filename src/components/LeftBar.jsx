@@ -13,9 +13,15 @@ import {
 import { PiInvoice } from "react-icons/pi";
 import { BsBuilding } from "react-icons/bs";
 import {
+  Building,
+  House,
   PanelLeftCloseIcon,
   PanelLeftOpenIcon,
   PanelsTopLeftIcon,
+  ReceiptText,
+  SquarePen,
+  Users,
+  Wallet,
 } from "lucide-react";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { useCompanyStore } from "@/store/useCompany";
@@ -52,66 +58,68 @@ function LeftBar() {
     <>
       <Menu />
       <div
-        className={`hidden sm:flex  flex-col justify-between h-full min-h-screen shadow-lg transition-all duration-300 bg-base-300 py-6 ${
-          collapsed ? "w-16" : "w-xs"
+        className={`hidden sm:flex max-w-[240px] rounded-xl flex-col justify-between shadow-lg transition-all duration-300 vibe-opacity py-6 ${
+          collapsed ? "w-16" : "w-full"
         }`}
       >
         {/* Top section */}
         <div className="flex flex-col  px-4">
           {/* Logo */}
 
-          <div className="self-center px-auto mb-4">
-            <a href="/dashboard" className="text-2xl font-bold">
+          <div className="ml-2 mb-4">
+            <a href="/dashboard" className="font-bold">
               <div className="flex items-center gap-2">
                 <img className="size-6 self-center" src={"/Logo.png"} />
-                {!collapsed && <span>Vibe Invoice</span>}
+                {!collapsed && (
+                  <span className="text-center border text-3xl font-bold gradient-text">
+                    Vibe Invoice
+                  </span>
+                )}
               </div>
             </a>
           </div>
 
-          <div className="w-full h-[2px] bg-neutral-content mb-1.5" />
+          {/* <div className="w-full h-[2px] bg-neutral-content mb-1.5" /> */}
 
           {/* Navigation */}
           <div className="flex flex-col gap-1">
-            <div className="flex justify-between">
-              <NavButton
-                link="/dashboard"
-                name={!collapsed && "Dashboard"}
-                icon={<BiHome />}
-              />
-              {!collapsed && (
+            <NavButton
+              link="/dashboard"
+              name={!collapsed && "Dashboard"}
+              icon={<House size={22} />}
+            />
+            {/* {!collapsed && (
                 <button
                   className="btn btn-circle btn-ghost btn-sm self-center p-1 m-[-4px] rounded-full hover:text-primary hover:bg-base-200 cursor-pointer"
                   onClick={() => setCollapsed((prev) => !prev)}
                 >
                   <PanelLeftCloseIcon size={14} />
                 </button>
-              )}
-            </div>
+              )} */}
             <NavButton
               link="/invoices"
               name={!collapsed && "Invoices"}
-              icon={<BiDollar />}
+              icon={<ReceiptText size={22} />}
             />
             <NavButton
               link="/company"
               name={!collapsed && "Company"}
-              icon={<BsBuilding />}
+              icon={<Building size={22} />}
             />
             <NavButton
               link="/clients"
               name={!collapsed && "Clients"}
-              icon={<FaPeopleGroup />}
+              icon={<Users size={22} />}
             />
             <NavButton
               link="/billing"
               name={!collapsed && "Billing"}
-              icon={<PiInvoice />}
+              icon={<Wallet size={22} />}
             />
             <NavButton
               link="/suggestions"
               name={!collapsed && "Review"}
-              icon={<BiEdit />}
+              icon={<SquarePen size={22} />}
             />
           </div>
         </div>
@@ -126,9 +134,9 @@ function LeftBar() {
         </div>
 
         {/* Bottom section */}
-        <div className="px-4">
+        <div className="">
           {!collapsed && (
-            <div className="flex flex-row-reverse justify-center">
+            <div className="flex flex-row w-full justify-center items-center">
               <select
                 onChange={(e) => handleCompanyChange(e.target.value)}
                 value={company?._id}

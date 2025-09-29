@@ -57,14 +57,14 @@ export default function InvoicingDashboard() {
   };
 
   return (
-    <div className="flex flex-row h-screen bg-base-200">
+    <div className="vibe-dashboard">
       <LeftBar />
-      <div className="container overflow-y-auto mx-auto p-4">
-        <h1 className="text-2xl font-bold my-6">Dashboard</h1>
+      <div className="rounded-xl container overflow-y-auto">
+        <h1 className="gradient-text text-3xl font-bold my-6">Dashboard</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((stat, index) => (
-            <div key={index} className="card bg-base-100 shadow">
+            <div key={index} className="card vibe-opacity shadow">
               <div className="card-body p-5">
                 <div className="flex justify-between items-center">
                   <div>
@@ -73,7 +73,7 @@ export default function InvoicingDashboard() {
                     </h2>
                     <p className="text-2xl font-bold mt-1">{stat.value}</p>
                   </div>
-                  <div className={`rounded-full p-3 bg-base-200`}>
+                  <div className={`rounded-full p-3 bg-base-100/50`}>
                     {stat.icon}
                   </div>
                 </div>
@@ -97,16 +97,16 @@ export default function InvoicingDashboard() {
           ))}
         </div>
 
-        <div className="flex w-full rounded-xl bg-base-100 shadow p-4 gap-4 mb-8">
+        <div className="flex w-full rounded-xl vibe-opacity shadow p-4 gap-4 mb-8">
           <InvoiceTable />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="card bg-base-100 shadow col-span-1 lg:col-span-2">
+          <div className="card vibe-opacity shadow col-span-1 lg:col-span-2">
             <DailyRevenueChart />
           </div>
 
-          <div className="card bg-base-100 shadow">
+          <div className="card vibe-opacity shadow">
             <div className="card-body">
               <h2 className="card-title">Top Clients</h2>
               {isLoading ? (

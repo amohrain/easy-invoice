@@ -126,9 +126,12 @@ export function InvoicePreview({ setStep, editable, preview }) {
           qrText,
         };
 
+        console.log("Client Id: ", clientId);
+
         // Fetch client details based on clientId provided
         if (clientId) {
           const clientInfo = await fetchClientId(clientId);
+          console.log("Fetched client info based on clientId: ", clientInfo);
           updatedInvoice = { ...updatedInvoice, ...clientInfo };
         }
         const calculatedInvoice = calculateInvoice(updatedInvoice);
@@ -440,9 +443,9 @@ export function InvoicePreview({ setStep, editable, preview }) {
   };
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <div className="p-6 w-full max-w-5xl self-center">
-        <div className="flex flex-col w-full border shadow rounded-lg p-6 h-fit">
+    <div className="flex flex-col w-full max-w-5xl h-full">
+      <div className="w-full ">
+        <div className="flex flex-col w-full vibe-opacity shadow rounded-lg p-6 h-fit">
           {template.structure.map((section) => (
             <div
               key={section.section}
@@ -463,18 +466,18 @@ export function InvoicePreview({ setStep, editable, preview }) {
               {section.section === "title" && (
                 <div className="flex w-full justify-between">
                   <h2
-                    className={`text-xl sm:text-2xl font-semibold mb-4
+                    className={`gradient-text text-xl sm:text-3xl font-semibold mb-4
                     ${getTextStyle(section.style)}`}
                   >
                     {invoice?.invoiceTitle} Preview
                   </h2>
                   <div className="flex flex-row justify-around items-center gap-4">
-                    {editable && currentPath === "/invoices/create" && (
+                    {/* {editable && currentPath === "/invoices/create" && (
                       <Undo2
                         className="cursor-pointer hover:text-accent"
                         onClick={handleBack}
                       />
-                    )}
+                    )} */}
 
                     {editable && currentPath !== "/playground" && (
                       <Save
@@ -929,22 +932,22 @@ export function InvoicePreview({ setStep, editable, preview }) {
               )}
             </div>
           ))}
-        </div>
-        <div className="text-center">
-          “It took
-          {invoice?.timeTaken && invoice.timeTaken < 60
-            ? ` ${invoice.timeTaken} seconds`
-            : " a few minute"}{" "}
-          to create this invoice using Vibe Invoice."{" "}
-          {!editable ||
-            (preview && (
-              <a
-                href="https://www.vibeinvoice.com"
-                className="link hover:link-hover"
-              >
-                Create your own →
-              </a>
-            ))}
+          <div className="text-center">
+            “It took
+            {invoice?.timeTaken && invoice.timeTaken < 60
+              ? ` ${invoice.timeTaken} seconds`
+              : " a few minute"}{" "}
+            to create this invoice using Vibe Invoice."{" "}
+            {!editable ||
+              (preview && (
+                <a
+                  href="https://www.vibeinvoice.com"
+                  className="link hover:link-hover"
+                >
+                  Create your own →
+                </a>
+              ))}
+          </div>
         </div>
       </div>
       {showEditItemsModal && (

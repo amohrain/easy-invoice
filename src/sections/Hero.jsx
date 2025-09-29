@@ -23,7 +23,7 @@ function Hero() {
   return (
     <section
       ref={heroRef}
-      className="hero min-h-screen py-12 sm:px-4  bg-gradient-to-r from-primary/35 via-base-100 to-primary/10 relative"
+      className="hero min-h-screen py-12 sm:px-4 vibe-gradient relative"
     >
       <div className="hero-content flex-col gap-20 lg:flex-row-reverse">
         {/* <img src="/Tested.png" className="w-fit rounded" /> */}

@@ -3,7 +3,7 @@ import { SignIn } from "@clerk/nextjs";
 
 function SignInPage() {
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div className="flex h-screen items-center justify-center vibe-gradient">
       <SignIn
         routing="hash"
         fallbackRedirectUrl="/post-auth"

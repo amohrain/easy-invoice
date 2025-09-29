@@ -32,8 +32,10 @@ export default function PostAuthRedirect() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <p className="text-3xl">We are getting your dashboard ready.</p>
+    <div className="flex flex-col items-center justify-center min-h-screen vibe-gradient">
+      <p className="gradient-text text-4xl font-semibold">
+        We are getting your dashboard ready.
+      </p>
     </div>
   );
 }

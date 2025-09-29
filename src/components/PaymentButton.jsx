@@ -110,10 +110,10 @@ export default function PaymentButton({
           handlePayment();
         }
       }}
-      disabled={(planAmount == 0 && page !== "home") || name === currentPlan}
+      disabled={planAmount == 0 && page !== "home"}
       className={`btn w-full rounded-full ${
-        mostPopular ? "bg-white text-black" : "btn-primary "
-      }`}
+        mostPopular ? "bg-white text-black" : "btn-primary"
+      } ${currentPlan === name && "cursor-not-allowed"}`}
     >
       {currentPlan === name ? "Current Plan" : `Continue with ${name}`}
     </button>

@@ -9,24 +9,25 @@ import Pricing from "../sections/Pricing";
 import NavigationBar from "../sections/NavigationBar";
 import FAQ from "../sections/FAQ";
 import Video from "../sections/Video";
+import HowItWorksCards from "../sections/HowItWorksCards";
 
 export default function Home() {
   return (
-    <>
+    <div className="vibe-gradient">
       <SEO
         title="Vibe Invoice - Create and share invoices in seconds"
         description="Create stunning invoices in seconds. Type a prompt to generate invoice, share with customers and get paid faster!"
-        image="https://vibeinvoice.com/og-image.jpg"
+        image="https://vibeinvoice.com/og-image.png"
         url="https://vibeinvoice.com"
       />
       <NavigationBar />
       <Hero />
       <Video />
-      <HowItWorks />
+      <HowItWorksCards />
       <ProductShowcase />
       <Pricing />
       <FAQ />
       <Footer />
-    </>
+    </div>
   );
 }

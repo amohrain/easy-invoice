@@ -175,7 +175,7 @@ const TypingPlaceholder = ({ text, setText, home = false }) => {
         value={text}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        className="textarea text-[18px] textarea-ghost w-full focus:outline-none resize-none overflow-y-auto min-h-[200px] max-h-[300px]"
+        className="text-[18px] w-full focus:outline-none resize-none overflow-y-auto min-h-[200px] max-h-[300px]"
         placeholder={placeholder}
         rows={1}
         onInput={(e) => {
@@ -202,7 +202,7 @@ const TypingPlaceholder = ({ text, setText, home = false }) => {
                   : "bg-base-100 border border-base-100"
               }`}
             >
-              <div className="bg-neutralrounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+              <div className="bg-neutral rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
                 {getInitials(client.clientName)}
               </div>
               <div>

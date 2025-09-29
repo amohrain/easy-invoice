@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
 import Demo from "../../sections/Demo";
-import Footer from "../../sections/Footer";
+import NavigationBar from "../../sections/NavigationBar";
 
 function page() {
   return (
     <div>
+      <NavigationBar />
       <Demo />
-      <Footer />
     </div>
   );
 }

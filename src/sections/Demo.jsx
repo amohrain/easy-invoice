@@ -14,6 +14,7 @@ import { calculateInvoice } from "../lib/calculate";
 import { Loading } from "../components/Loading";
 import { samplePrompts } from "../constants/samplePrompts";
 import InvoiceSkeleton from "../components/InvoiceSkeleton";
+import { Sparkles } from "lucide-react";
 
 function Demo() {
   const { setTemplate } = useTemplateStore();
@@ -27,8 +28,6 @@ function Demo() {
     setTemplate(templates[0]);
     const client = setSampleClients();
     setText(`@${client.clientName}
-${client.clientEmail}
-
 ${samplePrompts[Math.floor(Math.random() * samplePrompts.length)]}`);
   }, []);
 
@@ -86,13 +85,13 @@ ${samplePrompts[Math.floor(Math.random() * samplePrompts.length)]}`);
   return (
     <div
       id="interactive-demo"
-      className="min-h-screen flex flex-col items-center justify-center gap-8 px-4 sm:px-4 sm:py-12"
+      className="min-h-screen flex flex-col items-center justify-center gap-8 px-4 sm:px-4 sm:py-12 vibe-gradient"
     >
       <div className="section-heading">
         <h2 className="section-title">Playground and interactive demo</h2>
         <p className="section-description mt-5">Try it yourself below</p>
       </div>
-      <div className="w-full max-w-4xl p-2 sm:p-4 flex flex-col justify-center border border-gray-100 shadow-base shadow-2xl rounded-2xl">
+      <div className="w-full max-w-4xl p-4 sm:p-6 flex flex-col justify-center border border-primary/10 shadow-primary/50 shadow-2xl rounded-2xl">
         <TypingPlaceholder isUsingAI={true} text={text} setText={setText} />
         <div className="flex flex-row">
           <div className="flex flex-row w-full gap-2"></div>
@@ -110,8 +109,9 @@ ${samplePrompts[Math.floor(Math.random() * samplePrompts.length)]}`);
             onClick={() => {
               handleGenerate();
             }}
-            className="btn btn-primary rounded-3xl"
+            className="generate-button btn-lg"
           >
+            <Sparkles size={18} />
             Generate
           </button>
         </div>

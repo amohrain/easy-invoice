@@ -36,20 +36,20 @@ function Suggestions() {
     await deleteSuggestion(id);
   };
 
-  if (!suggestions) return <Loading />;
+  // if (!suggestions) return <Loading />;
 
   return (
-    <div className="flex flex-row h-screen bg-base-200">
+    <div className="vibe-dashboard">
       <LeftBar />
-      <div className="container overflow-y-auto mx-auto p-4">
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold">Sugggestions</h1>
+      <div className="container overflow-y-auto mx-auto rounded-xl">
+        <div className="my-6">
+          <h1 className="gradient-text text-3xl font-bold">Suggestions</h1>
           <p className="mt-2">
             This is the suggestions page. Here you can manage client
             suggestions.
           </p>
         </div>
-        <div className="flex w-full rounded-xl bg-base-100 shadow p-4 gap-4 overflow-x-auto">
+        <div className="flex w-full rounded-xl vibe-opacity shadow p-4 gap-4 overflow-x-auto">
           <table className="table w-full">
             <thead className="italic uppercase">
               <tr>
@@ -62,7 +62,7 @@ function Suggestions() {
               </tr>
             </thead>
             <tbody>
-              {suggestions.map((suggestion, index) => (
+              {suggestions?.map((suggestion, index) => (
                 <tr key={suggestion._id}>
                   <th className="italic">{index + 1}</th>
                   <th>{suggestion.clientName}</th>

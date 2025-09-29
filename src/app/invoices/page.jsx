@@ -5,14 +5,14 @@ import InvoiceTable from "@/components/InvoiceTable";
 
 function Invoices() {
   return (
-    <div className="flex w-full h-screen">
+    <div className="vibe-dashboard">
       <LeftBar />
-      <div className="flex flex-col w-full p-4 gap-4 bg-base-200">
+      <div className="flex flex-col w-full gap-4 overflow-y-auto rounded-xl">
         <div className="">
-          <h1 className="text-2xl font-bold">Invoices</h1>
-          <p className="mt-2">Manage your invoices here.</p>
+          <h1 className="gradient-text text-3xl font-bold">Invoices</h1>
+          <p className="mt-2">Manage all your invoices here.</p>
         </div>
-        <div className="flex w-full rounded-xl bg-base-100 shadow p-4 gap-4 overflow-y-auto">
+        <div className="flex w-full rounded-xl vibe-opacity shadow p-4 gap-4">
           <InvoiceTable />
         </div>
       </div>

@@ -1,4 +1,3 @@
-import { ExternalLink } from "lucide-react";
 import React, { useState } from "react";
 
 function HowItWorks() {
@@ -17,8 +16,8 @@ function HowItWorks() {
         <p className="section-description italic mt-5">in three simple steps</p>
       </div>
       <div className="flex md:flex-row flex-col items-center justify-center w-full gap-4">
-        <div className="join text-lg join-vertical rounded-2xl overflow-hidden shadow-lg max-w-lg">
-          <div className="rounded-t-2xl collapse collapse-arrow join-item border-base-300 border">
+        <div className="join text-lg join-vertical vibe-opacity rounded-xl overflow-hidden shadow-lg max-w-lg">
+          <div className="rounded-t-2xl collapse collapse-arrow join-item">
             <input
               type="radio"
               className="peer"

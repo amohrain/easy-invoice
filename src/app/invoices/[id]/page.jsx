@@ -22,25 +22,15 @@ function InvoicePage() {
     fetchData();
   }, []);
 
-  // if (!invoice || !template) {
-  //   return (
-  //     <div className="flex w-full h-screen items-center justify-center">
-  //       <span className="loading loading-spinner loading-lg"></span>
-  //     </div>
-  //   );
-  // }
-
   return (
-    <div className="flex w-full h-screen">
+    <div className="vibe-dashboard">
       <LeftBar />
-      <div className="flex w-full justify-center">
-        <div className="w-full h-full self-center flex flex-row gap-8 overflow-y-auto">
-          {!invoice || !template ? (
-            <InvoiceSkeleton />
-          ) : (
-            <InvoicePreview editable={true} />
-          )}
-        </div>
+      <div className="w-full max-w-5xl h-full flex flex-row gap-8 rounded-xl shadow-2xl overflow-y-auto">
+        {!invoice || !template ? (
+          <InvoiceSkeleton />
+        ) : (
+          <InvoicePreview editable={true} />
+        )}
       </div>
     </div>
   );

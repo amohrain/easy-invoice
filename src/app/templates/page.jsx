@@ -30,13 +30,13 @@ function Templates() {
     return <div>Loading...</div>;
   }
 
-  // return <div>404</div>;
+  return <div>Unauthorized</div>;
 
   return (
-    <div className="flex flex-row h-screen">
+    <div className="vibe-dashboard">
       <LeftBar className="" />
-      <div className="flex flex-col w-full p-4 gap-4">
-        <h1 className="text-3xl font-bold mb-4">Templates</h1>
+      <div className="flex flex-col w-full gap-4">
+        <h1 className="gradient-text text-3xl font-bold my-6">Templates</h1>
         <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
           {templatesData.map((template) => (
             <div key={template._id} className="card bg-base-200 shadow-sm">

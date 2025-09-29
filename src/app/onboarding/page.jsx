@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { Loading } from "../../components/Loading";
 import { useUserStore } from "../../store/useUser";
 import { useCompanyStore } from "../../store/useCompany";
 import CompanyForm from "../../components/CompanyForm";
@@ -41,6 +40,7 @@ export default function Onboarding() {
     });
 
     const data = await res.json();
+    console.log("Uploaded Image URL:", data.url);
     return data.url;
   }
 
@@ -65,6 +65,7 @@ export default function Onboarding() {
         const logoUrl = await uploadLogo();
         data.businessLogo = logoUrl;
       }
+      console.log("company data", data);
       const resCompany = await fetch("/api/company", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -76,52 +77,70 @@ export default function Onboarding() {
     } catch (error) {
       console.error("Error creating user:", error);
     } finally {
+      setStep(3);
       setLoading(false);
     }
   };
 
   const handleNext = async () => {
-    if (step === 2) {
-      await handleCreateCompany();
+    if (step === 1) {
       setStep((prev) => prev + 1);
       return;
+    } else if (step === 2) {
+      await handleCreateCompany();
+      return;
     } else if (step >= 3) {
-      localStorage.setItem("onboarded", "true");
       router.push("/invoices/create");
-    } else setStep((prev) => prev + 1);
+    }
   };
 
-  if (loading) {
-    return <Loading />;
-  }
-
   return (
-    <div className="max-w-4xl w-fit mx-auto mt-24 p-6 bg-base border rounded-lg shadow-md">
-      {step === 1 && (
-        <div>
-          <h2 className="text-2xl font-bold">Welcome, {user?.firstName}!</h2>
-          <p className="mt-2">Let's get you set up with Easy Invoice.</p>
-        </div>
-      )}
-      {step === 2 && (
-        <div className="">
-          <h2 className="text-xl text-center font-bold">
-            Your Company Details
-          </h2>
-          <CompanyForm setStep={setStep} />
-        </div>
-      )}
-      {step === 3 && (
-        <div>
-          <h2 className="text-2xl font-bold">You're all set!</h2>
-          <p className="mt-2">
-            Click finish button to get started with your first project
-          </p>
-        </div>
-      )}
-      <button className="btn btn-accent mt-6 w-full" onClick={handleNext}>
-        {step >= 3 ? "Finish" : "Next"}
-      </button>
+    <div className="h-screen w-full vibe-gradient pt-16 p-4">
+      <div className="max-w-4xl w-full mx-auto vibe-opacity border border-primary/20 p-6 bg-base rounded-lg shadow-md text-center">
+        {step === 1 && (
+          <div>
+            <h2 className="gradient-text text-3xl font-bold">
+              Welcome, {user?.firstName}!
+            </h2>
+            <p className="section-description mt-2">
+              Let's get you set up with Vibe Invoice.
+            </p>
+          </div>
+        )}
+        {step === 2 && (
+          <div className="">
+            <h2 className="gradient-text text-3xl font-bold">
+              Your Company Details
+            </h2>
+            <p className="section-description mt-2">
+              Please provide your company information to continue.
+            </p>
+            <div className="rounded-lg border border-primary/20 mt-4">
+              <CompanyForm setStep={setStep} />
+            </div>
+          </div>
+        )}
+        {step === 3 && (
+          <div>
+            <h2 className="gradient-text text-3xl font-bold">
+              You're all set!
+            </h2>
+            <p className="section-description mt-2">
+              Click finish button to get started with your first project
+            </p>
+          </div>
+        )}
+        <button
+          className="generate-button mt-6 w-fit text-lg"
+          disabled={loading}
+          onClick={handleNext}
+        >
+          {loading && (
+            <span className="loading loading-spinner loading-sm"></span>
+          )}
+          {step >= 3 ? "Finish" : "Next"}
+        </button>
+      </div>
     </div>
   );
 }
