@@ -36,24 +36,13 @@ export async function POST(request) {
     const { clientName, clientAddress, clientEmail, clientPhone, clientTaxId } =
       await request.json();
 
-    console.log(
-      "Creating client with data",
-      clientName,
-      clientAddress,
-      clientEmail,
-      clientPhone,
-      clientTaxId
-    );
-
     // Find if the client already exists
-
     const existingClient = await Client.findOne({
       clientName,
       clientEmail,
     });
 
     if (existingClient) {
-      console.log("Found existing client");
       return NextResponse.json({
         success: true,
         data: existingClient._id,

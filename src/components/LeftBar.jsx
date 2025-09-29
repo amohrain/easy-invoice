@@ -58,12 +58,12 @@ function LeftBar() {
     <>
       <Menu />
       <div
-        className={`hidden sm:flex max-w-[240px] rounded-xl flex-col justify-between shadow-lg transition-all duration-300 vibe-opacity py-6 ${
+        className={`hidden sm:flex max-w-[240px] rounded-xl flex-col justify-between shadow-lg transition-all duration-300 vibe-opacity py-5 ${
           collapsed ? "w-16" : "w-full"
         }`}
       >
         {/* Top section */}
-        <div className="flex flex-col  px-4">
+        <div className="flex flex-col px-4">
           {/* Logo */}
 
           <div className="ml-2 mb-4">
@@ -82,7 +82,7 @@ function LeftBar() {
           {/* <div className="w-full h-[2px] bg-neutral-content mb-1.5" /> */}
 
           {/* Navigation */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col">
             <NavButton
               link="/dashboard"
               name={!collapsed && "Dashboard"}

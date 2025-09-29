@@ -15,15 +15,21 @@ function AddInvoiceButton() {
     "/suggestions",
   ];
 
-  if (!acceptedRoutes.includes(currentPath)) {
-    return null; // Don't show the button if the current path is not in the accepted routes
+  // check exact matches OR routes that start with "/invoices/"
+  const isAccepted =
+    acceptedRoutes.includes(currentPath) ||
+    (currentPath.startsWith("/invoices/") && !currentPath.includes("/create"));
+
+  if (!isAccepted) {
+    return null;
   }
 
   return (
-    <div className="fixed right-5 bottom-5">
+    <div className="fixed flex justify-end right-5 bottom-5">
       <Link href={"/invoices/create"}>
-        <button className="generate-button btn-circle">
-          <Plus />
+        <button className=" generate-button btn-circle">
+          <Plus size={24} />
+          {/* <span className="hidden group-hover:block text-lg">Create</span> */}
         </button>
       </Link>
     </div>

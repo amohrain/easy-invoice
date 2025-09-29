@@ -16,32 +16,53 @@ export const useCompanyStore = create((set, get) => ({
   loading: false,
   setLoading: (loading) => set({ loading }),
   getAndSetCompaniesData: async () => {
+    const existing = JSON.parse(localStorage.getItem("company"));
     try {
-      const response = await fetch("/api/company/");
-      const data = await response.json();
-      const companies = data.data;
-      set({
-        // companies: companies,
-        // company: data.company,
-        companyData: data.company,
-      });
-      return data.data;
+      if (existing) {
+        set({ companyData: existing });
+        return existing;
+      } else {
+        const response = await fetch("/api/company/");
+        const data = await response.json();
+        const companies = data.data;
+        set({
+          // companies: companies,
+          // company: data.company,
+          companyData: data.company,
+        });
+        return data.data;
+      }
     } catch (error) {
       console.error("Error fetching companies:", error);
       return [];
     }
   },
   getCompanies: async () => {
+    // Todo add localstorage caching
+    let companies = [];
+    let company = {};
+
+    const existingCompanies = localStorage.getItem("companies");
+    const existingCompany = localStorage.getItem("company");
+
     try {
-      const response = await fetch("/api/company/");
-      const data = await response.json();
-      const companies = data.data;
+      if (existingCompanies && existingCompany) {
+        companies = JSON.parse(existingCompanies);
+        company = JSON.parse(existingCompany);
+      } else {
+        const response = await fetch("/api/company/");
+        const data = await response.json();
+        companies = data.data;
+        company = data.company;
+        localStorage.setItem("companies", JSON.stringify(companies));
+        localStorage.setItem("company", JSON.stringify(company));
+      }
       set({
-        companies: companies,
-        company: data.company,
+        companies,
+        company,
         // companyData: data.company,
       });
-      return data.data;
+      return companies;
     } catch (error) {
       console.error("Error fetching companies:", error);
       return [];
@@ -63,6 +84,9 @@ export const useCompanyStore = create((set, get) => ({
       console.error("Error updating company:", error);
       toast.error("Failed to update company");
     } finally {
+      localStorage.removeItem("company");
+      localStorage.removeItem("companies");
+      get().getCompanies();
       get().setLoading(false);
     }
   },
@@ -80,6 +104,7 @@ export const useCompanyStore = create((set, get) => ({
         (company) => company._id === companyId
       );
       set({ company: selectedCompany, companyData: selectedCompany });
+      localStorage.setItem("company", JSON.stringify(selectedCompany));
       toast.success("Success");
     } catch (error) {
       console.error("Error updating company:", error);

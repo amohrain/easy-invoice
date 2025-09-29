@@ -62,6 +62,7 @@ export const useInvoiceStore = create((set, get) => ({
   },
   invoiceId: null,
   getInvoiceId: async () => {
+    // This is redundant
     try {
       const response = await fetch("/api/invoice/number");
       const data = await response.json();
@@ -73,31 +74,52 @@ export const useInvoiceStore = create((set, get) => ({
   },
 
   // Function to fetch client ID for creating invocie
-  fetchClientId: async (clientId) => {
+  fetchClientById: async (clientId) => {
+    const existingClients = JSON.parse(localStorage.getItem("clients"));
+    const foundClient = existingClients?.find(
+      (client) => client._id === clientId
+    );
+
     try {
-      const response = await fetch(`/api/client/${clientId}`);
-      const data = await response.json();
+      if (foundClient) {
+        const {
+          clientName,
+          clientAddress,
+          clientEmail,
+          clientPhone,
+          clientTaxId,
+        } = foundClient;
 
-      const {
-        clientName,
-        clientAddress,
-        clientEmail,
-        clientPhone,
-        clientTaxId,
-      } = data.data;
+        return {
+          clientName,
+          clientAddress,
+          clientEmail,
+          clientPhone,
+          clientTaxId,
+        };
+      } else {
+        const response = await fetch(`/api/client/${clientId}`);
+        const data = await response.json();
 
-      return {
-        clientName,
-        clientAddress,
-        clientEmail,
-        clientPhone,
-        clientTaxId,
-      };
+        const {
+          clientName,
+          clientAddress,
+          clientEmail,
+          clientPhone,
+          clientTaxId,
+        } = data.data || {};
+
+        return {
+          clientName,
+          clientAddress,
+          clientEmail,
+          clientPhone,
+          clientTaxId,
+        };
+      }
     } catch (error) {
       console.log("Error fetching client");
     }
-
-    return "ClientId";
   },
 
   // Function to create a new client
@@ -122,6 +144,8 @@ export const useInvoiceStore = create((set, get) => ({
       return clientId;
     } catch (error) {
       console.log("Error creating client", error);
+    } finally {
+      localStorage.removeItem("clients");
     }
   },
   suggestion: null,

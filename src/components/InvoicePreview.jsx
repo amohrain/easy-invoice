@@ -50,8 +50,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
     setInvoice,
     saveInvoice,
     postInvoice,
-    invoiceId,
-    fetchClientId,
+    fetchClientById,
     createClient,
     suggestion,
     createSuggestion,
@@ -112,10 +111,10 @@ export function InvoicePreview({ setStep, editable, preview }) {
           businessEmail,
           businessPhone,
           businessLogo,
-          invoiceId,
+          // invoiceId,
           company: company._id,
           currency: company.currency || "USD",
-          invoiceNumber: `INV-${invoiceId}`,
+          // invoiceNumber: `INV-${invoiceId}`,
           issuedAt: new Date().toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
@@ -130,9 +129,9 @@ export function InvoicePreview({ setStep, editable, preview }) {
 
         // Fetch client details based on clientId provided
         if (clientId) {
-          const clientInfo = await fetchClientId(clientId);
+          const clientInfo = await fetchClientById(clientId);
           console.log("Fetched client info based on clientId: ", clientInfo);
-          updatedInvoice = { ...updatedInvoice, ...clientInfo };
+          updatedInvoice = { ...updatedInvoice, clientId, ...clientInfo };
         }
         const calculatedInvoice = calculateInvoice(updatedInvoice);
 

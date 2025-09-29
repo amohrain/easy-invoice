@@ -1,9 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { getMongoUser } from "@/lib/getMongoUser";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import Invoice from "@/models/invoice.model";
 
-export async function POST(req: NextRequest) {
+export async function POST(req) {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
@@ -58,6 +59,17 @@ export async function POST(req: NextRequest) {
         user.invoiceCount = 1; // reset count
         user.invoiceCountMonth = currentMonth; // update to current month
       }
+
+      // Get the last invoice number from the database
+      const lastInvoice = await Invoice.findOne({
+        company: user.company,
+        invoiceId: { $exists: true },
+      }).sort({ invoiceId: -1 });
+
+      // Generate the next invoice number
+      const invoiceId = lastInvoice ? lastInvoice.invoiceId + 1 : 1001;
+      invoice.invoiceId = invoiceId;
+      invoice.invoiceNumber = `INV-${invoiceId}`;
 
       await user.save();
     }

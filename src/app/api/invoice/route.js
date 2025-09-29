@@ -34,13 +34,26 @@ export async function POST(request) {
     // Connect to the database
     await connectDB();
 
+    // // Get the last invoice number from the database
+    // const lastInvoice = await Invoice.findOne({
+    //   company: user.company,
+    //   invoiceId: { $exists: true },
+    // }).sort({ invoiceId: -1 });
+
+    // // Generate the next invoice number
+    // const invoiceId = lastInvoice ? lastInvoice.invoiceId + 1 : 1001;
+
     // Parse the request body
     const invoiceData = await request.json();
-
     console.log("Invoice data: ", invoiceData);
 
     // Create a new invoice
-    const invoice = new Invoice({ ...invoiceData, user: user._id });
+    const invoice = new Invoice({
+      ...invoiceData,
+      user: user._id,
+      // invoiceId,
+      // invoiceNumber: `INV-${invoiceId}`,
+    });
     await invoice.save();
 
     const now = new Date();

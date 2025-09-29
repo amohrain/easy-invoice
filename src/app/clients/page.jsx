@@ -16,6 +16,7 @@ import LeftBar from "@/components/LeftBar";
 import { useInvoiceStore } from "@/store/useInvoice";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useClientStore } from "../../store/useClient";
 
 export default function ClientsPage() {
   const [clients, setClients] = useState([]);
@@ -29,13 +30,15 @@ export default function ClientsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const { invoiceData, getInvoices } = useInvoiceStore();
+  const { getClients } = useClientStore();
 
   useEffect(() => {
     async function fetchData() {
       await getInvoices();
-      const response = await fetch("/api/client");
-      const data = await response.json();
-      setClients(data.data);
+      const clients = await getClients();
+      // const response = await fetch("/api/client");
+      // const data = await response.json();
+      setClients(clients);
     }
     fetchData();
   }, []);

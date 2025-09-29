@@ -198,11 +198,11 @@ const TypingPlaceholder = ({ text, setText, home = false }) => {
               onClick={() => insertMention(client)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition ${
                 selectedIndex === idx
-                  ? "bg-base-300 border rounded-lg"
+                  ? "bg-primary/25 border border-base-300 rounded-lg"
                   : "bg-base-100 border border-base-100"
               }`}
             >
-              <div className="bg-neutral rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+              <div className="bg-base-200 rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold">
                 {getInitials(client.clientName)}
               </div>
               <div>

@@ -17,11 +17,20 @@ export const useClientStore = create((set) => ({
   },
 
   getClients: async () => {
+    let clients = [];
+    const existingClients = JSON.parse(localStorage.getItem("clients"));
     try {
-      const response = await fetch("/api/client");
-      const data = await response.json();
-      set({ clients: data.data });
-      return data.data;
+      if (existingClients) {
+        clients = existingClients;
+      } else {
+        const response = await fetch("/api/client");
+        const data = await response.json();
+        clients = data.data;
+        localStorage.setItem("clients", JSON.stringify(clients));
+      }
+
+      set({ clients: clients });
+      return clients;
     } catch (error) {
       console.log("Error fetching clients: ", error);
     }

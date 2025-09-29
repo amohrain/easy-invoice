@@ -11,21 +11,27 @@ export const useTemplateStore = create((set, get) => ({
   // Fetch all existing templates
   templatesData: null,
   getTemplateById: async (templateId) => {
+    let template = [];
+    const existing = JSON.parse(localStorage.getItem("templates"));
+    const existingTemplate = existing.find((t) => t.id == templateId);
     try {
       set({ loading: true });
       if (!templateId) {
         console.error("Template ID is required to fetch a template.");
         return;
       }
-      const response = await fetch("/api/templates/" + templateId);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (existingTemplate) {
+        template = existingTemplate;
+      } else {
+        const response = await fetch("/api/templates/" + templateId);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        template = data.data || [];
       }
-
-      const data = await response.json();
-      const template = data.data || [];
-
       set({ template: template });
       return template;
     } catch (error) {
@@ -59,11 +65,20 @@ export const useTemplateStore = create((set, get) => ({
   // Fetch user templates
   userTemplates: null,
   getUsersTemplates: async (templateId) => {
+    let templates;
+    const existing = JSON.parse(localStorage.getItem("templates"));
+
     try {
-      const response = await fetch("/api/users/templates");
-      const data = await response.json();
-      const templates = data.data || [];
-      set({ userTemplates: templates });
+      if (existing) {
+        templates = existing;
+        set({ userTemplates: templates });
+      } else {
+        const response = await fetch("/api/users/templates");
+        const data = await response.json();
+        templates = data.data || [];
+        localStorage.setItem("templates", JSON.stringify(templates));
+        set({ userTemplates: templates });
+      }
       if (templateId) {
         const template = templates.find((temp) => temp._id === templateId);
         set({ template: template || templates[0] });
