@@ -13,16 +13,16 @@ export default function Onboarding() {
   const { logo, setLogo, loading, setLoading, companyData, setCompanyData } =
     useCompanyStore();
 
-  // useEffect(() => {
-  //   async function checkIfOnboarded() {
-  //     const response = await fetch("/api/company");
-  //     const data = await response.json();
-  //     const companies = data.data;
+  useEffect(() => {
+    async function checkIfOnboarded() {
+      const response = await fetch("/api/company");
+      const data = await response.json();
+      const companies = data.data;
 
-  //     if (companies?.length > 0) router.push("/invoices/create");
-  //   }
-  //   checkIfOnboarded();
-  // }, []);
+      if (companies?.length > 0) router.push("/invoices/create");
+    }
+    checkIfOnboarded();
+  }, []);
 
   const steps = {
     1: {
