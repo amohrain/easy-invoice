@@ -10,8 +10,18 @@ import NavigationBar from "../sections/NavigationBar";
 import FAQ from "../sections/FAQ";
 import Video from "../sections/Video";
 import HowItWorksCards from "../sections/HowItWorksCards";
+import { useEffect } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    // Clear local storage on sign-in page load
+    localStorage.removeItem("clients");
+    localStorage.removeItem("company");
+    localStorage.removeItem("companies");
+    localStorage.removeItem("templates");
+    localStorage.removeItem("onboarded");
+  }, []);
+
   return (
     <div className="vibe-gradient">
       <SEO

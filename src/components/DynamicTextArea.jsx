@@ -279,7 +279,7 @@ export const DynamicTextarea = () => {
 
   return (
     <div
-      className="flex w-full max-w-2xl mx-auto py-4 px-6 rounded-2xl h-48 shadow-2xl shadow-secondary/20 
+      className="flex flex-col w-full max-w-2xl mx-auto py-4 px-4 md:px-6 rounded-2xl h-48 shadow-2xl shadow-secondary/20 
         bg-base-100/10 backdrop-blur-sm border border-primary/20 
         animate-pulse-soft"
     >
@@ -318,7 +318,7 @@ export const DynamicTextarea = () => {
 
       {suggestions.length > 0 && (
         <ul
-          className="absolute z-50  border-base-300 rounded-lg shadow-lg max-h-44 overflow-y-auto w-72"
+          className="absolute z-50 border-base-300 rounded-lg max-h-44 overflow-y-auto w-64"
           style={{
             top: mentionPosition.top,
             left: mentionPosition.left,
@@ -328,10 +328,10 @@ export const DynamicTextarea = () => {
             <li
               key={client._id}
               onClick={() => insertMention(client)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition ${
+              className={`flex items-center gap-2 px-4 py-2 mb-1 rounded-lg cursor-pointer transition hover:bg-secondary/40 ${
                 selectedIndex === idx
-                  ? "bg-base-300 border rounded-lg"
-                  : "bg-base-100 border border-base-100"
+                  ? "bg-secondary/20 rounded-lg"
+                  : "bg-base-100/50 border-base-100"
               }`}
             >
               <div className="bg-neutralrounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">

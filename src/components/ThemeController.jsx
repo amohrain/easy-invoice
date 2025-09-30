@@ -1,9 +1,11 @@
 "use client";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 import { useEffect, useState } from "react";
 
 function ThemeController() {
+  const currentPath = usePathname();
   const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
@@ -20,6 +22,8 @@ function ThemeController() {
     localStorage.setItem("theme", newTheme);
     setTheme(newTheme);
   };
+
+  if (currentPath === "/") return null;
 
   return (
     <label className="swap swap-rotate fixed top-5 right-5">

@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import { SignIn } from "@clerk/nextjs";
 
 function SignInPage() {

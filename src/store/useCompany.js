@@ -18,7 +18,7 @@ export const useCompanyStore = create((set, get) => ({
   getAndSetCompaniesData: async () => {
     const existing = JSON.parse(localStorage.getItem("company"));
     try {
-      if (existing) {
+      if (existing.length) {
         set({ companyData: existing });
         return existing;
       } else {
@@ -46,7 +46,8 @@ export const useCompanyStore = create((set, get) => ({
     const existingCompany = localStorage.getItem("company");
 
     try {
-      if (existingCompanies && existingCompany) {
+      if (existingCompanies?.length > 0 && existingCompany) {
+        console.log("Loading existing data");
         companies = JSON.parse(existingCompanies);
         company = JSON.parse(existingCompany);
       } else {
@@ -105,7 +106,11 @@ export const useCompanyStore = create((set, get) => ({
       );
       set({ company: selectedCompany, companyData: selectedCompany });
       localStorage.setItem("company", JSON.stringify(selectedCompany));
+
+      // Clear cached data related to the previous company
+      localStorage.removeItem("clients");
       toast.success("Success");
+      window.location.reload();
     } catch (error) {
       console.error("Error updating company:", error);
       toast.error("Failed to update company");

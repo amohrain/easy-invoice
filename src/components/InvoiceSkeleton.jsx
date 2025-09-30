@@ -3,7 +3,7 @@ const InvoiceSkeleton = () => {
 
   return (
     <div className={`flex flex-col w-full h-full`}>
-      <div className={`w-full vibe-opacity max-w-5xl self-center`}>
+      <div className={`w-full rounded-lg vibe-opacity max-w-5xl self-center`}>
         <div
           className={`flex flex-col w-full shadow rounded-lg p-6 h-fit animate-pulse space-y-8`}
         >

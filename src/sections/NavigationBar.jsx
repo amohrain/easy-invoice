@@ -39,7 +39,7 @@ function NavigationBar() {
   };
 
   return (
-    <nav className="bg-gradient-to-r sm:px-12 vibe-gradient px-6 py-4">
+    <nav className="bg-gradient-to-r px-0 vibe-gradient sm:px-6 py-4">
       {isMenuOpen && <MobileMenu />}
       <div className="max-w-7xl px-4 mx-auto flex items-center justify-between">
         {/* Logo */}

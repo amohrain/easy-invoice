@@ -196,9 +196,9 @@ const TypingPlaceholder = ({ text, setText, home = false }) => {
             <li
               key={client._id}
               onClick={() => insertMention(client)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-secondary/30 cursor-pointer transition ${
                 selectedIndex === idx
-                  ? "bg-primary/25 border border-base-300 rounded-lg"
+                  ? "bg-secondary/20 border border-base-300 rounded-lg"
                   : "bg-base-100 border border-base-100"
               }`}
             >

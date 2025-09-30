@@ -931,8 +931,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
               )}
             </div>
           ))}
-          <div className="text-center">
-            “It took
+          <div className="text-center gradient-text">
+            “It just took
             {invoice?.timeTaken && invoice.timeTaken < 60
               ? ` ${invoice.timeTaken} seconds`
               : " a few minute"}{" "}

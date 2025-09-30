@@ -23,24 +23,24 @@ function Hero() {
   return (
     <section
       ref={heroRef}
-      className="hero min-h-screen py-12 sm:px-4 vibe-gradient relative"
+      className="hero min-h-screen py-12 px-0 sm:px-4 vibe-gradient relative"
     >
       <div className="hero-content flex-col gap-20 lg:flex-row-reverse">
         {/* <img src="/Tested.png" className="w-fit rounded" /> */}
         <div className="flex flex-col justify-between h-full gap-12 text-center">
-          <div className="section-heading">
-            <h1 className="section-title">
+          <div className="flex flex-col section-heading">
+            <h1 className="self-center section-title">
               {/* Professional invoices with minimum effort! */}
               {/* Create invoices at lightning speed! */}
               {/* Invoice in 60 Seconds or Less */}
               Don't wait on invoices, send them instantly
             </h1>
-            <p className="section-description mt-5">
+            <p className="self-center section-description mt-5 sm:w-full w-72">
               {/* Generate invoice, share with customers and get paid faster all
               under one minute */}
-              Create and share invoices{" "}
+              Create and share invoices in{" "}
               <span className="underline decoration-wavy decoration-secondary underline-offset-4">
-                in less than a minute.
+                one minute.
               </span>
             </p>
           </div>

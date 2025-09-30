@@ -20,7 +20,7 @@
   }
 
   .vibe-gradient {
-    @apply bg-gradient-to-r from-primary/35 via-secondary/10 to-primary/20;
+    @apply bg-gradient-to-r from-primary/35 to-secondary/10 md:via-secondary/10 md:to-primary/20;
     /* @apply bg-base-200 */
     /* @apply bg-primary/35; */
   }
