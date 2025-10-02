@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import LeftBar from "../../components/LeftBar";
-import { Loading } from "../../components/Loading";
 import { useInvoiceStore } from "../../store/useInvoice";
 import { ExternalLink, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -35,8 +34,6 @@ function Suggestions() {
   const handleDelete = async (id) => {
     await deleteSuggestion(id);
   };
-
-  // if (!suggestions) return <Loading />;
 
   return (
     <div className="vibe-dashboard">

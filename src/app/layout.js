@@ -5,6 +5,7 @@ import ThemeController from "../components/ThemeController";
 import { Toaster } from "sonner";
 import CookieBanner from "../components/CookieBanner";
 import AddInvoiceButton from "../components/AddInvoiceButton";
+import { getSEOTags, renderSchemaTags } from "../lib/seo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,19 +17,23 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
+export const metadata = getSEOTags({
   title: "Vibe Invoice",
   description: "Create stunning invoices using AI Prompts!",
-  // keywords:
-  //   "invoice, invoicing tool, ai invoice, fast invoice, quick invoice, create invoice faster, vibe invoice",
-  // authors: [{ name: "Vibe Invoice" }],
-  // creator: "Vibe Invoice",
-};
+  keywords:
+    "invoice, invoicing tool, ai invoice, fast invoice, quick invoice, create invoice faster, vibe invoice",
+  openGraph: {
+    title: "Vibe Invoice",
+    description: "Create stunning invoices using AI Prompts!",
+    image: `https://vibeinvoice.com/og-image.png`,
+  },
+});
 
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>{renderSchemaTags()}</head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >

@@ -1,8 +1,5 @@
 "use client";
 import Footer from "@/sections/Footer";
-import SEO from "@/components/SEO";
-
-import HowItWorks from "@/sections/HowItWorks";
 import Hero from "../sections/Hero";
 import ProductShowcase from "../sections/ProductShowcase";
 import Pricing from "../sections/Pricing";
@@ -24,12 +21,6 @@ export default function Home() {
 
   return (
     <div className="vibe-gradient">
-      <SEO
-        title="Vibe Invoice - Create and share invoices in seconds"
-        description="Create stunning invoices in seconds. Type a prompt to generate invoice, share with customers and get paid faster!"
-        image="https://vibeinvoice.com/og-image.png"
-        url="https://vibeinvoice.com"
-      />
       <NavigationBar />
       <Hero />
       <Video />

@@ -11,6 +11,7 @@ export default function Plans(where) {
     {
       name: "Free",
       amount: 0,
+      mrp: null,
       mostPopular: false,
       features: [
         "10 Invoices per month",
@@ -22,6 +23,7 @@ export default function Plans(where) {
     {
       name: "Starter",
       amount: isIndia ? 3999 : 49.99,
+      mrp: isIndia ? 9999 : 149.99,
       mostPopular: true,
       features: [
         "Unlimited invoices",
@@ -34,7 +36,8 @@ export default function Plans(where) {
     },
     {
       name: "Pro",
-      amount: isIndia ? 6500 : 99.99,
+      amount: isIndia ? 7999 : 99.99,
+      mrp: isIndia ? 15999 : 249.99,
       mostPopular: false,
       features: [
         "Unlimited invoices",
@@ -52,6 +55,7 @@ export default function Plans(where) {
           key={index}
           name={plan.name}
           amount={plan.amount}
+          mrp={plan.mrp}
           mostPopular={plan.mostPopular}
           features={plan.features}
           where={where}

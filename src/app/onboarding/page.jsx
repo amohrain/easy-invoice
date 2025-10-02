@@ -33,8 +33,8 @@ export default function Onboarding() {
       buttonIcon: <Save />,
     },
     2: {
-      heading: "Upload your logo",
-      subheading: "Add your company logo.",
+      // heading: "Upload your logo",
+      subheading: "Add your business logo.",
       buttonText: logo ? "Upload" : "Skip for now",
       style: logo
         ? "generate-button"
@@ -128,20 +128,20 @@ export default function Onboarding() {
   );
 
   return (
-    <div className="min-h-screen w-full vibe-gradient pt-16 p-4">
+    <div className="min-h-screen w-full vibe-gradient pt-8 p-4">
       {step == 1 && <Heading />}
-      <div className="flex flex-col max-w-xl w-full min-h-3xl mx-auto vibe-opacity border border-primary/20 p-6 bg-base rounded-lg shadow-md">
+      <div className="relative flex flex-col max-w-xl w-full min-h-3xl mx-auto vibe-opacity border border-primary/20 p-6 bg-base rounded-lg shadow-md">
         {step === 1 && (
           <div>
             <fieldset className="rounded-lg">
               <div className="mb-4">
                 <label className="fieldset-label block mb-2">
-                  Company Name
+                  Business Name
                 </label>
                 <input
                   type="text"
                   required
-                  className="input input-bordered w-full bg-base-100/50"
+                  className="input input-bordered rounded-lg w-full bg-base-100/50"
                   placeholder="Vibe Invoice"
                   value={companyData?.businessName || ""}
                   onChange={(e) =>
@@ -154,7 +154,7 @@ export default function Onboarding() {
               <div className="mb-4">
                 <label className="fieldset-label block mb-2">Address</label>
                 <textarea
-                  className="textarea textarea-bordered w-full h-22 resize-none bg-base-100/50"
+                  className="textarea textarea-bordered rounded-lg w-full h-22 resize-none bg-base-100/50"
                   placeholder="123 Business St, Suite 101, City, State, 12345"
                   value={companyData?.businessAddress || ""}
                   onChange={(e) =>
@@ -170,7 +170,7 @@ export default function Onboarding() {
                 </label>
                 <input
                   type="tel"
-                  className="input input-bordered w-full bg-base-100/50"
+                  className="input input-bordered rounded-lg  w-full bg-base-100/50"
                   placeholder="(555) 123-4567"
                   value={companyData?.businessPhone || ""}
                   onChange={(e) =>
@@ -185,7 +185,7 @@ export default function Onboarding() {
                 <label className="fieldset-label block mb-2">Email</label>
                 <input
                   type="email"
-                  className="input input-bordered w-full bg-base-100/50"
+                  className="input input-bordered rounded-lg  w-full bg-base-100/50"
                   placeholder="contact@vibeinvoice.com"
                   value={companyData?.businessEmail || ""}
                   onChange={(e) =>
@@ -247,7 +247,7 @@ export default function Onboarding() {
           </div>
         )}
         <button
-          className={`self-center mt-6 w-fit text-lg ${steps[step].style}`}
+          className={`self-center mt-4 w-fit text-lg ${steps[step].style}`}
           disabled={loading}
           onClick={handleNext}
         >

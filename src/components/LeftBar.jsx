@@ -79,7 +79,7 @@ function LeftBar() {
             </a>
           </div>
 
-          {/* <div className="w-full h-[2px] bg-neutral-content mb-1.5" /> */}
+          <div className="w-full h-[1px] bg-primary/20 mb-4" />
 
           {/* Navigation */}
           <div className="flex flex-col">

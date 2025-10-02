@@ -11,7 +11,7 @@ import { sampleCompany } from "../constants/sampleCompany";
 import { clients } from "../constants/clients";
 import { handleInvoiceGenerate } from "../lib/openai";
 import { calculateInvoice } from "../lib/calculate";
-import { Loading } from "../components/Loading";
+
 import { samplePrompts } from "../constants/samplePrompts";
 import InvoiceSkeleton from "../components/InvoiceSkeleton";
 import { Sparkles } from "lucide-react";

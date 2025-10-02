@@ -22,19 +22,7 @@ export default function CookieBanner() {
     setShowBanner(false);
   };
 
-  const loadAnalytics = () => {
-    const script = document.createElement("script");
-    script.src = "https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"; // Replace with your GA ID
-    script.async = true;
-    document.head.appendChild(script);
-
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      window.dataLayer.push(arguments);
-    }
-    gtag("js", new Date());
-    gtag("config", "G-XXXXXXX"); // Replace with your GA ID
-  };
+  const loadAnalytics = () => {};
 
   if (!showBanner) return null;
 

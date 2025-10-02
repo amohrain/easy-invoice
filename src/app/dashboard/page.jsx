@@ -6,7 +6,6 @@ import { useInvoiceStore } from "@/store/useInvoice";
 import { getInvoiceStats } from "@/lib/getInvoiceStats";
 import Link from "next/link";
 import DailyRevenueChart from "@/components/DailyRevenueChart";
-import { Loading } from "@/components/Loading";
 import { useCompanyStore } from "@/store/useCompany";
 import { formatCurrency } from "../../lib/formatCurrency";
 

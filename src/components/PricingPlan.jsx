@@ -5,7 +5,15 @@ import { CheckCircle } from "lucide-react";
 import { formatCurrency } from "../lib/formatCurrency";
 import { motion } from "framer-motion";
 
-function PricingPlan({ name, mostPopular, features, amount, where, currency }) {
+function PricingPlan({
+  name,
+  mostPopular,
+  features,
+  amount,
+  mrp,
+  where,
+  currency,
+}) {
   const router = useRouter();
   const [invoiceLink, setInvoiceLink] = useState("");
 
@@ -69,10 +77,13 @@ function PricingPlan({ name, mostPopular, features, amount, where, currency }) {
               {formatCurrency(amount, currency)}
             </span>
 
-            <span className="tracking-tight font-bold">
+            <span className="tracking-tight opacity-50 font-bold">
               {amount !== 0 ? "/lifetime" : ""}
             </span>
           </div>
+          <p className="line-through font-semibold opacity-50 tracking-tighter leading-none">
+            {formatCurrency(mrp, currency)}
+          </p>
           <div className="mt-6">
             <PaymentButton
               name={name}
