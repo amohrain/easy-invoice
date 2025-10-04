@@ -23,11 +23,11 @@ function Hero() {
   return (
     <section
       ref={heroRef}
-      className="hero min-h-screen py-12 px-0 sm:px-4 vibe-gradient relative"
+      className="hero min-h-screen px-0 sm:px-4 vibe-gradient relative"
     >
       <div className="hero-content flex-col gap-20 lg:flex-row-reverse">
         {/* <img src="/Tested.png" className="w-fit rounded" /> */}
-        <div className="flex flex-col justify-between h-full gap-12 text-center">
+        <div className="flex flex-col justify-between h-full gap-8 text-center">
           <div className="flex flex-col section-heading">
             <h1 className="self-center section-title">
               {/* Professional invoices with minimum effort! */}
@@ -45,6 +45,7 @@ function Hero() {
             </p>
           </div>
           <DynamicTextarea />
+          <p className="italic underline">No credit card required.</p>
           {/* <Link href={"/sign-up"}>
             <button className="btn btn-primary w-fit text-xl self-center rounded-full py-6 px-6">
               Get Started for free

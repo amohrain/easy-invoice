@@ -13,7 +13,7 @@ export const useTemplateStore = create((set, get) => ({
   getTemplateById: async (templateId) => {
     let template = [];
     const existing = JSON.parse(localStorage.getItem("templates"));
-    const existingTemplate = existing.find((t) => t.id == templateId);
+    const existingTemplate = existing?.find((t) => t.id == templateId);
     try {
       set({ loading: true });
       if (!templateId) {

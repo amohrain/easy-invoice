@@ -86,6 +86,8 @@ function Dashboard() {
     // console.log("step: ", step);
   }, [step]);
 
+  console.log(user);
+
   return (
     <div className="vibe-dashboard">
       <LeftBar className="" />

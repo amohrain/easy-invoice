@@ -12,7 +12,7 @@ import { FaXTwitter } from "react-icons/fa6";
 
 function Footer() {
   return (
-    <footer className="footer bg-neutral sm:footer-horizontal text-lg text-neutral-content px-10 py-20">
+    <footer className="footer bg-base-100 sm:footer-horizontal text-md px-10 py-20">
       <aside className="flex flex-col items-center ">
         <img
           className="w-12 rounded-4xl"

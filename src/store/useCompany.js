@@ -18,7 +18,7 @@ export const useCompanyStore = create((set, get) => ({
   getAndSetCompaniesData: async () => {
     const existing = JSON.parse(localStorage.getItem("company"));
     try {
-      if (existing.length) {
+      if (existing?.length) {
         set({ companyData: existing });
         return existing;
       } else {

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useCompanyStore } from "../store/useCompany";
 import { usePathname, useRouter } from "next/navigation";
-import { Copy, CopyCheck, ExternalLink, Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-import { Loading } from "./Loading";
 import { useUserStore } from "../store/useUser";
 
 function CompanyForm() {
@@ -14,7 +13,6 @@ function CompanyForm() {
     loading,
     setLoading,
     company,
-    setCompany,
     companyData,
     setCompanyData,
     getAndSetCompaniesData,
@@ -22,8 +20,6 @@ function CompanyForm() {
     logo,
     setLogo,
   } = useCompanyStore();
-  const [copied, setCopied] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [isPro, setIsPro] = useState(false);
   const { getCurrentUser } = useUserStore();
@@ -74,91 +70,6 @@ function CompanyForm() {
     }
   }, [companyData?.currency]);
 
-  const handleGenerateAPIKey = async () => {
-    try {
-      const res = await fetch("/api/company/api-key", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ companyId: company._id }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success("API key generated successfully");
-        setCompany({ ...company, apiKey: data.apiKey });
-      }
-    } catch (error) {
-      console.error("Error generating API key:", error);
-      toast.error("Error generating API key");
-    }
-  };
-
-  const handleDeleteAPIKey = async () => {
-    try {
-      const res = await fetch("/api/company/api-key", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          companyId: company._id,
-          apiKey: company.apiKey,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success("API key deleted successfully");
-        setCompany({ ...company, apiKey: null });
-        setShowDeleteModal(false);
-      }
-    } catch (error) {
-      console.error("Error deleting API key:", error);
-      toast.error("Error deleting API key");
-    }
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(company.apiKey);
-    setCopied(true);
-    toast.success("API key copied to clipboard");
-  };
-
-  useEffect(() => {
-    setTimeout(() => {
-      setCopied(false);
-    }, 10000);
-  }, [copied == true]);
-
-  const DeleteAPIKeyModal = () => {
-    return (
-      <dialog
-        id="my_modal_5"
-        className="modal modal-open modal-bottom sm:modal-middle"
-      >
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Delete API Key!</h3>
-          <p className="py-4">
-            Are you sure you want to delete the API key? This action cannot be
-            undone. If you delete the API key, you will need to generate a new
-            one to access the API. This will also invalidate any existing API
-            keys.
-          </p>
-          <div className="modal-action gap-2">
-            <form method="dialog">
-              <button onClick={handleDeleteAPIKey} className="btn btn-error">
-                Delete
-              </button>
-              <button onClick={() => setShowDeleteModal(false)} className="btn">
-                Close
-              </button>
-            </form>
-          </div>
-        </div>
-      </dialog>
-    );
-  };
-
   const handleCreateCompany = async () => {
     setLoading(true);
     try {
@@ -203,10 +114,6 @@ function CompanyForm() {
     }
   };
 
-  // if (loading) {
-  //   return <Loading />;
-  // }
-
   return (
     <>
       <fieldset className="fieldset p-4 rounded-lg">
@@ -237,7 +144,7 @@ function CompanyForm() {
               <input
                 type="file"
                 accept="image/*"
-                className="file-input file-input-border bg-base-100/50 w-full"
+                className="file-input file-input-border rounded-lg bg-base-100/50 w-full"
                 onChange={(e) => setLogo(e.target.files[0])}
               />
             </div>
@@ -245,7 +152,7 @@ function CompanyForm() {
               <label className="fieldset-label block mb-2">Company Name</label>
               <input
                 type="text"
-                className="input input-bordered w-full bg-base-100/50"
+                className="input input-bordered rounded-lg  w-full bg-base-100/50"
                 placeholder="Easy Invoice"
                 value={companyData?.businessName || ""}
                 onChange={(e) =>
@@ -260,7 +167,7 @@ function CompanyForm() {
               <label className="fieldset-label block mb-2">Phone Number</label>
               <input
                 type="tel"
-                className="input input-bordered w-full bg-base-100/50"
+                className="input input-bordered rounded-lg w-full bg-base-100/50"
                 placeholder="(555) 123-4567"
                 value={companyData?.businessPhone || ""}
                 onChange={(e) =>
@@ -275,7 +182,7 @@ function CompanyForm() {
               <label className="fieldset-label block mb-2">Email</label>
               <input
                 type="email"
-                className="input input-bordered w-full bg-base-100/50"
+                className="input input-bordered rounded-lg w-full bg-base-100/50"
                 placeholder="contact@vibeinvoice.com"
                 value={companyData?.businessEmail || ""}
                 onChange={(e) =>
@@ -292,7 +199,7 @@ function CompanyForm() {
             <div className="mb-4">
               <label className="fieldset-label block mb-2">Address</label>
               <textarea
-                className="textarea textarea-bordered w-full h-22 resize-none bg-base-100/50"
+                className="textarea textarea-bordered rounded-lg w-full h-22 resize-none bg-base-100/50"
                 placeholder="123 Business St, Suite 101, City, State, 12345"
                 value={companyData?.businessAddress || ""}
                 onChange={(e) =>
@@ -309,7 +216,7 @@ function CompanyForm() {
               </label>
               <input
                 type="text"
-                className="input input-bordered w-full bg-base-100/50"
+                className="input input-bordered rounded-lg w-full bg-base-100/50"
                 placeholder="123-45-6789"
                 value={companyData?.businessTaxId || ""}
                 onChange={(e) =>
@@ -346,7 +253,7 @@ function CompanyForm() {
               </label>
               <input
                 type="text"
-                className="input input-bordered w-full bg-base-100/50"
+                className="input input-bordered rounded-lg w-full bg-base-100/50"
                 placeholder="Please scan the QR code to pay"
                 value={companyData?.qrText || ""}
                 onChange={(e) =>
@@ -365,7 +272,7 @@ function CompanyForm() {
                 Payment Instructions
               </label>
               <textarea
-                className="textarea textarea-bordered w-full h-22 resize-none bg-base-100/50"
+                className="textarea textarea-bordered rounded-lg w-full h-22 resize-none bg-base-100/50"
                 placeholder="Please pay before the due date"
                 value={companyData?.paymentInstructions || ""}
                 onChange={(e) =>
@@ -378,7 +285,7 @@ function CompanyForm() {
             <div className="mb-4">
               <label className="fieldset-label block mb-2">Notes</label>
               <textarea
-                className="textarea textarea-bordered w-full h-30 resize-none bg-base-100/50"
+                className="textarea textarea-bordered rounded-lg w-full h-30 resize-none bg-base-100/50"
                 placeholder="Thank you for the business!"
                 value={companyData?.notes || ""}
                 onChange={(e) =>
@@ -411,7 +318,7 @@ function CompanyForm() {
                 </div>
                 <input
                   type="url"
-                  className="input input-bordered w-full bg-base-100/50"
+                  className="input input-bordered rounded-lg w-full bg-base-100/50"
                   placeholder="abc@upi"
                   value={companyData?.upiId || ""}
                   onChange={(e) =>
@@ -450,45 +357,8 @@ function CompanyForm() {
               </button>
             )}
           </div>
-
-          {currentPath === "/company" && (
-            <div className="flex items-center">
-              {company?.apiKey ? (
-                <div className="flex bg-base-100/50 p-4 rounded-2xl gap-2">
-                  <span className="text-sm self-center mr-2">
-                    API Key: {company.apiKey}
-                  </span>
-                  <button onClick={handleCopy}>
-                    {copied ? (
-                      <CopyCheck className="size-4 self-center hover:cursor-pointer text-accent" />
-                    ) : (
-                      <Copy className="size-4 self-center hover:cursor-pointer hover:text-accent" />
-                    )}
-                  </button>
-                  <Trash2
-                    onClick={() => setShowDeleteModal(true)}
-                    className="size-4 self-center hover:cursor-pointer  hover:text-error"
-                  />
-                  <Link target="_blank" href="/docs">
-                    <button className="btn rounded-full">
-                      Api Docs
-                      <ExternalLink className="size-4" />
-                    </button>
-                  </Link>
-                </div>
-              ) : (
-                <button
-                  onClick={handleGenerateAPIKey}
-                  className="btn rounded-full"
-                >
-                  Generate API Key
-                </button>
-              )}
-            </div>
-          )}
         </div>
       </fieldset>
-      {showDeleteModal && <DeleteAPIKeyModal />}
     </>
   );
 }

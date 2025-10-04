@@ -25,6 +25,8 @@ function ThemeController() {
 
   if (currentPath === "/") return null;
 
+  return null;
+
   return (
     <label className="swap swap-rotate fixed top-5 right-5">
       {/* this hidden checkbox controls the state */}

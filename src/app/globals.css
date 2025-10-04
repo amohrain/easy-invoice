@@ -16,7 +16,7 @@
   }
 
   .generate-button {
-    @apply btn bg-gradient-to-tr from-secondary via-secondary/85 to-primary rounded-full shadow-lg transition text-white border-none;
+    @apply btn bg-gradient-to-tr from-secondary via-secondary/85 to-primary rounded-full shadow-lg shadow-secondary/25 transition text-white border-none;
   }
 
   .vibe-gradient {

@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import CookieBanner from "../components/CookieBanner";
 import AddInvoiceButton from "../components/AddInvoiceButton";
 import { getSEOTags, renderSchemaTags } from "../lib/seo";
+import AnalyticsHandler from "../components/AnalyticsHandler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           {children}
+          <AnalyticsHandler />
           <CookieBanner />
           <div>
             <Toaster richColors closeButton />

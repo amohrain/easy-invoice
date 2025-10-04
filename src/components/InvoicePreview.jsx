@@ -7,6 +7,8 @@ import { useTemplateStore } from "@/store/useTemplate";
 import { useLoadingStore } from "@/store/useLoading";
 import { useEffect, useState } from "react";
 import {
+  ArrowBigLeft,
+  Backpack,
   Check,
   Copy,
   CopyCheck,
@@ -14,6 +16,7 @@ import {
   EditIcon,
   Link2,
   Loader,
+  RefreshCcw,
   Save,
   Undo2,
   X,
@@ -511,7 +514,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     {!editable && (
                       <button
                         onClick={() => setShowSuggestionModal(true)}
-                        className="btn btn-info"
+                        className="generate-button"
                       >
                         <Edit />
                         Suggest
@@ -519,16 +522,29 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     )}
                     {preview && (
                       <>
-                        <button
+                        {/* <button
                           onClick={setStep}
                           className="btn btn-outline btn-primary rounded-full"
                         >
                           Back
+                        </button> */}
+
+                        <button
+                          data-tip="Restart demo"
+                          className="tooltip tooltip-bottom"
+                        >
+                          <RefreshCcw
+                            className="cursor-pointer hover:text-accent"
+                            onClick={setStep}
+                          />
                         </button>
 
                         <Link href={"/sign-up"}>
-                          <button className="btn btn-primary rounded-full">
-                            Get Started
+                          <button
+                            data-tip="No credit card required"
+                            className="tooltip tooltip-bottom tooltip-secondary generate-button rounded-full"
+                          >
+                            Get Started for free
                           </button>
                         </Link>
                       </>
@@ -931,19 +947,24 @@ export function InvoicePreview({ setStep, editable, preview }) {
               )}
             </div>
           ))}
-          <div className="text-center gradient-text">
-            “It just took
-            {invoice?.timeTaken && invoice.timeTaken < 60
-              ? ` ${invoice.timeTaken} seconds`
-              : " a few minute"}{" "}
-            to create this invoice using Vibe Invoice."{" "}
+          <div className="flex items-center justify-center gap-1 text-center italic">
+            <span>“This invoice was created in</span>{" "}
+            <span>
+              {invoice?.timeTaken && invoice.timeTaken < 60
+                ? ` ${invoice.timeTaken} seconds`
+                : " a few minutes"}{" "}
+              with{" "}
+            </span>
+            <img className="size-4" src="/Logo.png" alt="Vibe Invoice Logo" />
+            Vibe Invoice."{" "}
             {!editable ||
               (preview && (
                 <a
-                  href="https://www.vibeinvoice.com"
-                  className="link hover:link-hover"
+                  href={preview ? "/sign-up" : "https://www.vibeinvoice.com/"}
+                  data-tip="No credit card required"
+                  className="tooltip tooltip-secondary link underline link-hover hover:link-hover hover:text-secondary"
                 >
-                  Create your own →
+                  Try it free →
                 </a>
               ))}
           </div>

@@ -1,5 +1,4 @@
 import { Sparkles } from "lucide-react";
-import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useClientStore } from "@/store/useClient";
 import { InvoicePreview } from "./InvoicePreview";
@@ -7,10 +6,8 @@ import { handleInvoiceGenerate } from "../lib/openai";
 import { useInvoiceStore } from "../store/useInvoice";
 import { calculateInvoice } from "../lib/calculate";
 import { sampleCompany } from "../constants/sampleCompany";
-import { clients } from "../constants/clients";
 import { templates } from "../lib/templatesData";
 import { useTemplateStore } from "../store/useTemplate";
-import { dummyInvoice } from "../lib/dummyInvoice";
 import InvoiceSkeleton from "./InvoiceSkeleton";
 
 export const DynamicTextarea = () => {
@@ -28,6 +25,7 @@ export const DynamicTextarea = () => {
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState("");
   const [placeholder, setPlaceholder] = useState("");
+  const [showPlaceholder, setShowPlaceholder] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [mentionStart, setMentionStart] = useState(null);
@@ -38,14 +36,78 @@ export const DynamicTextarea = () => {
   const { invoice, setInvoice } = useInvoiceStore();
   const { setTemplate } = useTemplateStore();
 
+  const [tooltip, setTooltip] = useState(null);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipContent, setTooltipContent] = useState(null);
+
   const timeToStart = 1000; // 1 second
   const textareaRef = useRef();
   const mirrorRef = useRef();
 
+  // Logic for tooltip
+  const updateTooltipPosition = () => {
+    const lines = text.split("\n");
+
+    // Tooltip position: just below caret line
+    setTooltip({
+      // top: rect.bottom - taRect.top + textarea.scrollTop,
+      top: Math.min(lines.length * 24, 140),
+      left: 20,
+    });
+  };
+
+  // Update tooltip content on text change
+  useEffect(() => {
+    if (text.trim() === "") {
+      setClientId("");
+      setTooltipContent(
+        <div className="text-secondary">
+          Use <span className="text-primary italic">'@Name'</span> to mention a
+          client
+        </div>
+      );
+      return;
+    }
+
+    if (!clientId) {
+      setTooltipContent(
+        <div className="text-secondary">
+          Use <span className="text-primary italic">'@Name'</span> to mention a
+          client
+        </div>
+      );
+    } else if (text.split("\n").length == 2) {
+      setTooltipContent(
+        <div className="text-primary">
+          Add items like{" "}
+          <span className="text-secondary italic">'3 Logos @ 49.99'</span>
+        </div>
+      );
+    } else if (text.split("\n").length == 3) {
+      setTooltipContent(
+        <div className="text-primary">
+          Add <span className="text-secondary italic">'VAT-10%'</span> or
+          <span className="text-secondary italic"> 'discount @ 5%'</span>
+        </div>
+      );
+    } else if (text.split("\n").length == 4) {
+      setTooltipContent(
+        <div className="text-secondary">
+          Click <span className="text-primary italic">'Generate'</span>
+        </div>
+      );
+    }
+  }, [text]);
+
+  useEffect(() => {
+    updateTooltipPosition();
+  }, [text]);
+
   useEffect(() => {
     async function fetchClients() {
       //   await getClients();
-      setSampleClients();
+      await setSampleClients();
+      setClientId("");
       setTemplate(templates[0]);
     }
     fetchClients();
@@ -69,41 +131,25 @@ export const DynamicTextarea = () => {
     else document.body.style.overflow = "hidden";
   }, [step]);
 
-  const startTyping = () => {
-    if (text !== "") return;
-    setClientId("");
-    let i = 0;
-    const textToType =
-      placeholders[Math.floor(Math.random() * placeholders.length)];
-    setPlaceholder("");
-
-    const interval = setInterval(() => {
-      if (i < textToType.length) {
-        setPlaceholder(textToType.substring(0, i + 1));
-        i++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 40);
-  };
-
-  // useEffect(() => {
-  //   if (isVisible && text !== "") setPlaceholder("");
-  //   if (isVisible && text === "") {
-  //     setTimeout(() => {
-  //       startTyping();
-  //     }, timeToStart);
-  //   }
-  // }, [isVisible, text]);
-
   useEffect(() => {
     if (!isVisible) return;
 
+    let timeoutId;
+    let lastIndex = -1;
+
     const rotatePlaceholder = () => {
-      const nextText =
-        placeholders[Math.floor(Math.random() * placeholders.length)];
-      setPlaceholder(""); // clear placeholder first
-      setTimeout(() => {
+      let nextIndex;
+      do {
+        nextIndex = Math.floor(Math.random() * placeholders.length);
+      } while (nextIndex === lastIndex && placeholders.length > 1);
+
+      lastIndex = nextIndex;
+      const nextText = placeholders[nextIndex];
+
+      setPlaceholder(""); // clear first
+
+      // pause before typing
+      timeoutId = setTimeout(() => {
         let i = 0;
         const interval = setInterval(() => {
           if (i < nextText.length) {
@@ -111,19 +157,17 @@ export const DynamicTextarea = () => {
             i++;
           } else {
             clearInterval(interval);
+            // schedule next rotation *after* finishing
+            timeoutId = setTimeout(rotatePlaceholder, 3000); // wait before typing next
           }
         }, 40);
-      }, 2000); // 2-second pause before typing starts
+      }, 2000);
     };
 
-    rotatePlaceholder(); // start immediately
+    rotatePlaceholder(); // kickstart
 
-    const placeholderInterval = setInterval(() => {
-      if (text === "") rotatePlaceholder();
-    }, 7000);
-
-    return () => clearInterval(placeholderInterval);
-  }, [isVisible, text]);
+    return () => clearTimeout(timeoutId);
+  }, [isVisible]);
 
   // Mention handling
   useEffect(() => {
@@ -141,7 +185,7 @@ export const DynamicTextarea = () => {
 
     const { offsetTop, offsetLeft } = span;
     setMentionPosition({
-      top: offsetTop + 24,
+      top: offsetTop + 36,
       //  left: offsetLeft
     });
     mirror.removeChild(span);
@@ -154,7 +198,7 @@ export const DynamicTextarea = () => {
     const beforeCursor = value.slice(0, cursor);
     const match = beforeCursor.match(/@(\w*)$/);
 
-    if (match) {
+    if (match && !clientId) {
       const query = match[1].toLowerCase();
       const matched = clients.filter((client) =>
         client.clientName.toLowerCase().includes(query)
@@ -195,7 +239,7 @@ export const DynamicTextarea = () => {
     setSuggestions([]);
     setMentionStart(null);
     setTimeout(() => {
-      const pos = (before + mentionTag + " ").length;
+      const pos = (before + mentionTag + "").length;
       textareaRef.current.focus();
       textareaRef.current.setSelectionRange(pos, pos);
     }, 0);
@@ -257,7 +301,7 @@ export const DynamicTextarea = () => {
 
   const PreviewModal = () => {
     return (
-      <div className="fixed my-4 vibe-gradient inset-0 bg-base-100 flex flex-col items-center justify-center z-50">
+      <div className="fixed py-4 vibe-gradient inset-0 bg-base-100 flex flex-col items-center justify-center z-50">
         <div className="w-full max-w-5xl rounded-xl h-full overflow-y-auto">
           {loading ? (
             <InvoiceSkeleton />
@@ -279,14 +323,44 @@ export const DynamicTextarea = () => {
 
   return (
     <div
-      className="flex flex-col w-full max-w-2xl mx-auto py-4 px-4 md:px-6 rounded-2xl h-48 shadow-2xl shadow-secondary/20 
-        bg-base-100/10 backdrop-blur-sm border border-primary/20 
-        animate-pulse-soft"
+      className="relative dropdown dropdown-top dropdown-open flex flex-col w-full max-w-2xl mx-auto py-4 px-4 md:px-6 rounded-2xl h-48 shadow-2xl shadow-secondary/20 
+        bg-base-100/20 backdrop-blur-sm border border-primary/20 
+        animate-pulse-soft "
     >
+      <div
+        hidden={!showTooltip || suggestions.length > 0}
+        draggable
+        className="absolute rounded border backdrop-blur-xs border-primary/30 font-semibold text-sm vibe-opacity py-2 px-4 z-50"
+        style={{
+          top: tooltip?.top + 24 || 0, // small offset below line
+          left: tooltip?.left - 5 || 0,
+          transition: "top 0.2s, left 0.2s",
+        }}
+      >
+        {tooltipContent}
+        <div
+          className=""
+          style={{
+            position: "absolute",
+            top: "-6px",
+            left: "5px",
+            width: 0,
+            height: 0,
+            borderLeft: "4px solid transparent",
+            borderRight: "4px solid transparent",
+            borderBottom: "6px solid",
+          }}
+        />
+      </div>
+
+      <div className="absolute animate-pulse badge badge-primary rounded-none rounded-bl-[15px] rounded-tr-[15px] opacity-70 flex bottom-0 left-0">
+        <span className="italic font-extralight">interactive demo</span>
+      </div>
       <div
         className="absolute invisible whitespace-pre-wrap break-words p-4 border border-base-300 rounded-lg text-base"
         ref={mirrorRef}
         style={{
+          left: 0,
           whiteSpace: "pre-wrap",
           wordWrap: "break-word",
           width: "100%",
@@ -299,26 +373,30 @@ export const DynamicTextarea = () => {
         value={text}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        // rows={1}
-        // onInput={(e) => {
-        //   e.target.style.height = "40px";
-        //   e.target.style.height = `${Math.min(e.target.scrollHeight, 300)}px`;
-        // }}
-        className="w-full outline-0 h-36 resize-none"
+        placeholder={showPlaceholder ? placeholder : ""}
+        onFocus={() => {
+          if (text === "") setShowPlaceholder(false);
+          setShowTooltip(true);
+        }}
+        onBlur={() => {
+          if (text === "") {
+            setShowPlaceholder(true);
+            setShowTooltip(false);
+          }
+        }}
+        className="w-full outline-0 h-36 resize-none text font-medium placeholder:font-normal placeholder:text-primary/50"
       />
       <button
         onClick={() => {
           handleGenerate();
         }}
-        className="self-end btn btn-md bg-gradient-to-tr from-secondary via-secondary/85 to-primary rounded-full shadow-lg hover:scale-105 transition text-white border-none"
+        className="absolute bottom-4 self-end sm:btn-lg generate-button hover:scale-105 animate-pulse"
       >
         <Sparkles size={18} /> Generate
       </button>
-
-      {suggestions.length > 0 && (
+      {!clientId && suggestions.length > 0 && (
         <ul
-          className="absolute z-50 border-base-300 rounded-lg max-h-44 overflow-y-auto w-64"
+          className="absolute flex flex-col gap-1 z-50 border p-1 glass border-base-300 rounded-xl max-h-46 overflow-y-auto w-64"
           style={{
             top: mentionPosition.top,
             left: mentionPosition.left,
@@ -328,7 +406,7 @@ export const DynamicTextarea = () => {
             <li
               key={client._id}
               onClick={() => insertMention(client)}
-              className={`flex items-center gap-2 px-4 py-2 mb-1 rounded-lg cursor-pointer transition hover:bg-secondary/40 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition hover:bg-secondary/40 ${
                 selectedIndex === idx
                   ? "bg-secondary/20 rounded-lg"
                   : "bg-base-100/50 border-base-100"

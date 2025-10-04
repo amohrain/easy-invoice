@@ -84,7 +84,7 @@ function NavigationBar() {
           </Link>
           <Link href={"/sign-up"}>
             <button className="generate-button rounded-full">
-              Get Started
+              Get Started for free
             </button>
           </Link>
         </div>

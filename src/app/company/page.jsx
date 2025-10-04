@@ -6,6 +6,7 @@ import { useCompanyStore } from "@/store/useCompany";
 import { Plus } from "lucide-react";
 
 import CompanyForm from "../../components/CompanyForm";
+import APIKeyCompany from "../../components/APIKeyCompany";
 
 function Company() {
   const { companyData } = useCompanyStore();
@@ -30,6 +31,7 @@ function Company() {
         <div className="vibe-opacity rounded-xl">
           <CompanyForm />
         </div>
+        <APIKeyCompany />
       </div>
     </div>
   );
