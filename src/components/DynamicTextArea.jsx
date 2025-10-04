@@ -40,6 +40,8 @@ export const DynamicTextarea = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipContent, setTooltipContent] = useState(null);
 
+  const [startTime, setStartTime] = useState(0);
+
   const timeToStart = 1000; // 1 second
   const textareaRef = useRef();
   const mirrorRef = useRef();
@@ -58,50 +60,78 @@ export const DynamicTextarea = () => {
 
   // Update tooltip content on text change
   useEffect(() => {
+    updateTooltipPosition();
+
+    // start counting time when the user starts typing for the first time
+    if (text.length > 0 && startTime === 0) {
+      const start = performance.now();
+      setStartTime(start);
+    }
+    if (text.length === 0) {
+      setStartTime(0);
+    }
+
     if (text.trim() === "") {
       setClientId("");
       setTooltipContent(
-        <div className="text-secondary">
-          Use <span className="text-primary italic">'@Name'</span> to mention a
-          client
-        </div>
+        <span className="text-secondary">
+          Type <span className="text-primary italic">'@Name'</span> to quickly
+          add a client
+        </span>
       );
       return;
     }
 
     if (!clientId) {
       setTooltipContent(
-        <div className="text-secondary">
-          Use <span className="text-primary italic">'@Name'</span> to mention a
+        <span className="text-secondary">
+          Type <span className="text-primary italic">'@Name'</span> to mention a
           client
-        </div>
+        </span>
       );
     } else if (text.split("\n").length == 2) {
       setTooltipContent(
-        <div className="text-primary">
+        <span className="text-primary">
           Add items like{" "}
           <span className="text-secondary italic">'3 Logos @ 49.99'</span>
-        </div>
+        </span>
       );
     } else if (text.split("\n").length == 3) {
       setTooltipContent(
-        <div className="text-primary">
-          Add <span className="text-secondary italic">'VAT-10%'</span> or
+        <span className="text-primary">
+          Add extras like{" "}
+          <span className="text-secondary italic">'VAT-10%'</span> or
           <span className="text-secondary italic"> 'discount @ 5%'</span>
-        </div>
+        </span>
       );
     } else if (text.split("\n").length == 4) {
       setTooltipContent(
-        <div className="text-secondary">
+        <span className="text-secondary">
           Click <span className="text-primary italic">'Generate'</span>
-        </div>
+        </span>
       );
     }
   }, [text]);
 
+  const handleTooltipClicked = () => {
+    if (!clientId) {
+      const firstClient = clients[0];
+      if (firstClient) insertMention(firstClient);
+    } else if (text.split("\n").length == 2) {
+      setText((prev) => prev.trim() + "\n3 Logos @ 49.99\n");
+      textareaRef.current.focus();
+    } else if (text.split("\n").length == 3) {
+      setText((prev) => prev.trim() + "\nVAT-10%\n");
+      textareaRef.current.focus();
+    } else if (text.split("\n").length == 4) {
+      handleGenerate();
+    }
+  };
+
+  // Bad logic for tooltip timing
   useEffect(() => {
-    updateTooltipPosition();
-  }, [text]);
+    if (text.trim() !== "") setShowTooltip(true);
+  }, [showTooltip == false]);
 
   useEffect(() => {
     async function fetchClients() {
@@ -158,7 +188,7 @@ export const DynamicTextarea = () => {
           } else {
             clearInterval(interval);
             // schedule next rotation *after* finishing
-            timeoutId = setTimeout(rotatePlaceholder, 3000); // wait before typing next
+            timeoutId = setTimeout(rotatePlaceholder, 2000); // wait before typing next
           }
         }, 40);
       }, 2000);
@@ -282,10 +312,14 @@ export const DynamicTextarea = () => {
       };
 
       const invoice = await handleInvoiceGenerate(text);
-      //   const invoice = dummyInvoice;
+
+      // Calculate time taken to generate invoice
+      const end = performance.now();
+      const durationInSeconds = ((end - startTime) / 1000).toFixed(2);
+      invoice.timeTaken = parseFloat(durationInSeconds);
+
       const updatedInvoice = calculateInvoice(invoice);
       const clientInfo = clients.find((client) => client._id === clientId);
-
       setInvoice({
         ...updatedInvoice,
         ...clientInfo,
@@ -329,15 +363,20 @@ export const DynamicTextarea = () => {
     >
       <div
         hidden={!showTooltip || suggestions.length > 0}
+        id="tooltip"
+        onClick={handleTooltipClicked}
         draggable
-        className="absolute rounded border backdrop-blur-xs border-primary/30 font-semibold text-sm vibe-opacity py-2 px-4 z-50"
+        className="absolute rounded border backdrop-blur-xs border-primary/30 font-semibold text-sm vibe-opacity py-2 px-4 z-50 cursor-pointer"
         style={{
           top: tooltip?.top + 24 || 0, // small offset below line
           left: tooltip?.left - 5 || 0,
           transition: "top 0.2s, left 0.2s",
         }}
       >
-        {tooltipContent}
+        <span className=" animate-pulse flex items-center gap-2">
+          <Sparkles className="text-primary" size={16} />
+          {tooltipContent}
+        </span>
         <div
           className=""
           style={{
@@ -373,15 +412,18 @@ export const DynamicTextarea = () => {
         value={text}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        placeholder={showPlaceholder ? placeholder : ""}
+        placeholder={!showTooltip ? placeholder : ""}
         onFocus={() => {
           if (text === "") setShowPlaceholder(false);
           setShowTooltip(true);
         }}
         onBlur={() => {
           if (text === "") {
-            setShowPlaceholder(true);
-            setShowTooltip(false);
+            setTimeout(() => {
+              setPlaceholder("");
+              setShowPlaceholder(true);
+              setShowTooltip(false);
+            }, 300);
           }
         }}
         className="w-full outline-0 h-36 resize-none text font-medium placeholder:font-normal placeholder:text-primary/50"
