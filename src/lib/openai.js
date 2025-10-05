@@ -7,8 +7,6 @@ export const handleInvoiceGenerate = async (prompt) => {
     body: JSON.stringify({ prompt }),
   });
 
-  console.log(response);
-
   if (!response.ok) {
     console.error("Error generating invoice:", response.statusText);
     return {};

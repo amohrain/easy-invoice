@@ -83,7 +83,7 @@ function NavigationBar() {
             </button>
           </Link>
           <Link href={"/sign-up"}>
-            <button className="generate-button rounded-full">
+            <button className="generate-button hover:scale-105 rounded-full">
               Get Started for free
             </button>
           </Link>

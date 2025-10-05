@@ -6,8 +6,7 @@ import {
   useTransform,
   useMotionValueEvent,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { Sparkles, Stars } from "lucide-react";
+import { useRef } from "react";
 import { DynamicTextarea } from "../components/DynamicTextArea";
 
 function Hero() {
@@ -46,19 +45,8 @@ function Hero() {
           </div>
           <DynamicTextarea />
           <p className="italic underline">No credit card required.</p>
-          {/* <Link href={"/sign-up"}>
-            <button className="btn btn-primary w-fit text-xl self-center rounded-full py-6 px-6">
-              Get Started for free
-            </button>
-          </Link> */}
         </div>
       </div>
-      {/* <motion.img
-        src={"/InvoiceSearch.png"}
-        className="absolute h-30 right-150 top-0"
-        alt="Invoice Search"
-        style={{ translateY }}
-      /> */}
     </section>
   );
 }

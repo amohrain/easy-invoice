@@ -46,6 +46,8 @@ export const DynamicTextarea = () => {
   const textareaRef = useRef();
   const mirrorRef = useRef();
 
+  // Debugging
+
   // Logic for tooltip
   const updateTooltipPosition = () => {
     const lines = text.split("\n");
@@ -143,18 +145,18 @@ export const DynamicTextarea = () => {
     fetchClients();
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry.isIntersecting),
-      { threshold: 0.2 }
-    );
+  // useEffect(() => {
+  //   const observer = new IntersectionObserver(
+  //     ([entry]) => setIsVisible(entry.isIntersecting),
+  //     { threshold: 0.2 }
+  //   );
 
-    if (textareaRef.current) observer.observe(textareaRef.current);
+  //   if (textareaRef.current) observer.observe(textareaRef.current);
 
-    return () => {
-      if (textareaRef.current) observer.unobserve(textareaRef.current);
-    };
-  }, []);
+  //   return () => {
+  //     if (textareaRef.current) observer.unobserve(textareaRef.current);
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (step == 1) document.body.style.overflow = "";
@@ -162,12 +164,14 @@ export const DynamicTextarea = () => {
   }, [step]);
 
   useEffect(() => {
-    if (!isVisible) return;
+    // if (!isVisible) return;
 
     let timeoutId;
     let lastIndex = -1;
 
     const rotatePlaceholder = () => {
+      if (text !== "") return; // only show placeholder when text is empty
+
       let nextIndex;
       do {
         nextIndex = Math.floor(Math.random() * placeholders.length);
@@ -188,7 +192,9 @@ export const DynamicTextarea = () => {
           } else {
             clearInterval(interval);
             // schedule next rotation *after* finishing
-            timeoutId = setTimeout(rotatePlaceholder, 2000); // wait before typing next
+            if (text == "") {
+              timeoutId = setTimeout(rotatePlaceholder, 2000); // wait before typing next
+            }
           }
         }, 40);
       }, 2000);
@@ -197,7 +203,7 @@ export const DynamicTextarea = () => {
     rotatePlaceholder(); // kickstart
 
     return () => clearTimeout(timeoutId);
-  }, [isVisible]);
+  }, [text === ""]);
 
   // Mention handling
   useEffect(() => {
@@ -392,7 +398,7 @@ export const DynamicTextarea = () => {
         />
       </div>
 
-      <div className="absolute animate-pulse badge badge-primary rounded-none rounded-bl-[15px] rounded-tr-[15px] opacity-70 flex bottom-0 left-0">
+      <div className="absolute animate-pulse badge badge-primary rounded-none rounded-bl-[15px] rounded-tr-[15px] opacity-40 flex bottom-0 left-0">
         <span className="italic font-extralight">interactive demo</span>
       </div>
       <div
@@ -426,7 +432,7 @@ export const DynamicTextarea = () => {
             }, 300);
           }
         }}
-        className="w-full outline-0 h-36 resize-none text font-medium placeholder:font-normal placeholder:text-primary/50"
+        className="w-full outline-0 h-36 resize-none text font-medium placeholder:font-normal "
       />
       <button
         onClick={() => {

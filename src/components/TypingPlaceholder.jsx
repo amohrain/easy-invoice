@@ -186,7 +186,7 @@ const TypingPlaceholder = ({ text, setText, home = false }) => {
 
       {suggestions.length > 0 && (
         <ul
-          className="absolute z-50 border border-base-300 rounded-lg shadow-lg max-h-44 overflow-y-auto w-72"
+          className="absolute z-50 p-1 vibe-opacity flex flex-col gap-1 border border-base-300 rounded-lg shadow-lg max-h-48 overflow-y-auto w-72"
           style={{
             top: mentionPosition.top,
             left: mentionPosition.left,

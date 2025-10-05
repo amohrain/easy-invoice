@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { calculateInvoice } from "@/lib/calculate";
 import { useCompanyStore } from "@/store/useCompany";
 import { useInvoiceStore } from "@/store/useInvoice";
@@ -7,25 +7,20 @@ import { useTemplateStore } from "@/store/useTemplate";
 import { useLoadingStore } from "@/store/useLoading";
 import { useEffect, useState } from "react";
 import {
-  ArrowBigLeft,
-  Backpack,
   Check,
   Copy,
   CopyCheck,
   Edit,
   EditIcon,
   Link2,
-  Loader,
   RefreshCcw,
   Save,
-  Undo2,
   X,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import DownloadIcon from "./DownloadIcon";
 import { useRouter } from "next/navigation";
 import { useClientStore } from "@/store/useClient";
-import { templates } from "../lib/templatesData";
 import { formatCurrency } from "../lib/formatCurrency";
 import Link from "next/link";
 import { generateUPILink } from "../lib/generateUPILink";
@@ -40,13 +35,11 @@ export function InvoicePreview({ setStep, editable, preview }) {
     if (section.alignment === "left") style += " text-left self-start";
     if (section.alignment === "right") style += " text-right self-end";
     if (section.alignment === "center") style += " text-center self-center";
-    // if (section.uppercase) style += " uppercase";
     if (section.fontSize) style += ` text-[${section.fontSize}px]`;
     return style;
   };
 
-  const { template, getUsersTemplates, getTemplateById } = useTemplateStore();
-  // const template = templates[0];
+  const { template } = useTemplateStore();
 
   const {
     invoice,
@@ -74,7 +67,6 @@ export function InvoicePreview({ setStep, editable, preview }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const share = searchParams.get("share");
-  const { id } = useParams();
 
   // use effect to fetch suggestions after they have been created
   useEffect(() => {
@@ -114,10 +106,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
           businessEmail,
           businessPhone,
           businessLogo,
-          // invoiceId,
           company: company._id,
           currency: company.currency || "USD",
-          // invoiceNumber: `INV-${invoiceId}`,
           issuedAt: new Date().toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
@@ -216,17 +206,8 @@ export function InvoicePreview({ setStep, editable, preview }) {
     }
   };
 
-  const handleBack = () => {
-    if (currentPath === "/invoices/create") {
-      setStep((prev) => prev - 1);
-    } else if (currentPath === "/") {
-      setStep((prev) => prev - 1);
-    } else {
-      window.history.back();
-    }
-  };
-
   const [showQRModal, setShowQRModal] = useState(false);
+
   const InvoiceQRModal = () => {
     const [link, setLink] = useState(invoice.QR || "");
 
@@ -245,7 +226,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
       <div className="modal modal-open modal-end">
         <div className="modal-box">
           <div className="flex justify-between">
-            <h2 className="font-bold text-2xl">Add QR Code</h2>
+            <h2 className="gradient-text text-3xl font-bold">Add QR Code</h2>
             <button
               onClick={() => {
                 handleChange("QR", link);
@@ -256,14 +237,14 @@ export function InvoicePreview({ setStep, editable, preview }) {
               <X />
             </button>
           </div>
-          <p>
+          <p className="text-xl">
             Please enter the payment link below to generate a QR code for your
             invoice.
           </p>
-          <div className="flex py-4">
+          <div className="flex gap-2 py-4">
             <input
               type="text"
-              className="input input-bordered w-full"
+              className="input input-bordered rounded-full w-full"
               placeholder="Payment Link"
               value={link}
               onChange={(e) => setLink(e.target.value)}
@@ -273,7 +254,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                 handleChange("QR", link);
                 setShowQRModal(false);
               }}
-              className="btn btn-primary"
+              className="generate-button"
             >
               Add QR
             </button>
@@ -466,24 +447,18 @@ export function InvoicePreview({ setStep, editable, preview }) {
                 }) && <h3 className="font-bold mb-2">{section.title}</h3>}
 
               {section.section === "title" && (
-                <div className="flex w-full justify-between">
+                <div className="flex items-center w-full justify-between">
                   <h2
-                    className={`gradient-text text-xl sm:text-3xl font-semibold mb-4
+                    className={`gradient-text text-xl sm:text-3xl font-semibold
                     ${getTextStyle(section.style)}`}
                   >
                     {invoice?.invoiceTitle} Preview
                   </h2>
-                  <div className="flex flex-row justify-around items-center gap-4">
-                    {/* {editable && currentPath === "/invoices/create" && (
-                      <Undo2
-                        className="cursor-pointer hover:text-accent"
-                        onClick={handleBack}
-                      />
-                    )} */}
-
+                  <div className="flex flex-row justify-around items-center gap-2 sm:gap-3">
                     {editable && currentPath !== "/playground" && (
                       <Save
-                        className={`cursor-pointer hover:text-accent ${
+                        data-tip="Save invoice"
+                        className={`tooltip tooltip-bottom cursor-pointer hover:text-secondary ${
                           saved && "text-gray-400"
                         }`}
                         onClick={() => {
@@ -492,19 +467,20 @@ export function InvoicePreview({ setStep, editable, preview }) {
                       />
                     )}
 
-                    <DownloadIcon className="cursor-pointer hover:text-accent" />
+                    <DownloadIcon className="cursor-pointer hover:text-secondary" />
                     {currentPath !== "/invoices/create" &&
                       editable &&
                       !preview && (
                         <Link2
-                          className="cursor-pointer hover:text-accent"
+                          data-tip="Share invoice"
+                          className="tooltip tooltip-bottomcursor-pointer hover:text-secondary"
                           onClick={handleLinkShare}
                         />
                       )}
                     {editable && invoice.changesSuggested && (
                       <button
                         onClick={handleAcceptSuggestions}
-                        className="btn btn-info"
+                        className="btn btn-info rounded-full"
                       >
                         <Check />
                         Accept All
@@ -522,19 +498,12 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     )}
                     {preview && (
                       <>
-                        {/* <button
-                          onClick={setStep}
-                          className="btn btn-outline btn-primary rounded-full"
-                        >
-                          Back
-                        </button> */}
-
                         <button
                           data-tip="Restart demo"
                           className="tooltip tooltip-bottom"
                         >
                           <RefreshCcw
-                            className="cursor-pointer hover:text-accent"
+                            className="cursor-pointer hover:text-secondary"
                             onClick={setStep}
                           />
                         </button>
@@ -542,9 +511,9 @@ export function InvoicePreview({ setStep, editable, preview }) {
                         <Link href={"/sign-up"}>
                           <button
                             data-tip="No credit card required"
-                            className="tooltip tooltip-bottom tooltip-secondary generate-button rounded-full"
+                            className="tooltip tooltip-left tooltip-secondary generate-button sm:btn-lg hover:scale-105"
                           >
-                            Get Started for free
+                            Sign up
                           </button>
                         </Link>
                       </>
@@ -662,7 +631,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
 
                         <Edit
                           onClick={() => setShowQRModal(true)}
-                          className="size-3 mt-2 hover:text-accent cursor-pointer"
+                          className="size-3 mt-2 hover:text-secondary cursor-pointer"
                         />
                       </div>
                     ) : (
@@ -735,7 +704,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     <div className="w-full flex flex-row justify-end mt-[-24px]">
                       <span
                         onClick={() => setShowEditItemsModal(true)}
-                        className="flex flex-row gap-2 items-center rounded-full hover:text-accent cursor-pointer"
+                        className="flex flex-row gap-2 items-center rounded-full hover:text-secondary cursor-pointer"
                       >
                         <EditIcon size={18} />
                         Edit items
@@ -947,7 +916,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
               )}
             </div>
           ))}
-          <div className="flex items-center justify-center gap-1 text-center italic">
+          <div className="text-center italic text-sm sm:text-base leading-relaxed">
             <span>“This invoice was created in</span>{" "}
             <span>
               {invoice?.timeTaken && invoice.timeTaken < 60
@@ -955,18 +924,24 @@ export function InvoicePreview({ setStep, editable, preview }) {
                 : " a few minutes"}{" "}
               with{" "}
             </span>
-            <img className="size-4" src="/Logo.png" alt="Vibe Invoice Logo" />
-            Vibe Invoice."{" "}
-            {!editable ||
-              (preview && (
-                <a
-                  href={preview ? "/sign-up" : "https://www.vibeinvoice.com/"}
-                  data-tip="No credit card required"
-                  className="tooltip tooltip-secondary link underline link-hover hover:link-hover hover:text-secondary"
-                >
-                  Try it free →
-                </a>
-              ))}
+            <span className="whitespace-nowrap">
+              <img
+                className="inline-block size-4 align-text-bottom"
+                src="/Logo.png"
+                alt="Vibe Invoice Logo"
+              />{" "}
+              Vibe Invoice
+            </span>
+            ."{" "}
+            {(!editable || preview) && (
+              <a
+                href={preview ? "/sign-up" : "https://www.vibeinvoice.com/"}
+                data-tip="No credit card required"
+                className="tooltip tooltip-secondary underline hover:text-secondary"
+              >
+                Try it free →
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -1012,7 +987,7 @@ const ShareLinkModal = ({ hide }) => {
                 setCopied(false);
               }, 10000);
             }}
-            className={`absolute right-2 top-1/2 -translate-y-1/2 hover:text-accent/55 ${
+            className={`absolute right-2 top-1/2 -translate-y-1/2 hover:text-secondary/55 ${
               copied && "text-accent"
             }`}
           >
