@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Loader, X } from "lucide-react";
+import { Loader, Sparkles, X } from "lucide-react";
 import { useInvoiceStore } from "../store/useInvoice";
 import { handleItemsGenerate } from "../lib/openai";
 import { calculateInvoice } from "../lib/calculate";
@@ -29,10 +29,12 @@ export function EditItemsModal({ closeModal }) {
   };
 
   return (
-    <dialog id="my_modal_1" className="modal modal-open backdrop-blur">
-      <div className="modal-box gap-4 flex flex-col">
+    <dialog id="my_modal_1" className="modal modal-open">
+      <div className="modal-box gap-4 bg-base-300 flex flex-col">
         <div className="flex flex-row justify-between">
-          <h3 className="font-bold text-lg text-center">Edit items</h3>
+          <h3 className="font-bold gradient-text text-2xl w-full text-center">
+            Edit items
+          </h3>
           <button onClick={closeModal} className="btn btn-ghost btn-circle">
             <X />
           </button>
@@ -46,16 +48,18 @@ export function EditItemsModal({ closeModal }) {
             id=""
           />
 
-          <div className="flex flex-row">
-            <div className="flex flex-row w-full gap-2"></div>
+          <div className="flex flex-row justify-end">
+            {/* <div className="flex flex-row w-full gap-2"></div> */}
             <button
               onClick={handleGenerate}
-              className={`btn btn-outline rounded-3xl ${
+              className={`generate-button hover:scale-105 ${
                 loading && "cursor-not-allowed"
               }`}
             >
-              {loading && (
+              {loading ? (
                 <span className="loading loading-spinner loading-sm mr-2"></span>
+              ) : (
+                <Sparkles size={18} />
               )}
               Edit
             </button>

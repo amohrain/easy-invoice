@@ -82,7 +82,7 @@ function PricingPlan({
             </span>
           </div>
           <p className="line-through font-semibold opacity-50 tracking-tighter leading-none">
-            {formatCurrency(mrp, currency)}
+            {mrp && formatCurrency(mrp, currency)}{" "}
           </p>
           <div className="mt-6">
             <PaymentButton

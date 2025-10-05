@@ -33,7 +33,7 @@ export const DynamicTextarea = () => {
   const [mentionPosition, setMentionPosition] = useState({ top: 0, left: 0 });
   const { setClientId, getClients, clients, clientId, setSampleClients } =
     useClientStore();
-  const { invoice, setInvoice } = useInvoiceStore();
+  const { setInvoice } = useInvoiceStore();
   const { setTemplate } = useTemplateStore();
 
   const [tooltip, setTooltip] = useState(null);
@@ -59,6 +59,10 @@ export const DynamicTextarea = () => {
       left: 20,
     });
   };
+
+  useEffect(() => {
+    console.log("Loading");
+  }, [loading]);
 
   // Update tooltip content on text change
   useEffect(() => {
@@ -158,52 +162,71 @@ export const DynamicTextarea = () => {
   //   };
   // }, []);
 
+  const [restartPlaceholder, setRestartPlaceholder] = useState(false);
+
   useEffect(() => {
     if (step == 1) document.body.style.overflow = "";
     else document.body.style.overflow = "hidden";
   }, [step]);
 
   useEffect(() => {
-    // if (!isVisible) return;
+    setRestartPlaceholder(false);
+    if (text !== "" || showTooltip) return;
 
     let timeoutId;
+    let intervalId;
     let lastIndex = -1;
+    let stopped = false;
 
-    const rotatePlaceholder = () => {
-      if (text !== "") return; // only show placeholder when text is empty
+    // pick a new placeholder different from last one
+    let nextIndex;
+    do {
+      nextIndex = Math.floor(Math.random() * placeholders.length);
+    } while (nextIndex === lastIndex && placeholders.length > 1);
+    lastIndex = nextIndex;
 
-      let nextIndex;
-      do {
-        nextIndex = Math.floor(Math.random() * placeholders.length);
-      } while (nextIndex === lastIndex && placeholders.length > 1);
+    const nextText = placeholders[nextIndex];
+    setPlaceholder(""); // clear first
 
-      lastIndex = nextIndex;
-      const nextText = placeholders[nextIndex];
+    // small pause before typing
+    timeoutId = setTimeout(() => {
+      if (stopped || showTooltip || text !== "") return;
 
-      setPlaceholder(""); // clear first
+      let i = 0;
+      intervalId = setInterval(() => {
+        if (stopped || showTooltip || text !== "") {
+          clearInterval(intervalId);
+          return;
+        }
 
-      // pause before typing
-      timeoutId = setTimeout(() => {
-        let i = 0;
-        const interval = setInterval(() => {
-          if (i < nextText.length) {
-            setPlaceholder(nextText.substring(0, i + 1));
-            i++;
-          } else {
-            clearInterval(interval);
-            // schedule next rotation *after* finishing
-            if (text == "") {
-              timeoutId = setTimeout(rotatePlaceholder, 2000); // wait before typing next
-            }
+        if (i < nextText.length) {
+          setPlaceholder(nextText.substring(0, i + 1));
+          i++;
+        } else {
+          clearInterval(intervalId);
+
+          // schedule another run only if still empty
+          if (!stopped && !showTooltip && text === "") {
+            timeoutId = setTimeout(() => {
+              if (!showTooltip && text === "" && step === 1) {
+                // trigger re-run by updating dependency indirectly
+                console.log("Triggering restart");
+                setRestartPlaceholder(true); // this will retrigger effect naturally
+              }
+            }, 2000);
           }
-        }, 40);
-      }, 2000);
+        }
+      }, 40);
+    }, 1000);
+
+    return () => {
+      stopped = true;
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
     };
+  }, [text === "", restartPlaceholder === true, showTooltip]);
 
-    rotatePlaceholder(); // kickstart
-
-    return () => clearTimeout(timeoutId);
-  }, [text === ""]);
+  // useEffect(() => {}, [restartPlaceholder])
 
   // Mention handling
   useEffect(() => {

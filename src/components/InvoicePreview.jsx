@@ -563,7 +563,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                                   : ""}
                               </strong>
                               <span
-                                contentEditable={editable}
+                                contentEditable={editable && !preview}
                                 suppressContentEditableWarning
                                 onBlur={(e) =>
                                   editable &&
@@ -647,7 +647,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                             : ""}
                         </strong>
                         <span
-                          contentEditable={editable}
+                          contentEditable={editable && !preview}
                           suppressContentEditableWarning
                           onBlur={(e) =>
                             editable &&
@@ -757,7 +757,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                               }}
                             >
                               <span
-                                contentEditable={editable}
+                                contentEditable={editable && !preview}
                                 suppressContentEditableWarning
                                 onBlur={(e) =>
                                   editable &&
@@ -789,18 +789,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                   <div className="w-64">
                     <div className="flex justify-between">
                       {template.labels?.subtotal || "Sub Total: "}
-                      <span
-                        contentEditable={editable}
-                        suppressContentEditableWarning
-                        onBlur={(e) =>
-                          editable &&
-                          handleChange(
-                            "subtotal",
-                            e.target.innerText.trim() || "0"
-                          )
-                        }
-                        className="cursor-text"
-                      >
+                      <span className="cursor-text">
                         {formatCurrency(invoice.subtotal, invoice.currency) ??
                           ""}
                       </span>
@@ -809,7 +798,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     {invoice.deductions?.map((deduct, index) => (
                       <div key={index} className="flex justify-between">
                         <span
-                          contentEditable={editable}
+                          contentEditable={editable && !preview}
                           suppressContentEditableWarning
                           onBlur={(e) => {
                             if (!editable) return;
@@ -825,21 +814,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                         >
                           {deduct.description ?? ""}
                         </span>
-                        <span
-                          // contentEditable={editable}
-                          // suppressContentEditableWarning
-                          // onBlur={(e) => {
-                          //   if (!editable) return;
-                          //   const deductions = [...invoice.deductions];
-                          //   deductions[index].amount =
-                          //     e.target.innerText.trim() || "0";
-                          //   setInvoice({
-                          //     ...invoice,
-                          //     deductions,
-                          //   });
-                          // }}
-                          className="cursor-text"
-                        >
+                        <span className="cursor-text">
                           {/* {invoice.currencySymbol}
                           {deduct.amount?.toFixed(2) ?? "0"} */}
 
@@ -851,7 +826,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                     {invoice.additions?.map((add, index) => (
                       <div key={index} className="flex justify-between">
                         <span
-                          contentEditable={editable}
+                          contentEditable={editable && !preview}
                           suppressContentEditableWarning
                           onBlur={(e) => {
                             if (!editable) return;
@@ -867,23 +842,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
                         >
                           {add.description ?? ""}
                         </span>
-                        <span
-                          // contentEditable={editable}
-                          // suppressContentEditableWarning
-                          // onBlur={(e) => {
-                          //   if (!editable) return;
-                          //   const newAdditions = [...invoice.additions];
-                          //   newAdditions[index].amount =
-                          //     e.target.innerText.trim() || "0";
-                          //   setInvoice({
-                          //     ...invoice,
-                          //     additions: newAdditions,
-                          //   });
-                          // }}
-                          className=" cursor-text"
-                        >
-                          {/* {invoice.currencySymbol}
-                          {add.amount?.toFixed(2) ?? "0"} */}
+                        <span className=" cursor-text">
                           {formatCurrency(add.amount, invoice.currency) ?? ""}
                         </span>
                       </div>
@@ -891,20 +850,7 @@ export function InvoicePreview({ setStep, editable, preview }) {
 
                     <div className="flex justify-between font-bold border-t border-gray-300 pt-2 mt-2">
                       {template.labels?.totalAmount || "Total"}
-                      <span
-                        // contentEditable={editable}
-                        // suppressContentEditableWarning
-                        // onBlur={(e) => {
-                        //   if (!editable) return;
-                        //   handleChange(
-                        //     "totalAmount",
-                        //     e.target.innerText.trim() || "0"
-                        //   );
-                        // }}
-                        className=" cursor-text"
-                      >
-                        {/* {invoice.currencySymbol}
-                        {invoice.totalAmount?.toFixed(2) ?? ""} */}
+                      <span className=" cursor-text">
                         {formatCurrency(
                           invoice.totalAmount,
                           invoice.currency
