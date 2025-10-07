@@ -1,4 +1,7 @@
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+import { methods } from "../data/method";
+import { PROFESSION_PAGES } from "../data/profession";
+import { countries } from "../data/countries";
 
 export default async function sitemap() {
   const staticPages = [
@@ -18,29 +21,43 @@ export default async function sitemap() {
     priority: 1,
   }));
 
-  //   const allTags = await getAllTags();
+  const methodProfessionCountryPages = methods
+    .map((method) =>
+      PROFESSION_PAGES.map((profession) =>
+        countries.map((country) => ({
+          url: `${baseUrl}/${method.id}/${profession.id}/${country.id}`,
+          lastModified: new Date(),
+          changeFrequency: "weekly",
+          priority: 1,
+        }))
+      ).flat(2)
+    )
+    .flat();
 
-  //   const searchLandingPages = allTags
-  //     .map((tag) =>
-  //       locations.map((location) => ({
-  //         url: `${baseUrl}/${location}/${tag}`,
-  //         lastModified: new Date(),
-  //         changeFrequency: "weekly",
-  //         priority: 1,
-  //       }))
-  //     )
-  //     .flat();
+  const methodProfessionPages = methods
+    .map((method) =>
+      PROFESSION_PAGES.map((profession) => ({
+        url: `${baseUrl}/${method.id}/${profession.id}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 1,
+      }))
+    )
+    .flat();
+
+  const methodPages = methods.map((method) => ({
+    url: `${baseUrl}/${method.id}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: 1,
+  }));
 
   return [
     // Insert your hardcoded pages:
-    {
-      url: `${baseUrl}/hardcoded`,
-      lastModified: "2024-12-31",
-      changeFrequency: "yearly",
-      priority: 0.8,
-    },
     ...staticPages,
     // Our pSEO pages:
-    // ...searchLandingPages,
+    ...methodPages,
+    ...methodProfessionPages,
+    ...methodProfessionCountryPages,
   ];
 }

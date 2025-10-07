@@ -16,6 +16,11 @@ const isPublicRoute = createRouteMatcher([
   "/about-us",
   "/contact-us",
   "/refund-policy",
+
+  "/:method",
+  "/:method/:id",
+  "/:method/:id/:country",
+
   "/sitemap.xml",
   "/robots.txt",
 ]);

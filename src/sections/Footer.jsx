@@ -1,16 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import {
-  FaFacebook,
-  FaLinkedin,
-  FaYoutube,
-  FaInstagram,
-  FaTwitter,
-  FaTwitterSquare,
-} from "react-icons/fa";
+import { FaFacebook, FaLinkedin, FaYoutube, FaInstagram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
-function Footer() {
+function Footer({ links }) {
   return (
     <footer className="footer bg-base-100 sm:footer-horizontal text-md px-10 py-20">
       <aside className="flex flex-col items-center ">
@@ -63,6 +56,7 @@ function Footer() {
         {/* <Link href="/docs" className="link link-hover">
           API Documentation
         </Link> */}
+
         <Link href="/playground" className="link link-hover">
           Playground
         </Link>
@@ -71,6 +65,12 @@ function Footer() {
         </Link>
         <Link href="/contact-us" className="link link-hover">
           Contact
+        </Link>
+        <Link href="/invoice-generator" className="link link-hover">
+          Invoice Generator
+        </Link>
+        <Link href="/invoice-template" className="link link-hover">
+          Invoice Template
         </Link>
       </nav>
       <nav>
@@ -88,6 +88,17 @@ function Footer() {
           Cookie policy
         </Link>
       </nav>
+      {links && (
+        <nav>
+          <h6 className="footer-title">Useful Links</h6>
+
+          {links.map(({ title, url }) => (
+            <Link key={title} href={url} className="link link-hover">
+              {title}
+            </Link>
+          ))}
+        </nav>
+      )}
     </footer>
   );
 }

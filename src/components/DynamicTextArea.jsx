@@ -10,7 +10,7 @@ import { templates } from "../lib/templatesData";
 import { useTemplateStore } from "../store/useTemplate";
 import InvoiceSkeleton from "./InvoiceSkeleton";
 
-export const DynamicTextarea = () => {
+export const DynamicTextarea = ({ prompt }) => {
   const placeholders = [
     "@Alice Johnson\n5 Website Designs @ 400\n2 Logos @ 100\ndiscount @ 5%\nGST-18%",
     "@Bob Smith\n3 Mobile App Screens @ 500\n1 Logo @ 150\nVAT-12%",
@@ -23,7 +23,7 @@ export const DynamicTextarea = () => {
   ];
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [text, setText] = useState("");
+  const [text, setText] = useState(prompt ? "\n" + prompt : "");
   const [placeholder, setPlaceholder] = useState("");
   const [showPlaceholder, setShowPlaceholder] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
@@ -42,11 +42,26 @@ export const DynamicTextarea = () => {
 
   const [startTime, setStartTime] = useState(0);
 
-  const timeToStart = 1000; // 1 second
   const textareaRef = useRef();
   const mirrorRef = useRef();
 
-  // Debugging
+  useEffect(() => {
+    async function fetchClients() {
+      const client = await setSampleClients();
+      setTemplate(templates[0]);
+      if (client && prompt) {
+        console.log("Clients", client);
+        const mentionTag = `@${client.clientName}\n`;
+        const newText = `${mentionTag}${prompt}`;
+        setClientId(client._id);
+        setText(newText);
+        setShowTooltip(false);
+      } else {
+        setClientId("");
+      }
+    }
+    fetchClients();
+  }, []);
 
   // Logic for tooltip
   const updateTooltipPosition = () => {
@@ -59,10 +74,6 @@ export const DynamicTextarea = () => {
       left: 20,
     });
   };
-
-  useEffect(() => {
-    console.log("Loading");
-  }, [loading]);
 
   // Update tooltip content on text change
   useEffect(() => {
@@ -110,7 +121,7 @@ export const DynamicTextarea = () => {
           <span className="text-secondary italic"> 'discount @ 5%'</span>
         </span>
       );
-    } else if (text.split("\n").length == 4) {
+    } else if (text.split("\n").length >= 4) {
       setTooltipContent(
         <span className="text-secondary">
           Click <span className="text-primary italic">'Generate'</span>
@@ -138,16 +149,6 @@ export const DynamicTextarea = () => {
   useEffect(() => {
     if (text.trim() !== "") setShowTooltip(true);
   }, [showTooltip == false]);
-
-  useEffect(() => {
-    async function fetchClients() {
-      //   await getClients();
-      await setSampleClients();
-      setClientId("");
-      setTemplate(templates[0]);
-    }
-    fetchClients();
-  }, []);
 
   // useEffect(() => {
   //   const observer = new IntersectionObserver(
