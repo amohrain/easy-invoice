@@ -44,7 +44,7 @@ function page() {
         </div>
       </section>
 
-      <Pricing />
+      {/* <Pricing /> */}
       <FAQ />
       <section className="bg-gradient-to-b from-base-300 to-base-100 p-4">
         <CTA />
