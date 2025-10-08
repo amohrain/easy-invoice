@@ -166,8 +166,14 @@ export const DynamicTextarea = ({ prompt }) => {
   const [restartPlaceholder, setRestartPlaceholder] = useState(false);
 
   useEffect(() => {
-    if (step == 1) document.body.style.overflow = "";
-    else document.body.style.overflow = "hidden";
+    // Scroll to top of the page
+
+    if (step == 1) {
+      document.body.style.overflow = "";
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      document.body.style.overflow = "hidden";
+    }
   }, [step]);
 
   useEffect(() => {
@@ -497,6 +503,13 @@ export const DynamicTextarea = ({ prompt }) => {
           ))}
         </ul>
       )}
+      <div
+        draggable
+        className="absolute animate-pulse bottom-[-42px] mr-[40px] opacity-80 flex w-fit self-center z-60"
+      >
+        <img className="size-16 mb-2" src="/left-up-arrow.png" alt="arrow" />
+        <p className="text-secondary italic text-xl self-end">Try it today.</p>
+      </div>
     </div>
   );
 };

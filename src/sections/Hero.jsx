@@ -44,7 +44,6 @@ function Hero() {
             </p>
           </div>
           <DynamicTextarea />
-          <p className="italic underline">No credit card required.</p>
         </div>
       </div>
     </section>

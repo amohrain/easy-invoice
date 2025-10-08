@@ -42,7 +42,7 @@ GST @ 18%`,
     description:
       "Professional web developer invoices for projects, milestones and retainers. Include hourly rates, milestone billing and taxes with ease",
     h1: "Web Developer ",
-    prompt: `Initial Deposit - 30% @ 600.00
+    prompt: `Security Deposit @ 600.00
 Website Development - Final @ 1400.00
 Service Tax @ 18%`,
     keywords: [
@@ -60,7 +60,7 @@ Service Tax @ 18%`,
     description:
       "Invoice templates tailored for graphic designers: logo, branding, print-ready files and usage rights. Quick, editable and shareable",
     h1: "Graphic Designer ",
-    prompt: `Logo Design - Basic @ 200.00
+    prompt: `Standard Logo Design @ 200.00
 Brand Kit + Revisions @ 350.00
 VAT @ 12%`,
     keywords: [
@@ -78,7 +78,7 @@ VAT @ 12%`,
     description:
       "Create cinematic invoices for videography services: shoot days, editing, deliverables and licensing fees. Simple tax support included",
     h1: "Videographer ",
-    prompt: `Full Day Shoot - 1 day @ 600.00
+    prompt: `Full Day Shoot @ 600.00
 Editing & Color Grade @ 300.00
 GST @ 18%`,
     keywords: [
@@ -115,7 +115,7 @@ Service Tax @ 18%`,
       "Easy invoices for copywriters and content creators — per word, per article, or retainer billing with tax breakdowns",
     h1: "Copywriter ",
     prompt: `Blog Article - 1200 words @ 120.00
-Content Revision (1) @ 20.00
+Content Revision @ 20.00
 VAT @ 10%`,
     keywords: [
       "copywriter invoice template",
@@ -187,7 +187,7 @@ GST @ 18%`,
       "Invoice templates for app development projects, milestone payments, app store fees and maintenance retainers",
     h1: "Mobile App Developer ",
     prompt: `Initial Phase - Wireframes @ 800.00
-App Build - Final Payment @ 2200.00
+Final App Build @ 2200.00
 Service Tax @ 18%`,
     keywords: [
       "mobile app invoice template",
@@ -349,7 +349,7 @@ Service Tax @ 18%`,
       "Clear legal invoices for consultations, retainers, court fees and hourly billing. Perfect for solo practitioners and firms",
     h1: "Legal ",
     prompt: `Consultation - 2 hrs @ 200.00
-Court Filing Fee (pass-through) @ 50.00
+3 Effective Hearings @ 50.00
 GST @ 18%`,
     keywords: [
       "lawyer invoice template",
@@ -546,8 +546,8 @@ GST @ 18%`,
     description:
       "Itemized invoicing for event planning: venue coordination, vendor fees and day-of management charges",
     h1: "Event Planner ",
-    prompt: `Planning Fee - Flat Rate @ 500.00
-Vendor Coordination (pass-through) @ 200.00
+    prompt: `Planning Fee @ 500.00
+Vendor Coordination @ 200.00
 VAT @ 12%`,
     keywords: [
       "event planner invoice",
@@ -798,7 +798,7 @@ VAT @ 12%`,
     description:
       "Invoicing for moving companies: itemize labor hours, packing materials and transport charges with taxes",
     h1: "Moving Service ",
-    prompt: `Local Move - 3 movers @ 300.00
+    prompt: `Local Move @ 300.00
 Packing Materials @ 40.00
 VAT @ 5%`,
     keywords: [
@@ -961,7 +961,7 @@ GST @ 18%`,
       "Invoice templates for consultants with options for hourly, project and retainer billing plus expense pass-throughs",
     h1: "Consultant ",
     prompt: `Strategy Session - 5 hrs @ 500.00
-Travel Expense (pass-through) @ 60.00
+Travel Expense @ 60.00
 Service Tax @ 18%`,
     keywords: [
       "consultant invoice template",
