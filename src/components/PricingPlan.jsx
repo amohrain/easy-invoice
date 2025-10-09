@@ -77,14 +77,16 @@ function PricingPlan({
               {formatCurrency(amount, currency)}
             </span>
 
-            <span className="tracking-tight opacity-50 font-bold">
+            <span className="tracking-tight opacity-50 font-stretch-semi-condensed">
               {amount !== 0 ? "/lifetime" : ""}
             </span>
           </div>
-          <p className="line-through font-semibold opacity-50 tracking-tighter leading-none">
-            {mrp && formatCurrency(mrp, currency)}{" "}
-          </p>
-          <div className="mt-6">
+          {mrp && (
+            <p className="badge badge-secondary rounded-full line-through font-bold tracking-tighter leading-none">
+              {formatCurrency(mrp, currency)}
+            </p>
+          )}
+          <div className="mt-4">
             <PaymentButton
               name={name}
               planAmount={amount * 100}

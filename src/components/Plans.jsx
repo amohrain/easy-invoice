@@ -23,13 +23,14 @@ export default function Plans(where) {
     {
       name: "Starter",
       amount: isIndia ? 3999 : 49.99,
-      mrp: isIndia ? 9999 : 149.99,
+      mrp: isIndia ? 11999 : 149.99,
       mostPopular: true,
       features: [
         "Unlimited invoices",
         "Unlimited clients",
         "Supports one business",
         "Unlimited invoice storage",
+        "Lifetime Access",
         // "Access to exclusive templates",
         // "Unlimited API calls*",
       ],
@@ -37,12 +38,13 @@ export default function Plans(where) {
     {
       name: "Pro",
       amount: isIndia ? 7999 : 99.99,
-      mrp: isIndia ? 15999 : 249.99,
+      mrp: isIndia ? 23999 : 299.99,
       mostPopular: false,
       features: [
         "Unlimited invoices",
         "Unlimited clients",
         "Unlimited businesses",
+        "Lifetime Access",
         // "Create Own Templates",
       ],
     },

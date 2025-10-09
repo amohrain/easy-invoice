@@ -111,7 +111,7 @@ export default function PaymentButton({
         }
       }}
       disabled={planAmount == 0 && page !== "home"}
-      className={`btn w-full rounded-full ${
+      className={`btn w-full font-bold rounded-full ${
         mostPopular ? "bg-white text-black" : "btn-primary"
       } ${currentPlan === name && "cursor-not-allowed"}`}
     >

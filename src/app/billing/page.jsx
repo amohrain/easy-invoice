@@ -24,8 +24,9 @@ function page() {
       <div className="flex flex-col w-full rounded-xl overflow-y-auto pt-12">
         <div className="flex flex-col items-center justify-center gap-4">
           <h1 className="gradient-text text-4xl text-center font-semibold">
-            One-time payment, no commitments
+            One-time payment, Zero commitments
           </h1>
+
           <Plans where="billing" />
           <div>
             <p className="text-center">
