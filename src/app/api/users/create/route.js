@@ -27,6 +27,7 @@ export async function POST(req) {
       industry,
       template: publicTemplates,
       defaultTemplate: publicTemplates[0]?._id,
+      validTill: Date.now() + 14 * 24 * 60 * 60 * 1000, // 14 days from now
     });
     await newUser.save();
     console.log("User created", newUser);

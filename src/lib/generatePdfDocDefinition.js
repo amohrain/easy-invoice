@@ -79,7 +79,7 @@ export function getCustomTableLayout(tableStyle = {}, template) {
     borderColor = "content",
     borderWidth = 1,
     dashedBorders = false,
-    cellPadding = 4,
+    cellPadding = 8,
   } = tableStyle;
 
   const lineStyle = dashedBorders
@@ -295,7 +295,8 @@ export function generatePdfDocDefinition(template, invoice) {
       tableBody.push(
         section.items.map((col) => ({
           text: col.placeholder || col.key,
-          margin: Array(4).fill(section.tableStyle?.cellPadding ?? 2),
+          // margin: Array(4).fill(section.tableStyle?.cellPadding ?? 4),
+          margin: [0, 8, 8, 8],
           bold: col.bold || true,
           fontSize: col.size || 12,
           alignment: col.alignment || "left",
@@ -309,7 +310,8 @@ export function generatePdfDocDefinition(template, invoice) {
             col.key === "total"
               ? item[col.key].toFixed(2)
               : item[col.key] ?? "-",
-          margin: Array(4).fill(section.tableStyle?.cellPadding ?? 2),
+          // margin: Array(4).fill(section.tableStyle?.cellPadding ?? 4),
+          margin: [0, 8, 8, 8],
           fontSize: col.size || 12,
           alignment: col.alignment || "left",
         }));

@@ -2,8 +2,6 @@ import crypto from "crypto";
 import { auth } from "@clerk/nextjs/server";
 import { getMongoUser } from "../../../lib/getMongoUser";
 import Company from "../../../models/company.model";
-import Invoice from "../../../models/invoice.model";
-import User from "../../../models/user.model";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -79,7 +77,8 @@ export async function POST(req) {
   const invoiceId = data.invoiceId;
 
   // Payment is valid, update Clerk metadata
-  user.subscriptionPlan = plan;
+  user.subscriptionPlan = plan === "Free Trial" ? "Free" : plan;
+  user.validTill = new Date(Date.now() + 30 * 365 * 24 * 60 * 60 * 1000); // 30 days from now
   user.invoice = invoiceId;
   await user.save();
 

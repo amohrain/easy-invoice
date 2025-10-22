@@ -219,6 +219,8 @@ export default function Onboarding() {
                     onClick={(e) => {
                       e.preventDefault();
                       setLogo(null);
+                      const input = document.getElementById("file-upload");
+                      if (input) input.value = "";
                     }}
                     className="absolute top-[-12px] right-[-12px] btn btn-circle btn-error btn-xs"
                   >

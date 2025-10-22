@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "Free",
   },
+  validTill: {
+    type: Date,
+    required: false,
+  },
   invoice: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Invoice",

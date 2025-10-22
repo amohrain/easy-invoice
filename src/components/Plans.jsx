@@ -9,13 +9,14 @@ export default function Plans(where) {
 
   const plans = [
     {
-      name: "Free",
+      name: "Free Trial",
       amount: 0,
       mrp: null,
       mostPopular: false,
       features: [
-        "10 Invoices per month",
-        "Maximum 10 clients",
+        "14 days free trial",
+        "Create 10 free invoices",
+        "Maximum 5 clients",
         "Limited invoice storage",
         // "100 API calls per month",
       ],

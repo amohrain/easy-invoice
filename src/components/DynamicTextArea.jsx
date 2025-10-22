@@ -9,6 +9,7 @@ import { sampleCompany } from "../constants/sampleCompany";
 import { templates } from "../lib/templatesData";
 import { useTemplateStore } from "../store/useTemplate";
 import InvoiceSkeleton from "./InvoiceSkeleton";
+import { getInitials } from "../lib/getInitials";
 
 export const DynamicTextarea = ({ prompt }) => {
   const placeholders = [
@@ -311,15 +312,6 @@ export const DynamicTextarea = ({ prompt }) => {
     }, 0);
   };
 
-  const getInitials = (name) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   const handleGenerate = async () => {
     if (clientId === "") {
       alert("Please mention a client typing '@' followed by their name.");
@@ -474,7 +466,7 @@ export const DynamicTextarea = ({ prompt }) => {
       </button>
       {!clientId && suggestions.length > 0 && (
         <ul
-          className="absolute flex flex-col gap-1 z-50 border p-1 glass border-base-300 rounded-xl max-h-46 overflow-y-auto w-64"
+          className="absolute flex flex-col gap-1 z-150 border p-1 glass border-base-300 rounded-xl max-h-46 overflow-y-auto w-64"
           style={{
             top: mentionPosition.top,
             left: mentionPosition.left,
@@ -490,7 +482,7 @@ export const DynamicTextarea = ({ prompt }) => {
                   : "bg-base-100/50 border-base-100"
               }`}
             >
-              <div className="bg-neutralrounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+              <div className="bg-base-300 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
                 {getInitials(client.clientName)}
               </div>
               <div>

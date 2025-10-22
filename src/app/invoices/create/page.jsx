@@ -11,8 +11,10 @@ import { useLoadingStore } from "@/store/useLoading";
 import { useUserStore } from "../../../store/useUser";
 import InvoiceSkeleton from "../../../components/InvoiceSkeleton";
 import { Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function Dashboard() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [text, setText] = useState("");
   const { template, setTemplate, userTemplates, getUsersTemplates } =
@@ -27,6 +29,7 @@ function Dashboard() {
   const invoiceCount =
     user?.invoiceCountMonth === currentMonth ? user?.invoiceCount : 0 || 0;
 
+  const validityExpired = user?.validTill && new Date(user.validTill) < now;
   const limitExceeded = user?.subscriptionPlan === "Free" && invoiceCount > 10;
 
   const [startTime, setStartTime] = useState(0);
@@ -56,6 +59,11 @@ function Dashboard() {
   }, []);
 
   const handleGenerate = async () => {
+    if (validityExpired) {
+      alert("Your subscription has expired. Please renew to continue.");
+      router.replace("/billing");
+      return;
+    }
     if (limitExceeded) {
       alert("Monthly invoice limit reached. Upgrade your plan to continue.");
       return;
@@ -85,8 +93,6 @@ function Dashboard() {
   useEffect(() => {
     // console.log("step: ", step);
   }, [step]);
-
-  console.log(user);
 
   return (
     <div className="vibe-dashboard">
