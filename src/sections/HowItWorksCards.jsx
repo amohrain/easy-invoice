@@ -1,6 +1,7 @@
-import { AtSign, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import React from "react";
 import HoverClientCard from "../components/HoverClientCard";
+import Link from "next/link";
 
 function HowItWorksCards() {
   const steps = [
@@ -9,12 +10,10 @@ function HowItWorksCards() {
       step: "1",
       description: (
         <ul className="flex flex-col gap-4 items-center">
-          <li
-            tabIndex={-1}
-            className="dropdown dropdown-hover items-center justify-center"
-          >
+          <li className="dropdown dropdown-hover items-center justify-center">
             Write{" "}
             <span
+              tabIndex={0}
               role="button"
               className="badge mt-[-5px] py-4.5 gap-0 italic badge-primary opacity-70 badge-xl rounded-full px-2 cursor-pointer font-bold"
             >
@@ -36,8 +35,10 @@ function HowItWorksCards() {
       step: "2",
       description: (
         <ul className="flex flex-col gap-4 items-center">
-          <li className="py-4.5 mt-[-5px] badge badge-secondary opacity-80 badge-xl rounded-full cursor-pointer font-medium">
-            5 Logos @ 99.99
+          <li className="">
+            <span className="py-4.5 mt-[-5px] badge badge-secondary opacity-80 badge-xl rounded-full cursor-pointer font-medium">
+              5 Logos @ 99.99
+            </span>
           </li>
           <li>Describe your work naturally. The AI formats it into invoice.</li>
         </ul>
@@ -45,23 +46,24 @@ function HowItWorksCards() {
       img: "/step-preview.png",
     },
     {
-      title: "Generate Invoice",
+      title: "Press this button",
       step: "3",
       description: (
         <ul className="flex flex-col gap-4 items-center">
-          <li className="items-center justify-center">
-            Hit{" "}
-            <span
-              tabIndex={0}
-              role="button"
-              className="px-3 gap-1 py-4.5 mt-[-5px] badge badge-xl bg-gradient-to-tr from-secondary via-secondary/85 to-primary opacity-80 text-base-100 rounded-full cursor-pointer font-medium"
+          <li className="">
+            <Link
+              href={"#hero"}
+              className="px-3 gap-1 py-4.5 mt-[-5px] badge badge-primary border badge-xl opacity-70 text-base-100 rounded-full cursor-pointer font-medium"
             >
               <Sparkles className="size-4" />
-              Generate
-            </span>{" "}
-            button
+              Generate Invoice
+            </Link>{" "}
           </li>
-          <li> Watch your invoice come to life in a few seconds.</li>
+          <li>
+            {" "}
+            Click this button and watch your invoice come to life in a few
+            seconds.
+          </li>
         </ul>
       ),
       img: "/step-collaborate.png",
