@@ -7,6 +7,7 @@ import CookieBanner from "../components/CookieBanner";
 import AddInvoiceButton from "../components/AddInvoiceButton";
 import { getSEOTags, renderSchemaTags } from "../lib/seo";
 import AnalyticsHandler from "../components/AnalyticsHandler";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,22 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <head>{renderSchemaTags()}</head>
+        <head>
+          {renderSchemaTags()}
+          <Script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=AW-17588532087"
+          />
+          <Script id="google-ads-init" strategy="afterInteractive">
+            {`
+           window.dataLayer = window.dataLayer || [];
+           function gtag(){dataLayer.push(arguments);}
+           gtag('js', new Date());
+
+           gtag('config', 'AW-17588532087');
+          `}
+          </Script>
+        </head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
