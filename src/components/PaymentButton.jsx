@@ -77,6 +77,12 @@ export default function PaymentButton({
             const data = await verifyRes.json();
             const invoiceLink = `${data.data}`;
             setInvoiceLink(invoiceLink);
+            if (
+              typeof window !== "undefined" &&
+              window.gtag_report_conversion
+            ) {
+              window.gtag_report_conversion(); // you can pass a redirect URL if you want
+            }
           } catch (error) {
             console.error("Error handling payment:", error);
             alert("Something went wrong. Please contact support.");
@@ -102,20 +108,32 @@ export default function PaymentButton({
     );
 
   return (
-    <button
-      onClick={() => {
-        if (page === "home") {
-          router.push("/sign-in");
-        } else {
-          handlePayment();
-        }
-      }}
-      disabled={planAmount == 0 && page !== "home"}
-      className={`btn w-full font-bold rounded-full ${
-        mostPopular ? "bg-white text-black" : "btn-primary"
-      } ${currentPlan === name && "cursor-not-allowed"}`}
-    >
-      {currentPlan === name ? "Current Plan" : `Continue with ${name}`}
-    </button>
+    <>
+      <button
+        onClick={() => {
+          if (page === "home") {
+            router.push("/sign-in");
+          } else {
+            handlePayment();
+          }
+        }}
+        disabled={planAmount == 0 && page !== "home"}
+        className={`btn w-full font-bold rounded-full ${
+          mostPopular ? "bg-white text-black" : "btn-primary"
+        } ${currentPlan === name && "cursor-not-allowed"}`}
+      >
+        {currentPlan === name ? "Current Plan" : `Continue with ${name}`}
+      </button>
+
+      <button
+        onClick={() => {
+          if (typeof window !== "undefined" && window.gtag_report_conversion) {
+            window.gtag_report_conversion(); // you can pass a redirect URL if you want
+          }
+        }}
+      >
+        clickme
+      </button>
+    </>
   );
 }

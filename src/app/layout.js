@@ -50,6 +50,25 @@ export default function RootLayout({ children }) {
            gtag('config', 'AW-17588532087');
           `}
           </Script>
+          <Script id="google-ads-conversion" strategy="afterInteractive">
+            {`
+    function gtag_report_conversion(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'conversion', {
+        'send_to': 'AW-17588532087/LmJkCJKsiJ8bEPfm7sJB',
+        'value': 3999.0,
+        'currency': 'INR',
+        'transaction_id': '',
+        'event_callback': callback
+      });
+      return false;
+    }
+  `}
+          </Script>
         </head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}

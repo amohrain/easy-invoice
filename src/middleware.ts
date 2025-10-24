@@ -17,9 +17,12 @@ const isPublicRoute = createRouteMatcher([
   "/contact-us",
   "/refund-policy",
 
-  "/:method",
-  "/:method/:id",
-  "/:method/:id/:country",
+  "/invoice-template",
+  "/invoice-generator",
+  "/invoice-template/:id",
+  "/invoice-generator/:id",
+  "/invoice-template/:id/:country",
+  "/invoice-generator/:id/:country",
 
   "/sitemap.xml",
   "/robots.txt",
