@@ -124,16 +124,6 @@ export default function PaymentButton({
       >
         {currentPlan === name ? "Current Plan" : `Continue with ${name}`}
       </button>
-
-      <button
-        onClick={() => {
-          if (typeof window !== "undefined" && window.gtag_report_conversion) {
-            window.gtag_report_conversion(); // you can pass a redirect URL if you want
-          }
-        }}
-      >
-        clickme
-      </button>
     </>
   );
 }
